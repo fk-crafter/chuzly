@@ -13,3 +13,29 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Event {
+  id        String   @id @default(cuid())
+  name      String
+  options   Option[]
+  guests    Guest[]
+  createdAt DateTime @default(now())
+}
+
+model Option {
+  id        String   @id @default(cuid())
+  name      String
+  price     Float?
+  datetime  DateTime?
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   String
+}
+
+model Guest {
+  id        String   @id @default(cuid())
+  nickname  String
+  vote      Option?  @relation(fields: [voteId], references: [id])
+  voteId    String?
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   String
+}
