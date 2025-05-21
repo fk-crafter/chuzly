@@ -23,19 +23,22 @@ model Event {
 }
 
 model Option {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
   price     Float?
   datetime  DateTime?
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event     @relation(fields: [eventId], references: [id])
   eventId   String
+
+  guests    Guest[]   @relation("GuestVotes")
 }
 
 model Guest {
   id        String   @id @default(cuid())
   nickname  String
-  vote      Option?  @relation(fields: [voteId], references: [id])
+  vote      Option?  @relation("GuestVotes", fields: [voteId], references: [id])
   voteId    String?
   event     Event    @relation(fields: [eventId], references: [id])
   eventId   String
 }
+
