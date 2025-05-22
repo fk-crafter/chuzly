@@ -31,4 +31,16 @@ export class EventService {
 
     return event;
   }
+
+  async findAll() {
+    return this.prisma.event.findMany({
+      include: {
+        options: true,
+        guests: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }
