@@ -43,4 +43,15 @@ export class EventService {
       },
     });
   }
+  async findOneWithGuest(eventId: string, nickname: string) {
+    return this.prisma.event.findUnique({
+      where: { id: eventId },
+      include: {
+        options: true,
+        guests: {
+          where: { nickname },
+        },
+      },
+    });
+  }
 }
