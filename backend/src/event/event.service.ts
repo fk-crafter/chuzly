@@ -87,4 +87,48 @@ export class EventService {
       },
     });
   }
+
+  async getVotes(eventId: string) {
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+      include: {
+        guests: {
+          include: {
+            vote: true,
+          },
+        },
+      },
+    });
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    return {
+      eventName: event.name,
+      votes: event.guests.map((guest) => {
+        if (guest.vote === null) {
+          return {
+            nickname: guest.nickname,
+            vote: null,
+          };
+        }
+
+        if (guest.vote.name === 'Not available') {
+          return {
+            nickname: guest.nickname,
+            vote: 'Not available',
+          };
+        }
+
+        return {
+          nickname: guest.nickname,
+          vote: {
+            optionName: guest.vote.name,
+            optionId: guest.vote.id,
+          },
+        };
+      }),
+    };
+  }
 }

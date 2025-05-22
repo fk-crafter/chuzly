@@ -31,4 +31,9 @@ export class EventController {
   ) {
     return this.eventService.submitVote(id, nickname, choice);
   }
+
+  @Get(':id/votes')
+  getVotes(@Param('id') id: string) {
+    return this.eventService.getVotes(id);
+  }
 }
