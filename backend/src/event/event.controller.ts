@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 
@@ -21,5 +21,14 @@ export class EventController {
     @Param('nickname') nickname: string,
   ) {
     return this.eventService.findOneWithGuest(id, nickname);
+  }
+
+  @Post(':id/guest/:nickname/vote')
+  submitVote(
+    @Param('id') id: string,
+    @Param('nickname') nickname: string,
+    @Body('choice') choice: string | null,
+  ) {
+    return this.eventService.submitVote(id, nickname, choice);
   }
 }

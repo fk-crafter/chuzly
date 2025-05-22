@@ -63,4 +63,28 @@ export class EventService {
       },
     });
   }
+
+  async submitVote(eventId: string, nickname: string, choice: string | null) {
+    const guest = await this.prisma.guest.findFirst({
+      where: {
+        eventId,
+        nickname,
+      },
+    });
+
+    if (!guest) {
+      throw new Error('Guest not found');
+    }
+
+    return this.prisma.guest.update({
+      where: { id: guest.id },
+      data: {
+        vote: choice ? { connect: { id: choice } } : { disconnect: true },
+      },
+
+      include: {
+        vote: true,
+      },
+    });
+  }
 }
