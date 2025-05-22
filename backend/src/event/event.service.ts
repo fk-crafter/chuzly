@@ -29,7 +29,15 @@ export class EventService {
       },
     });
 
-    return event;
+    const links = event.guests.map((guest) => ({
+      nickname: guest.nickname,
+      url: `http://localhost:5001/events/${event.id}/guest/${guest.nickname}`,
+    }));
+
+    return {
+      ...event,
+      links,
+    };
   }
 
   async findAll() {
@@ -43,6 +51,7 @@ export class EventService {
       },
     });
   }
+
   async findOneWithGuest(eventId: string, nickname: string) {
     return this.prisma.event.findUnique({
       where: { id: eventId },
