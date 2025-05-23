@@ -5,99 +5,72 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function VotePageClient() {
+export default function VotePageClient() {
   const params = useSearchParams();
   const router = useRouter();
   const [event, setEvent] = useState<any>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
-  const user = params.get("guest");
+  const eventId = params.get("id");
+  const guest = params.get("guest");
 
   useEffect(() => {
-    const raw = params.get("data");
-    if (!raw || !user) return;
+    const fetchEvent = async () => {
+      if (!eventId || !guest) return;
+
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/guest/${guest}`
+        );
+
+        const data = await res.json();
+        setEvent(data);
+      } catch (err) {
+        console.error("Error loading event", err);
+      }
+    };
+    console.log("API_URL", process.env.NEXT_PUBLIC_API_URL);
+
+    fetchEvent();
+  }, [eventId, guest]);
+
+  const handleVote = async () => {
+    if (!eventId || !guest || !selectedOption) return;
 
     try {
-      const decoded = JSON.parse(decodeURIComponent(raw));
+      await fetch(`http://localhost:5001/events/${eventId}/vote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nickname: guest, choice: selectedOption }),
+      });
 
-      const localVotes = JSON.parse(
-        localStorage.getItem("togedaVotes") || "{}"
-      );
-
-      decoded.votes = {
-        ...(decoded.votes || {}),
-        ...localVotes,
-      };
-
-      setEvent(decoded);
+      alert("Vote submitted!");
+      router.refresh();
     } catch (err) {
-      console.error("Invalid event data");
+      console.error("Vote error", err);
     }
-  }, [params, user]);
-
-  const updateVote = (vote: string | null) => {
-    if (!event || !user) return;
-
-    const updatedVotes = {
-      ...(event.votes || {}),
-    };
-
-    if (vote === null) {
-      delete updatedVotes[user];
-    } else {
-      updatedVotes[user] = vote;
-    }
-
-    if (typeof window !== "undefined") {
-      localStorage.setItem("togedaVotes", JSON.stringify(updatedVotes));
-    }
-
-    const updatedEvent = {
-      ...event,
-      votes: updatedVotes,
-    };
-
-    const encoded = encodeURIComponent(JSON.stringify(updatedEvent));
-    router.replace(`/app/vote?data=${encoded}&guest=${user}`);
-  };
-
-  const handleVote = () => {
-    if (!selectedOption) return;
-    updateVote(selectedOption);
-  };
-
-  const handleUnavailable = () => {
-    updateVote("Not available");
-  };
-
-  const handleCancelVote = () => {
-    updateVote(null);
-    setSelectedOption(null);
   };
 
   if (!event) {
-    return <p className="text-center mt-20">Loading event data...</p>;
+    return <p className="text-center mt-20">Loading event...</p>;
   }
-
-  const currentVote = event.votes?.[user as string];
-  const hasVoted = currentVote !== undefined;
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
       <div className="md:col-span-2 space-y-6">
-        <h1 className="text-2xl font-bold mb-2">{event.eventName}</h1>
+        <h1 className="text-2xl font-bold mb-2">{event.name}</h1>
         <p className="text-muted-foreground text-sm mb-4">
-          Hi {user}, choose your favorite option 👇
+          Hi {guest}, choose your favorite option 👇
         </p>
 
         <div className="space-y-4">
           {event.options.map((opt: any, i: number) => (
             <div
               key={i}
-              onClick={() => setSelectedOption(opt.name)}
+              onClick={() => setSelectedOption(opt.id)}
               className={cn(
                 "border rounded-lg px-4 py-3 cursor-pointer hover:bg-accent transition",
-                selectedOption === opt.name && "border-primary bg-muted"
+                selectedOption === opt.id && "border-primary bg-muted"
               )}
             >
               <p className="font-medium">{opt.name}</p>
@@ -112,7 +85,7 @@ export function VotePageClient() {
                   <p>
                     <span className="inline-block w-16 font-medium">
                       Price:
-                    </span>
+                    </span>{" "}
                     ${opt.price}
                   </p>
                 )}
@@ -121,54 +94,29 @@ export function VotePageClient() {
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 mt-4">
-          <Button onClick={handleVote} disabled={!selectedOption || hasVoted}>
-            {hasVoted ? "Vote submitted" : "Submit vote"}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={handleUnavailable}
-            disabled={hasVoted}
-          >
-            I’m not available
-          </Button>
-
-          {hasVoted && (
-            <Button variant="ghost" onClick={handleCancelVote}>
-              Cancel vote
-            </Button>
-          )}
-        </div>
+        <Button onClick={handleVote} disabled={!selectedOption}>
+          Submit vote
+        </Button>
       </div>
 
       <div>
         <h2 className="text-lg font-semibold mb-4">Who's voted?</h2>
         <ul className="space-y-2 text-sm">
-          {event.guests.map((g: string, i: number) => {
-            const vote = event.votes?.[g];
-            return (
-              <li key={i} className="flex items-center justify-between">
-                <span>{g}</span>
-                <span
-                  className={cn(
-                    "text-xs px-2 py-1 rounded-full",
-                    vote
-                      ? vote === "Not available"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-green-100 text-green-700"
-                      : "bg-gray-200 text-gray-500"
-                  )}
-                >
-                  {vote
-                    ? vote === "Not available"
-                      ? "Unavailable"
-                      : "Voted"
-                    : "Pending"}
-                </span>
-              </li>
-            );
-          })}
+          {event.guests.map((g: any, i: number) => (
+            <li key={i} className="flex items-center justify-between">
+              <span>{g.nickname}</span>
+              <span
+                className={cn(
+                  "text-xs px-2 py-1 rounded-full",
+                  g.vote
+                    ? "bg-green-100 text-green-700"
+                    : "bg-gray-200 text-gray-500"
+                )}
+              >
+                {g.vote ? "Voted" : "Pending"}
+              </span>
+            </li>
+          ))}
         </ul>
       </div>
     </main>

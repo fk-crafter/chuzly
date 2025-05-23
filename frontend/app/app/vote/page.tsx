@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { VotePageClient } from "@/components/VotePageClient";
+import VotePageClient from "@/components/VotePageClient";
 
 export default function VotePage() {
   return (
