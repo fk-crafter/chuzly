@@ -76,25 +76,52 @@ export class EventService {
 
   async submitVote(eventId: string, nickname: string, choice: string | null) {
     const guest = await this.prisma.guest.findFirst({
-      where: {
-        eventId,
-        nickname,
-      },
+      where: { eventId, nickname },
     });
 
-    if (!guest) {
-      throw new Error('Guest not found');
+    if (!guest) throw new Error('Guest not found');
+
+    // Cas "Indisponible"
+    if (choice === 'unavailable') {
+      const notAvailableOption = await this.prisma.option.upsert({
+        where: {
+          id: `${eventId}_not_available`,
+        },
+        update: {},
+        create: {
+          id: `${eventId}_not_available`,
+          eventId,
+          name: 'Not available',
+        },
+      });
+
+      return this.prisma.guest.update({
+        where: { id: guest.id },
+        data: {
+          vote: { connect: { id: notAvailableOption.id } },
+        },
+        include: { vote: true },
+      });
     }
 
+    // Cas "Annuler"
+    if (!choice) {
+      return this.prisma.guest.update({
+        where: { id: guest.id },
+        data: {
+          vote: { disconnect: true },
+        },
+        include: { vote: true },
+      });
+    }
+
+    // Cas "Vote normal"
     return this.prisma.guest.update({
       where: { id: guest.id },
       data: {
-        vote: choice ? { connect: { id: choice } } : { disconnect: true },
+        vote: { connect: { id: choice } },
       },
-
-      include: {
-        vote: true,
-      },
+      include: { vote: true },
     });
   }
 
@@ -110,25 +137,17 @@ export class EventService {
       },
     });
 
-    if (!event) {
-      throw new Error('Event not found');
-    }
+    if (!event) throw new Error('Event not found');
 
     return {
       eventName: event.name,
       votes: event.guests.map((guest) => {
-        if (guest.vote === null) {
-          return {
-            nickname: guest.nickname,
-            vote: null,
-          };
+        if (!guest.vote) {
+          return { nickname: guest.nickname, vote: null };
         }
 
         if (guest.vote.name === 'Not available') {
-          return {
-            nickname: guest.nickname,
-            vote: 'Not available',
-          };
+          return { nickname: guest.nickname, vote: 'Not available' };
         }
 
         return {
@@ -141,6 +160,7 @@ export class EventService {
       }),
     };
   }
+
   async findOne(id: string) {
     return this.prisma.event.findUnique({
       where: { id },
