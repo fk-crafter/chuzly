@@ -7,16 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 export default function CreateEventPage() {
+  const router = useRouter();
+
   const [eventName, setEventName] = useState("");
   const [options, setOptions] = useState([
     { name: "", price: "", datetime: "" },
   ]);
   const [guests, setGuests] = useState([""]);
-  const router = useRouter();
 
   const handleOptionChange = (index: number, field: string, value: string) => {
     const updated = [...options];
-    updated[index][field as keyof (typeof options)[number]] = value;
+    updated[index][field as keyof (typeof updated)[number]] = value;
     setOptions(updated);
   };
 
@@ -26,22 +27,30 @@ export default function CreateEventPage() {
     setGuests(updated);
   };
 
-  const addOption = () => {
+  const addOption = () =>
     setOptions([...options, { name: "", price: "", datetime: "" }]);
-  };
+  const addGuest = () => setGuests([...guests, ""]);
 
-  const addGuest = () => {
-    setGuests([...guests, ""]);
-  };
-
-  const handleSubmit = () => {
-    const event = {
+  const handleSubmit = async () => {
+    const body = {
       eventName,
       options,
       guests,
     };
-    const encoded = encodeURIComponent(JSON.stringify(event));
-    router.push(`/app/share?data=${encoded}`);
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+      router.push(`/app/share?id=${data.id}`);
+    } catch (err) {
+      console.error("Failed to create event:", err);
+      alert("Something went wrong");
+    }
   };
 
   return (
@@ -49,30 +58,31 @@ export default function CreateEventPage() {
       <h1 className="text-2xl font-bold mb-6">Create a new event</h1>
 
       <div className="mb-6">
-        <Label className="mb-2 block">Event name</Label>
+        <Label>Event name</Label>
         <Input
-          placeholder="Ex: Saturday plans"
+          placeholder="Saturday plans"
           value={eventName}
           onChange={(e) => setEventName(e.target.value)}
         />
       </div>
 
-      <div className="mb-6 space-y-4">
-        <Label className="block mb-2">Options</Label>
+      <div className="mb-6">
+        <Label>Options</Label>
         {options.map((opt, i) => (
-          <div key={i} className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <div key={i} className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
             <Input
-              placeholder="Option name (e.g. Bowling)"
+              placeholder="Name"
               value={opt.name}
               onChange={(e) => handleOptionChange(i, "name", e.target.value)}
             />
             <Input
               placeholder="Price"
-              type="number"
               value={opt.price}
+              type="number"
               onChange={(e) => handleOptionChange(i, "price", e.target.value)}
             />
             <Input
+              placeholder="Date & time"
               type="datetime-local"
               value={opt.datetime}
               onChange={(e) =>
@@ -86,14 +96,15 @@ export default function CreateEventPage() {
         </Button>
       </div>
 
-      <div className="mb-6 space-y-4">
-        <Label className="block mb-2">Guests</Label>
-        {guests.map((guest, i) => (
+      <div className="mb-6">
+        <Label>Guests</Label>
+        {guests.map((g, i) => (
           <Input
             key={i}
-            placeholder="Enter guest nickname"
-            value={guest}
+            placeholder="Nickname"
+            value={g}
             onChange={(e) => handleGuestChange(i, e.target.value)}
+            className="mb-2"
           />
         ))}
         <Button type="button" variant="outline" onClick={addGuest}>

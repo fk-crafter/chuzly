@@ -36,4 +36,9 @@ export class EventController {
   getVotes(@Param('id') id: string) {
     return this.eventService.getVotes(id);
   }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.eventService.findOne(id);
+  }
 }
