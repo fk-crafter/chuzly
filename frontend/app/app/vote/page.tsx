@@ -11,6 +11,7 @@ export default function VotePageClient() {
 
   const [event, setEvent] = useState<any>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [hasVoted, setHasVoted] = useState(false);
 
   const eventId = params.get("id");
   const guest = params.get("guest");
@@ -25,6 +26,12 @@ export default function VotePageClient() {
         );
         const data = await res.json();
         setEvent(data);
+
+        const currentGuest = data.guests.find((g: any) => g.nickname === guest);
+        if (currentGuest?.vote?.id) {
+          setSelectedOption(currentGuest.vote.id);
+          setHasVoted(true);
+        }
       } catch (err) {
         console.error("Failed to fetch event", err);
       }
@@ -34,7 +41,7 @@ export default function VotePageClient() {
   }, [eventId, guest]);
 
   const handleVote = async () => {
-    if (!selectedOption || !eventId || !guest) return;
+    if (!eventId || !guest) return;
 
     try {
       await fetch(
@@ -45,10 +52,32 @@ export default function VotePageClient() {
           body: JSON.stringify({ choice: selectedOption }),
         }
       );
+      setHasVoted(true);
       alert("Vote submitted!");
       router.refresh();
     } catch (err) {
       console.error("Vote error", err);
+    }
+  };
+
+  const handleCancelVote = async () => {
+    if (!eventId || !guest) return;
+
+    try {
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/guest/${guest}/vote`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ choice: null }),
+        }
+      );
+      setSelectedOption(null);
+      setHasVoted(false);
+      alert("Vote canceled");
+      router.refresh();
+    } catch (err) {
+      console.error("Cancel vote error", err);
     }
   };
 
@@ -68,7 +97,9 @@ export default function VotePageClient() {
           {event.options.map((opt: any) => (
             <div
               key={opt.id}
-              onClick={() => setSelectedOption(opt.id)}
+              onClick={() =>
+                setSelectedOption((prev) => (prev === opt.id ? null : opt.id))
+              }
               className={cn(
                 "border rounded-lg px-4 py-3 cursor-pointer hover:bg-accent transition",
                 selectedOption === opt.id && "border-primary bg-muted"
@@ -92,9 +123,17 @@ export default function VotePageClient() {
           ))}
         </div>
 
-        <Button onClick={handleVote} disabled={!selectedOption}>
-          Submit vote
-        </Button>
+        <div className="flex gap-4 mt-4">
+          <Button onClick={handleVote} disabled={!selectedOption || hasVoted}>
+            Submit vote
+          </Button>
+
+          {hasVoted && (
+            <Button variant="outline" onClick={handleCancelVote}>
+              Cancel vote
+            </Button>
+          )}
+        </div>
       </div>
 
       <div>
@@ -102,10 +141,7 @@ export default function VotePageClient() {
         <ul className="space-y-2 text-sm">
           {event.guests.map((g: any) => (
             <li key={g.nickname} className="flex items-center justify-between">
-              <span>
-                {g.nickname}
-                {g.nickname === event.currentGuest ? " (you)" : ""}
-              </span>
+              <span>{g.nickname}</span>
               <span
                 className={cn(
                   "text-xs px-2 py-1 rounded-full",
