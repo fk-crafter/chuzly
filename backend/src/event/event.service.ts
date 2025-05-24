@@ -53,15 +53,25 @@ export class EventService {
   }
 
   async findOneWithGuest(eventId: string, nickname: string) {
-    return this.prisma.event.findUnique({
+    const event = await this.prisma.event.findUnique({
       where: { id: eventId },
       include: {
         options: true,
         guests: {
-          where: { nickname },
+          include: { vote: true },
         },
       },
     });
+
+    if (!event) throw new Error('Event not found');
+
+    return {
+      id: event.id,
+      name: event.name,
+      options: event.options,
+      guests: event.guests,
+      currentGuest: nickname,
+    };
   }
 
   async submitVote(eventId: string, nickname: string, choice: string | null) {

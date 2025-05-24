@@ -102,7 +102,10 @@ export default function VotePageClient() {
         <ul className="space-y-2 text-sm">
           {event.guests.map((g: any) => (
             <li key={g.nickname} className="flex items-center justify-between">
-              <span>{g.nickname}</span>
+              <span>
+                {g.nickname}
+                {g.nickname === event.currentGuest ? " (you)" : ""}
+              </span>
               <span
                 className={cn(
                   "text-xs px-2 py-1 rounded-full",
