@@ -25,12 +25,30 @@ export default function VotePageClient() {
           `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/guest/${guest}`
         );
         const data = await res.json();
-        setEvent(data);
 
         const currentGuest = data.guests.find((g: any) => g.nickname === guest);
-        if (currentGuest?.vote?.id) {
-          setSelectedOption(currentGuest.vote.id);
+        const currentVote = currentGuest?.vote;
+
+        if (
+          currentVote?.name === "Not available" &&
+          !data.options.find((opt: any) => opt.id === currentVote.id)
+        ) {
+          data.options.push({
+            id: currentVote.id,
+            name: "Not available",
+            price: null,
+            datetime: null,
+          });
+        }
+
+        setEvent(data);
+
+        if (currentVote?.id) {
+          setSelectedOption(currentVote.id);
           setHasVoted(true);
+        } else {
+          setSelectedOption(null);
+          setHasVoted(false);
         }
       } catch (err) {
         console.error("Failed to fetch event", err);
@@ -123,9 +141,20 @@ export default function VotePageClient() {
           ))}
         </div>
 
-        <div className="flex gap-4 mt-4">
-          <Button onClick={handleVote} disabled={!selectedOption || hasVoted}>
+        <div className="flex gap-4 mt-4 flex-wrap">
+          <Button onClick={handleVote} disabled={selectedOption === null}>
             Submit vote
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setSelectedOption("unavailable");
+              handleVote();
+            }}
+            disabled={hasVoted}
+          >
+            I'm unavailable
           </Button>
 
           {hasVoted && (
@@ -145,12 +174,18 @@ export default function VotePageClient() {
               <span
                 className={cn(
                   "text-xs px-2 py-1 rounded-full",
-                  g.vote
+                  g.vote?.name === "Not available"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : g.vote
                     ? "bg-green-100 text-green-700"
                     : "bg-gray-200 text-gray-500"
                 )}
               >
-                {g.vote ? "Voted" : "Pending"}
+                {g.vote?.name === "Not available"
+                  ? "Unavailable"
+                  : g.vote
+                  ? "Voted"
+                  : "Pending"}
               </span>
             </li>
           ))}
