@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function VotePageClient() {
   const params = useSearchParams();
@@ -52,6 +53,7 @@ export default function VotePageClient() {
         }
       } catch (err) {
         console.error("Failed to fetch event", err);
+        toast.error("Failed to load event.");
       }
     };
 
@@ -71,10 +73,11 @@ export default function VotePageClient() {
         }
       );
       setHasVoted(true);
-      alert("Vote submitted!");
+      toast.success("Vote submitted!");
       router.refresh();
     } catch (err) {
       console.error("Vote error", err);
+      toast.error("Vote failed");
     }
   };
 
@@ -92,10 +95,11 @@ export default function VotePageClient() {
       );
       setSelectedOption(null);
       setHasVoted(false);
-      alert("Vote canceled");
+      toast.success("Vote canceled");
       router.refresh();
     } catch (err) {
       console.error("Cancel vote error", err);
+      toast.error("Failed to cancel");
     }
   };
 
@@ -148,10 +152,7 @@ export default function VotePageClient() {
 
           <Button
             variant="secondary"
-            onClick={() => {
-              setSelectedOption("unavailable");
-              handleVote();
-            }}
+            onClick={() => setSelectedOption("unavailable")}
             disabled={hasVoted}
           >
             I'm unavailable
