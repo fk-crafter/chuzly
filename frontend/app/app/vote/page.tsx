@@ -1,14 +1,13 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export default function VotePageClient() {
   const params = useSearchParams();
-  const router = useRouter();
 
   const [event, setEvent] = useState<any>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -17,48 +16,56 @@ export default function VotePageClient() {
   const eventId = params.get("id");
   const guest = params.get("guest");
 
-  useEffect(() => {
-    const fetchEvent = async () => {
-      if (!eventId || !guest) return;
+  const fetchEvent = useCallback(async () => {
+    if (!eventId || !guest) return;
 
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/guest/${guest}`
-        );
-        const data = await res.json();
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/guest/${guest}`
+      );
+      const data = await res.json();
 
-        const currentGuest = data.guests.find((g: any) => g.nickname === guest);
-        const currentVote = currentGuest?.vote;
+      const currentGuest = data.guests.find((g: any) => g.nickname === guest);
+      const currentVote = currentGuest?.vote;
 
-        if (
-          currentVote?.name === "Not available" &&
-          !data.options.find((opt: any) => opt.id === currentVote.id)
-        ) {
-          data.options.push({
-            id: currentVote.id,
-            name: "Not available",
-            price: null,
-            datetime: null,
-          });
-        }
-
-        setEvent(data);
-
-        if (currentVote?.id) {
-          setSelectedOption(currentVote.id);
-          setHasVoted(true);
-        } else {
-          setSelectedOption(null);
-          setHasVoted(false);
-        }
-      } catch (err) {
-        console.error("Failed to fetch event", err);
-        toast.error("Failed to load event.");
+      if (
+        currentVote?.name === "Not available" &&
+        !data.options.find((opt: any) => opt.id === currentVote.id)
+      ) {
+        data.options.push({
+          id: currentVote.id,
+          name: "Not available",
+          price: null,
+          datetime: null,
+        });
       }
-    };
 
-    fetchEvent();
+      setEvent(data);
+
+      if (currentVote?.id) {
+        setSelectedOption(currentVote.id);
+        setHasVoted(true);
+      } else {
+        setSelectedOption(null);
+        setHasVoted(false);
+      }
+    } catch (err) {
+      console.error("Failed to fetch event", err);
+      toast.error("Failed to load event.");
+    }
   }, [eventId, guest]);
+
+  useEffect(() => {
+    fetchEvent();
+  }, [fetchEvent]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchEvent();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [fetchEvent]);
 
   const handleVote = async () => {
     if (!eventId || !guest) return;
@@ -72,9 +79,8 @@ export default function VotePageClient() {
           body: JSON.stringify({ choice: selectedOption }),
         }
       );
-      setHasVoted(true);
       toast.success("Vote submitted!");
-      router.refresh();
+      await fetchEvent();
     } catch (err) {
       console.error("Vote error", err);
       toast.error("Vote failed");
@@ -93,10 +99,8 @@ export default function VotePageClient() {
           body: JSON.stringify({ choice: null }),
         }
       );
-      setSelectedOption(null);
-      setHasVoted(false);
       toast.success("Vote canceled");
-      router.refresh();
+      await fetchEvent();
     } catch (err) {
       console.error("Cancel vote error", err);
       toast.error("Failed to cancel");
