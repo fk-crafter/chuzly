@@ -23,7 +23,6 @@ export function CreateAccountModal() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Logique de création de compte ici (ex: appel API, validation, etc.)
     console.log(formData);
   };
 
