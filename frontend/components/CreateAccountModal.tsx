@@ -17,13 +17,50 @@ export function CreateAccountModal() {
     confirmPassword: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(err || "Registration failed");
+      }
+
+      const data = await res.json();
+
+      localStorage.setItem("token", data.token);
+
+      window.location.href = "/login";
+    } catch (err) {
+      console.error(err);
+      alert("Registration failed. Check the console for details.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -114,8 +151,8 @@ export function CreateAccountModal() {
           />
         </div>
 
-        <Button type="submit" className="w-full">
-          Create Account
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Creating account..." : "Create Account"}
         </Button>
       </form>
     </div>
