@@ -39,7 +39,6 @@ export function LoginModal() {
       const data = await res.json();
       localStorage.setItem("token", data.token);
 
-      // Redirige vers l'espace protégé
       window.location.href = "/app/create-event";
     } catch (err) {
       console.error(err);

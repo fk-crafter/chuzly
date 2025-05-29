@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,16 @@ import { Label } from "@/components/ui/label";
 
 export default function CreateEventPage() {
   const router = useRouter();
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+    } else {
+      setCheckingAuth(false);
+    }
+  }, [router]);
 
   const [eventName, setEventName] = useState("");
   const [options, setOptions] = useState([
@@ -41,7 +51,10 @@ export default function CreateEventPage() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         body: JSON.stringify(body),
       });
 
@@ -52,6 +65,10 @@ export default function CreateEventPage() {
       alert("Something went wrong");
     }
   };
+
+  if (checkingAuth) {
+    return <p className="text-center mt-20">Checking authentication...</p>;
+  }
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-16">
