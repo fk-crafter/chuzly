@@ -19,31 +19,37 @@ model Event {
   options   Option[]
   guests    Guest[]
   createdAt DateTime @default(now())
+
+  creator   User?   @relation("UserEvents", fields: [creatorId], references: [id])
+  creatorId String?
 }
 
 model Option {
-  id        String    @id @default(cuid())
-  name      String
-  price     Float?
-  datetime  DateTime?
-  event     Event     @relation(fields: [eventId], references: [id])
-  eventId   String
+  id       String    @id @default(cuid())
+  name     String
+  price    Float?
+  datetime DateTime?
+  event    Event     @relation(fields: [eventId], references: [id])
+  eventId  String
 
-  guests    Guest[]   @relation("GuestVotes")
+  guests Guest[] @relation("GuestVotes")
 }
 
 model Guest {
-  id        String   @id @default(cuid())
-  nickname  String
-  vote      Option?  @relation("GuestVotes", fields: [voteId], references: [id])
-  voteId    String?
-  event     Event    @relation(fields: [eventId], references: [id])
-  eventId   String
+  id       String  @id @default(cuid())
+  nickname String
+  vote     Option? @relation("GuestVotes", fields: [voteId], references: [id])
+  voteId   String?
+  event    Event   @relation(fields: [eventId], references: [id])
+  eventId  String
 }
+
 //auth
 model User {
-  id       String   @id @default(cuid())
-  email    String   @unique
-  password String
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
   createdAt DateTime @default(now())
+
+  events Event[] @relation("UserEvents")
 }
