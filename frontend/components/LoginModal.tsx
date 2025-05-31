@@ -58,7 +58,7 @@ export function LoginModal() {
         Back
       </Link>
 
-      <div className="text-2xl font-semibold">Welcome to Togeda</div>
+      <div className="text-2xl font-semibold">Welcome to Event-app</div>
 
       <form onSubmit={handleSubmit} className="space-y-4 pt-4 text-left">
         <div>

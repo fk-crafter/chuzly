@@ -29,9 +29,9 @@ export default function AppHeader() {
   return (
     <header className="flex justify-end items-center gap-4 p-4 border-b border-border bg-white dark:bg-zinc-900">
       <Badge variant="secondary">Connected</Badge>
-      <span className="text-sm text-muted-foreground">
-        {userEmail ?? "Loading..."}
-      </span>
+      {userEmail && (
+        <span className="text-sm text-muted-foreground">{userEmail}</span>
+      )}
       <Button onClick={handleLogout} variant="outline">
         Log out
       </Button>
