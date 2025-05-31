@@ -54,6 +54,7 @@ export function CreateAccountModal() {
       const data = await res.json();
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", data.name);
 
       window.location.href = "/login";
     } catch (err) {
