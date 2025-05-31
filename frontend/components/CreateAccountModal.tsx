@@ -41,6 +41,7 @@ export function CreateAccountModal() {
           body: JSON.stringify({
             email: formData.email,
             password: formData.password,
+            name: formData.name,
           }),
         }
       );
