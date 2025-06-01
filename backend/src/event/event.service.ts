@@ -188,4 +188,26 @@ export class EventService {
       },
     });
   }
+
+  async getEventsByCreator(userId: string) {
+    const events = await this.prisma.event.findMany({
+      where: { creatorId: userId },
+      include: {
+        guests: {
+          include: {
+            vote: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return events.map((event) => ({
+      id: event.id,
+      name: event.name,
+      createdAt: event.createdAt,
+      guestsCount: event.guests.length,
+      votesCount: event.guests.filter((g) => g.vote !== null).length,
+    }));
+  }
 }
