@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function MyEventsPage() {
+export default function EventListPage() {
   const [events, setEvents] = useState<
     {
       id: string;
@@ -65,10 +65,25 @@ export default function MyEventsPage() {
             <p className="text-sm text-muted-foreground mb-2">
               Created on: {new Date(event.createdAt).toLocaleDateString()}
             </p>
-            <p className="text-sm">
+            <p className="text-sm mb-4">
               Progress: <strong>{event.votesCount}</strong> /{" "}
               {event.guestsCount} guests voted
             </p>
+
+            <div className="flex gap-2">
+              <a
+                href={`/app/share?id=${event.id}`}
+                className="text-sm px-3 py-1 rounded bg-primary text-white hover:bg-primary/90 transition"
+              >
+                View Links
+              </a>
+              <a
+                href={`/app/vote?id=${event.id}`}
+                className="text-sm px-3 py-1 rounded border border-muted-foreground text-muted-foreground hover:bg-muted transition"
+              >
+                View Votes
+              </a>
+            </div>
           </div>
         ))}
       </div>

@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -33,14 +32,6 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [userName, setUserName] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const name = localStorage.getItem("userName");
-      setUserName(name);
-    }
-  }, []);
 
   return (
     <aside className="w-64 bg-white dark:bg-zinc-900 border-r h-screen flex flex-col">
@@ -70,16 +61,6 @@ export default function Sidebar() {
       </ScrollArea>
 
       <Separator />
-
-      <div className="p-4 text-center text-xs text-muted-foreground">
-        {userName && (
-          <>
-            Logged in as
-            <br />
-            <span className="font-medium">{userName}</span>
-          </>
-        )}
-      </div>
     </aside>
   );
 }
