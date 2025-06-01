@@ -8,6 +8,7 @@ const navItems = [
   { href: "/app/create-event", label: "Create Event" },
   { href: "/app/share", label: "Share Event" },
   { href: "/app/vote", label: "Votes Overview" },
+  { href: "/app/event-list", label: "My Events" },
 ];
 
 export default function Sidebar() {
