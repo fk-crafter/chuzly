@@ -36,7 +36,6 @@ export default function Sidebar() {
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
-    // Safe access to localStorage
     if (typeof window !== "undefined") {
       const name = localStorage.getItem("userName");
       setUserName(name);
