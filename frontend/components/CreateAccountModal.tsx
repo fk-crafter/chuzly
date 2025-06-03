@@ -157,6 +157,13 @@ export function CreateAccountModal() {
           {loading ? "Creating account..." : "Create Account"}
         </Button>
       </form>
+
+      <p className="text-sm text-center text-muted-foreground">
+        Already have an account?{" "}
+        <Link href="/login" className="text-primary hover:underline">
+          Login
+        </Link>
+      </p>
     </div>
   );
 }
