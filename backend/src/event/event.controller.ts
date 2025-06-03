@@ -3,13 +3,14 @@ import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/user.decorator';
+import { PlanGuard } from '../auth/plan.guard';
 
 @Controller('events')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), PlanGuard)
   createEvent(@Body() body: CreateEventDto, @User() user: { userId: string }) {
     return this.eventService.createEvent(body, user.userId);
   }
