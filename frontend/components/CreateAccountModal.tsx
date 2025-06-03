@@ -105,7 +105,9 @@ export function CreateAccountModal() {
 
       <form onSubmit={handleSubmit} className="space-y-4 text-left pt-4">
         <div>
-          <Label htmlFor="name">Full Name</Label>
+          <Label htmlFor="name" className="pb-2">
+            Full Name
+          </Label>
           <Input
             id="name"
             name="name"
@@ -117,7 +119,9 @@ export function CreateAccountModal() {
         </div>
 
         <div>
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="pb-2">
+            Email
+          </Label>
           <Input
             id="email"
             name="email"
@@ -130,7 +134,9 @@ export function CreateAccountModal() {
         </div>
 
         <div>
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="pb-2">
+            Password
+          </Label>
           <Input
             id="password"
             name="password"
@@ -142,7 +148,9 @@ export function CreateAccountModal() {
         </div>
 
         <div>
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Label htmlFor="confirmPassword" className="pb-2">
+            Confirm Password
+          </Label>
           <Input
             id="confirmPassword"
             name="confirmPassword"
