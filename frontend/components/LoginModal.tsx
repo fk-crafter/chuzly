@@ -62,7 +62,9 @@ export function LoginModal() {
 
       <form onSubmit={handleSubmit} className="space-y-4 pt-4 text-left">
         <div>
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="pb-2">
+            Email
+          </Label>
           <Input
             id="email"
             name="email"
@@ -75,7 +77,9 @@ export function LoginModal() {
         </div>
 
         <div>
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="pb-2">
+            Password
+          </Label>
           <Input
             id="password"
             name="password"
