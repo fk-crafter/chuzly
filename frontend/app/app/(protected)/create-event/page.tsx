@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -58,11 +59,22 @@ export default function CreateEventPage() {
         body: JSON.stringify(body),
       });
 
+      if (!res.ok) {
+        if (res.status === 403) {
+          toast.error(
+            "Your plan limit has been reached. Please upgrade or wait for next month."
+          );
+          return;
+        }
+
+        throw new Error("Something went wrong");
+      }
+
       const data = await res.json();
       router.push(`/app/share?id=${data.id}`);
     } catch (err) {
       console.error("Failed to create event:", err);
-      alert("Something went wrong");
+      toast.error("Failed to create event");
     }
   };
 
