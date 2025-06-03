@@ -92,6 +92,13 @@ export function LoginModal() {
         </Button>
       </form>
 
+      <p className="text-sm text-center text-muted-foreground">
+        Don’t have an account?{" "}
+        <Link href="/create-account" className="text-primary hover:underline">
+          Sign up
+        </Link>
+      </p>
+
       <div className="space-y-3 pt-6">
         <Button
           variant="outline"
