@@ -53,14 +53,15 @@ model User {
   createdAt        DateTime @default(now())
 
   plan             Plan     @default(TRIAL)
-
   trialEndsAt      DateTime?
+  freeStartedAt    DateTime? 
 
   stripeCustomerId String?
   stripeSubId      String?
 
   events           Event[]  @relation("UserEvents")
 }
+
 
 enum Plan {
   TRIAL
