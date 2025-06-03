@@ -28,7 +28,9 @@ export default function AppHeader() {
 
   return (
     <header className="flex justify-end items-center gap-4 p-4 border-b border-border bg-white dark:bg-zinc-900">
-      <Badge variant="secondary">Connected</Badge>
+      <Badge className="bg-green-200" variant="secondary">
+        Connected
+      </Badge>
       {userName && (
         <span className="text-sm text-muted-foreground">{userName}</span>
       )}

@@ -46,11 +46,24 @@ model Guest {
 
 //auth
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String    // 👈 ajoute cette ligne
-  createdAt DateTime @default(now())
+  id               String   @id @default(cuid())
+  email            String   @unique
+  password         String
+  name             String
+  createdAt        DateTime @default(now())
 
-  events Event[] @relation("UserEvents")
+  plan             Plan     @default(TRIAL)
+
+  trialEndsAt      DateTime?
+
+  stripeCustomerId String?
+  stripeSubId      String?
+
+  events           Event[]  @relation("UserEvents")
+}
+
+enum Plan {
+  TRIAL
+  FREE
+  PRO
 }

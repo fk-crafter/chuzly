@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { addDays } from 'date-fns';
 
 @Injectable()
 export class AuthService {
@@ -11,12 +12,16 @@ export class AuthService {
   ) {}
 
   async register(data: { email: string; password: string; name: string }) {
-    const hashed = await bcrypt.hash(data.password, 10);
+    const hashed: string = await bcrypt.hash(data.password, 10);
+    const trialEndsAt: Date = addDays(new Date(), 7);
+
     const user = await this.prisma.user.create({
       data: {
         email: data.email,
         password: hashed,
         name: data.name,
+        plan: 'TRIAL',
+        trialEndsAt,
       },
     });
 
@@ -29,10 +34,14 @@ export class AuthService {
       where: { email: data.email },
     });
 
-    if (!user) throw new Error('Invalid credentials');
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     const isMatch = await bcrypt.compare(data.password, user.password);
-    if (!isMatch) throw new Error('Invalid credentials');
+    if (!isMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     const token = this.jwt.sign({ userId: user.id });
     return { token };
