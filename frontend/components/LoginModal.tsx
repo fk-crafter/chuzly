@@ -37,7 +37,10 @@ export function LoginModal() {
       }
 
       const data = await res.json();
+
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", data.name);
+      localStorage.setItem("userPlan", data.plan);
 
       window.location.href = "/app/create-event";
     } catch (err) {
@@ -60,11 +63,10 @@ export function LoginModal() {
 
       <div className="text-2xl font-semibold">Welcome to Event-app</div>
 
-      {/* Boutons sociaux déplacés ici */}
       <div className="space-y-3 pt-2">
         <Button
           variant="outline"
-          className="w-full cursor-pointer flex items-center gap-2 justify-center"
+          className="w-full flex items-center gap-2 justify-center"
         >
           <FcGoogle className="text-xl" />
           Continue with Google
@@ -72,7 +74,7 @@ export function LoginModal() {
 
         <Button
           variant="outline"
-          className="w-full cursor-pointer flex items-center gap-2 justify-center"
+          className="w-full flex items-center gap-2 justify-center"
         >
           <FaGithub className="text-xl" />
           Continue with GitHub
@@ -80,14 +82,13 @@ export function LoginModal() {
 
         <Button
           variant="outline"
-          className="w-full cursor-pointer flex items-center gap-2 justify-center"
+          className="w-full flex items-center gap-2 justify-center"
         >
           <FaApple className="text-xl" />
           Continue with Apple
         </Button>
       </div>
 
-      {/* Formulaire classique */}
       <form onSubmit={handleSubmit} className="space-y-4 pt-6 text-left">
         <div>
           <Label htmlFor="email" className="pb-2">
