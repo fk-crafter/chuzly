@@ -49,7 +49,7 @@ export default function CreateEventPage() {
       guests,
     };
 
-    try {
+    const tryCreate = async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
         method: "POST",
         headers: {
@@ -61,17 +61,28 @@ export default function CreateEventPage() {
 
       if (!res.ok) {
         if (res.status === 403) {
-          toast.error(
-            "Your plan limit has been reached. Please upgrade or wait for next month."
-          );
-          return;
+          return "FORBIDDEN";
         }
-
         throw new Error("Something went wrong");
       }
 
       const data = await res.json();
       router.push(`/app/share?id=${data.id}`);
+      return "SUCCESS";
+    };
+
+    try {
+      const result = await tryCreate();
+
+      if (result === "FORBIDDEN") {
+        const retry = await tryCreate();
+
+        if (retry === "FORBIDDEN") {
+          toast.error(
+            "Your plan limit has been reached. Please upgrade or wait for next month."
+          );
+        }
+      }
     } catch (err) {
       console.error("Failed to create event:", err);
       toast.error("Failed to create event");

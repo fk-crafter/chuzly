@@ -60,7 +60,35 @@ export function LoginModal() {
 
       <div className="text-2xl font-semibold">Welcome to Event-app</div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 pt-4 text-left">
+      {/* Boutons sociaux déplacés ici */}
+      <div className="space-y-3 pt-2">
+        <Button
+          variant="outline"
+          className="w-full cursor-pointer flex items-center gap-2 justify-center"
+        >
+          <FcGoogle className="text-xl" />
+          Continue with Google
+        </Button>
+
+        <Button
+          variant="outline"
+          className="w-full cursor-pointer flex items-center gap-2 justify-center"
+        >
+          <FaGithub className="text-xl" />
+          Continue with GitHub
+        </Button>
+
+        <Button
+          variant="outline"
+          className="w-full cursor-pointer flex items-center gap-2 justify-center"
+        >
+          <FaApple className="text-xl" />
+          Continue with Apple
+        </Button>
+      </div>
+
+      {/* Formulaire classique */}
+      <form onSubmit={handleSubmit} className="space-y-4 pt-6 text-left">
         <div>
           <Label htmlFor="email" className="pb-2">
             Email
@@ -102,32 +130,6 @@ export function LoginModal() {
           Sign up
         </Link>
       </p>
-
-      <div className="space-y-3 pt-6">
-        <Button
-          variant="outline"
-          className="w-full cursor-pointer flex items-center gap-2 justify-center"
-        >
-          <FcGoogle className="text-xl" />
-          Continue with Google
-        </Button>
-
-        <Button
-          variant="outline"
-          className="w-full cursor-pointer flex items-center gap-2 justify-center"
-        >
-          <FaGithub className="text-xl" />
-          Continue with GitHub
-        </Button>
-
-        <Button
-          variant="outline"
-          className="w-full cursor-pointer flex items-center gap-2 justify-center"
-        >
-          <FaApple className="text-xl" />
-          Continue with Apple
-        </Button>
-      </div>
     </div>
   );
 }
