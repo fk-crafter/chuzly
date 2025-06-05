@@ -1,102 +1,107 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub, FaApple } from "react-icons/fa";
-import { ArrowLeft, Eye, EyeOff, Info, Check, X } from "lucide-react";
-import { useForm } from "react-hook-form";
+import {
+  ArrowLeft,
+  CheckCircle,
+  XCircle,
+  Eye,
+  EyeOff,
+  Info,
+} from "lucide-react";
 import { z } from "zod";
-import { motion, AnimatePresence } from "motion/react";
 
-const registerSchema = z
-  .object({
-    name: z.string().min(3, "Name must be at least 3 characters"),
-    email: z.string().email("Invalid email"),
-    password: z
-      .string()
-      .min(8, "Minimum 8 characters")
-      .regex(/[A-Z]/, "At least one uppercase letter")
-      .regex(/[a-z]/, "At least one lowercase letter")
-      .regex(/[0-9]/, "At least one number")
-      .regex(/[@#%&*!]/, "At least one special character (@, #, %, &, *, !)"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+const passwordSchema = z
+  .string()
+  .min(12, "Minimum 12 characters")
+  .regex(/[A-Z]/, "At least one uppercase letter")
+  .regex(/[a-z]/, "At least one lowercase letter")
+  .regex(/[0-9]/, "At least one number")
+  .regex(/[^A-Za-z0-9]/, "At least one special character");
 
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
+function PasswordRule({ valid, text }: { valid: boolean; text: string }) {
+  const Icon = valid ? CheckCircle : XCircle;
+  return (
+    <div
+      className={`flex items-center text-sm ${
+        valid ? "text-green-600" : "text-red-500"
+      }`}
+    >
+      <Icon className="w-4 h-4 mr-2" />
+      {text}
+    </div>
+  );
+}
 
 export function CreateAccountModal() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [showTooltipConfirm, setShowTooltipConfirm] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const [criteria, setCriteria] = useState({
+  const [passwordValidations, setPasswordValidations] = useState({
     length: false,
     uppercase: false,
+    lowercase: false,
     number: false,
-    specialChar: false,
-    match: false,
+    special: false,
   });
 
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: async (data) => {
-      try {
-        const validatedData = await registerSchema.parseAsync(data);
-        return {
-          values: validatedData,
-          errors: {},
-        };
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          return {
-            values: {},
-            errors: error.formErrors.fieldErrors,
-          };
-        }
-        return {
-          values: {},
-          errors: {},
-        };
-      }
-    },
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const validatePassword = (password: string, confirm: string) => {
-    setCriteria({
-      length: password.length >= 8,
-      uppercase: /[A-Z]/.test(password),
-      number: /[0-9]/.test(password),
-      specialChar: /[@#%&*!]/.test(password),
-      match: password === confirm,
+  const passwordsMatch =
+    formData.password.length > 0 &&
+    formData.confirmPassword.length > 0 &&
+    formData.password === formData.confirmPassword;
+
+  useEffect(() => {
+    const value = formData.password;
+    setPasswordValidations({
+      length: value.length >= 12,
+      uppercase: /[A-Z]/.test(value),
+      lowercase: /[a-z]/.test(value),
+      number: /[0-9]/.test(value),
+      special: /[^A-Za-z0-9]/.test(value),
     });
+  }, [formData.password]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onSubmit = async (data: FormData) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!passwordsMatch) {
+      alert("The passwords do not match.");
+      return;
+    }
+
+    const allValid = Object.values(passwordValidations).every(Boolean);
+    if (!allValid) {
+      alert("The password does not meet all the rules.");
+      return;
+    }
+
+    try {
+      passwordSchema.parse(formData.password);
+    } catch (err: any) {
+      alert("Invalid password: " + (err.errors?.[0]?.message || "Error"));
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch(
@@ -105,23 +110,27 @@ export function CreateAccountModal() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name: data.name,
-            email: data.email,
-            password: data.password,
+            email: formData.email,
+            password: formData.password,
+            name: formData.name,
           }),
         }
       );
 
-      if (!res.ok) throw new Error("Registration failed");
-      const response = await res.json();
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(err || "Registration failed.");
+      }
 
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("userName", response.name);
-      localStorage.setItem("userPlan", response.plan);
+      const data = await res.json();
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", data.name);
 
       window.location.href = "/login";
     } catch (err) {
-      alert("Error during registration");
+      console.error(err);
+      alert("Error during registration. See the console.");
     } finally {
       setLoading(false);
     }
@@ -165,153 +174,131 @@ export function CreateAccountModal() {
         </Button>
       </div>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 text-left pt-4"
-      >
+      <form onSubmit={handleSubmit} className="space-y-4 text-left pt-4">
         <div>
           <Label htmlFor="name">Full Name</Label>
-          <Input id="name" {...register("name")} placeholder="John Doe" />
-          {errors.name && (
-            <p className="text-sm text-red-500">{errors.name.message}</p>
-          )}
+          <Input
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="John Doe"
+            required
+          />
         </div>
 
         <div>
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
+            name="email"
             type="email"
-            {...register("email")}
+            value={formData.email}
+            onChange={handleChange}
             placeholder="you@example.com"
+            required
           />
-          {errors.email && (
-            <p className="text-sm text-red-500">{errors.email.message}</p>
-          )}
         </div>
 
         <div className="relative">
           <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            {...register("password")}
-            onChange={(e) =>
-              validatePassword(e.target.value, getValues("confirmPassword"))
-            }
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-2 top-[38px] text-gray-500"
-          >
-            {showPassword ? <EyeOff /> : <Eye />}
-          </button>
-          <div
-            className="absolute right-8 top-[42px] text-gray-500 cursor-pointer"
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
-          >
-            <Info size={16} />
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            <button
+              type="button"
+              className="absolute right-2 top-2"
+              onClick={() => setShowPassword((prev) => !prev)}
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
           </div>
 
-          <AnimatePresence>
-            {showTooltip && (
-              <motion.div
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 5 }}
-                className="absolute right-0 top-[72px] bg-white dark:bg-zinc-800 border p-3 rounded shadow-md w-64 text-sm z-50"
-              >
-                {[
-                  ["length", "At least 8 characters"],
-                  ["uppercase", "At least one uppercase letter"],
-                  ["number", "At least one number"],
-                  ["specialChar", "At least one special character"],
-                ].map(([key, label]) => (
-                  <p
-                    key={key}
-                    className={`flex items-center gap-2 ${
-                      criteria[key as keyof typeof criteria]
-                        ? "text-green-600"
-                        : "text-red-500"
-                    }`}
-                  >
-                    {criteria[key as keyof typeof criteria] ? (
-                      <Check size={16} />
-                    ) : (
-                      <X size={16} />
-                    )}{" "}
-                    {label}
-                  </p>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {errors.password && (
-            <p className="text-sm text-red-500">{errors.password.message}</p>
-          )}
+          {/* Info-bulle */}
+          <div className="relative group mt-2">
+            <div className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer">
+              <Info className="w-4 h-4" />
+              Password rules
+            </div>
+            <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-zinc-800 p-3 rounded-md shadow-md mt-2 border space-y-1 w-64">
+              <PasswordRule
+                valid={passwordValidations.length}
+                text="Minimum 12 characters"
+              />
+              <PasswordRule
+                valid={passwordValidations.uppercase}
+                text="At least one uppercase letter"
+              />
+              <PasswordRule
+                valid={passwordValidations.lowercase}
+                text="At least one lowercase letter"
+              />
+              <PasswordRule
+                valid={passwordValidations.number}
+                text="At least one number"
+              />
+              <PasswordRule
+                valid={passwordValidations.special}
+                text="At least one special character"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="relative">
           <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            id="confirmPassword"
-            type={showConfirmPassword ? "text" : "password"}
-            {...register("confirmPassword")}
-            onChange={(e) =>
-              validatePassword(getValues("password"), e.target.value)
-            }
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword((prev) => !prev)}
-            className="absolute right-2 top-[38px] text-gray-500"
-          >
-            {showConfirmPassword ? <EyeOff /> : <Eye />}
-          </button>
-
-          <div
-            className="absolute right-8 top-[42px] text-gray-500 cursor-pointer"
-            onMouseEnter={() => setShowTooltipConfirm(true)}
-            onMouseLeave={() => setShowTooltipConfirm(false)}
-          >
-            <Info size={16} />
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+            <button
+              type="button"
+              className="absolute right-2 top-2"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              tabIndex={-1}
+            >
+              {showConfirmPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
           </div>
-
-          <AnimatePresence>
-            {showTooltipConfirm && (
-              <motion.div
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 5 }}
-                className="absolute right-0 top-[72px] bg-white dark:bg-zinc-800 border p-3 rounded shadow-md w-64 text-sm z-50"
-              >
-                <p
-                  className={`flex items-center gap-2 ${
-                    criteria.match ? "text-green-600" : "text-red-500"
-                  }`}
-                >
-                  {criteria.match ? <Check size={16} /> : <X size={16} />}{" "}
-                  Passwords match
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {errors.confirmPassword && (
-            <p className="text-sm text-red-500">
-              {errors.confirmPassword.message}
-            </p>
+          {formData.confirmPassword.length > 0 && (
+            <div
+              className={`flex items-center mt-1 text-sm ${
+                passwordsMatch ? "text-green-600" : "text-red-500"
+              }`}
+            >
+              {passwordsMatch ? (
+                <CheckCircle className="w-4 h-4 mr-1" />
+              ) : (
+                <XCircle className="w-4 h-4 mr-1" />
+              )}
+              {passwordsMatch
+                ? "Password confirmed"
+                : "The passwords do not match"}
+            </div>
           )}
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading || !Object.values(criteria).every(Boolean)}
-        >
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading ? "Creating account..." : "Create Account"}
         </Button>
       </form>
