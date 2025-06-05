@@ -18,6 +18,11 @@ export class EventService {
   constructor(private readonly prisma: PrismaService) {}
 
   async createEvent(data: CreateEventDto, userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { name: true },
+    });
+
     const event = (await this.prisma.event.create({
       data: {
         name: data.eventName,
@@ -30,7 +35,10 @@ export class EventService {
           })),
         },
         guests: {
-          create: data.guests.map((nickname) => ({ nickname })),
+          create: [
+            ...data.guests.map((nickname) => ({ nickname })),
+            { nickname: user?.name || 'Creator' },
+          ],
         },
       },
       include: {
