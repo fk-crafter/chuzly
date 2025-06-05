@@ -14,15 +14,17 @@ datasource db {
 }
 
 model Event {
-  id        String   @id @default(cuid())
-  name      String
-  options   Option[]
-  guests    Guest[]
-  createdAt DateTime @default(now())
+  id             String   @id @default(cuid())
+  name           String
+  options        Option[]
+  guests         Guest[]
+  createdAt      DateTime @default(now())
+  votingDeadline DateTime? 
 
-  creator   User?   @relation("UserEvents", fields: [creatorId], references: [id])
-  creatorId String?
+  creator        User?    @relation("UserEvents", fields: [creatorId], references: [id])
+  creatorId      String?
 }
+
 
 model Option {
   id       String    @id @default(cuid())

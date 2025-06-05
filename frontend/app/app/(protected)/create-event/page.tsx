@@ -10,6 +10,12 @@ import { toast } from "sonner";
 export default function CreateEventPage() {
   const router = useRouter();
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [eventName, setEventName] = useState("");
+  const [votingDeadline, setVotingDeadline] = useState("");
+  const [options, setOptions] = useState([
+    { name: "", price: "", datetime: "" },
+  ]);
+  const [guests, setGuests] = useState([""]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -19,12 +25,6 @@ export default function CreateEventPage() {
       setCheckingAuth(false);
     }
   }, [router]);
-
-  const [eventName, setEventName] = useState("");
-  const [options, setOptions] = useState([
-    { name: "", price: "", datetime: "" },
-  ]);
-  const [guests, setGuests] = useState([""]);
 
   const handleOptionChange = (index: number, field: string, value: string) => {
     const updated = [...options];
@@ -40,11 +40,13 @@ export default function CreateEventPage() {
 
   const addOption = () =>
     setOptions([...options, { name: "", price: "", datetime: "" }]);
+
   const addGuest = () => setGuests([...guests, ""]);
 
   const handleSubmit = async () => {
     const body = {
       eventName,
+      votingDeadline,
       options,
       guests,
     };
@@ -60,9 +62,7 @@ export default function CreateEventPage() {
       });
 
       if (!res.ok) {
-        if (res.status === 403) {
-          return "FORBIDDEN";
-        }
+        if (res.status === 403) return "FORBIDDEN";
         throw new Error("Something went wrong");
       }
 
@@ -73,10 +73,8 @@ export default function CreateEventPage() {
 
     try {
       const result = await tryCreate();
-
       if (result === "FORBIDDEN") {
         const retry = await tryCreate();
-
         if (retry === "FORBIDDEN") {
           toast.error(
             "Your plan limit has been reached. Please upgrade or wait for next month."
@@ -89,9 +87,8 @@ export default function CreateEventPage() {
     }
   };
 
-  if (checkingAuth) {
+  if (checkingAuth)
     return <p className="text-center mt-20">Checking authentication...</p>;
-  }
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-16">
@@ -103,6 +100,15 @@ export default function CreateEventPage() {
           placeholder="Saturday plans"
           value={eventName}
           onChange={(e) => setEventName(e.target.value)}
+        />
+      </div>
+
+      <div className="mb-6">
+        <Label>Voting deadline</Label>
+        <Input
+          type="datetime-local"
+          value={votingDeadline}
+          onChange={(e) => setVotingDeadline(e.target.value)}
         />
       </div>
 

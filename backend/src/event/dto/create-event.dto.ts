@@ -6,4 +6,5 @@ export class CreateEventDto {
     datetime?: string;
   }[];
   guests!: string[];
+  votingDeadline?: string;
 }

@@ -27,6 +27,9 @@ export class EventService {
       data: {
         name: data.eventName,
         creatorId: userId,
+        votingDeadline: data.votingDeadline
+          ? new Date(data.votingDeadline)
+          : undefined,
         options: {
           create: data.options.map((opt) => ({
             name: opt.name,
@@ -94,11 +97,22 @@ export class EventService {
       name: event.name,
       options: event.options,
       guests: event.guests,
+      votingDeadline: event.votingDeadline,
       currentGuest: nickname,
     };
   }
 
   async submitVote(eventId: string, nickname: string, choice: string | null) {
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+    });
+
+    if (!event) throw new Error('Event not found');
+
+    if (event.votingDeadline && new Date() > event.votingDeadline) {
+      throw new Error('Voting is closed for this event.');
+    }
+
     const guest = await this.prisma.guest.findFirst({
       where: { eventId, nickname },
     });
