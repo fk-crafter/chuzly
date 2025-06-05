@@ -12,15 +12,30 @@ export default function AppHeader() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const name = localStorage.getItem("userName");
-    const plan = localStorage.getItem("userPlan");
 
     if (!token) {
       router.push("/login");
-    } else {
-      setUserName(name);
-      setUserPlan(plan);
+      return;
     }
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
+      .then((data) => {
+        setUserName(data.name);
+        setUserPlan(data.plan);
+        localStorage.setItem("userName", data.name);
+        localStorage.setItem("userPlan", data.plan);
+      })
+      .catch(() => {
+        router.push("/login");
+      });
   }, [router]);
 
   const handleLogout = () => {
