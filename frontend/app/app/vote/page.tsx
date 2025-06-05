@@ -119,6 +119,13 @@ export default function VotePageClient() {
           Hi {guest}, choose your favorite option 👇
         </p>
 
+        {event.votingDeadline && (
+          <p className="text-sm text-red-600 font-medium mb-2">
+            🕒 Voting closes on:{" "}
+            {new Date(event.votingDeadline).toLocaleString()}
+          </p>
+        )}
+
         <div className="space-y-4">
           {event.options.map((opt: any) => (
             <div
