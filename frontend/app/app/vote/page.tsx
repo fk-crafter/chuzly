@@ -200,18 +200,27 @@ export default function VotePageClient() {
 
         {!votingClosed && (
           <div className="flex gap-4 mt-4 flex-wrap">
-            <Button onClick={handleVote} disabled={selectedOption === null}>
+            <Button
+              onClick={handleVote}
+              disabled={selectedOption === null}
+              className="cursor-pointer"
+            >
               Submit vote
             </Button>
             <Button
               variant="secondary"
               onClick={() => setSelectedOption("unavailable")}
               disabled={hasVoted}
+              className="cursor-pointer"
             >
               I'm unavailable
             </Button>
             {hasVoted && (
-              <Button variant="outline" onClick={handleCancelVote}>
+              <Button
+                variant="outline"
+                onClick={handleCancelVote}
+                className="cursor-pointer"
+              >
                 Cancel vote
               </Button>
             )}
