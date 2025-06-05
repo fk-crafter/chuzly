@@ -198,6 +198,11 @@ export class EventService {
   }
 
   async getEventsByCreator(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { name: true },
+    });
+
     const events = await this.prisma.event.findMany({
       where: { creatorId: userId },
       include: {
@@ -210,12 +215,21 @@ export class EventService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return events.map((event) => ({
-      id: event.id,
-      name: event.name,
-      createdAt: event.createdAt,
-      guestsCount: event.guests.length,
-      votesCount: event.guests.filter((g) => g.vote !== null).length,
-    }));
+    return events.map((event) => {
+      const creatorGuest = event.guests.find(
+        (guest) => guest.nickname === user?.name,
+      );
+
+      return {
+        id: event.id,
+        name: event.name,
+        createdAt: event.createdAt,
+        guestsCount: event.guests.length,
+        votesCount: event.guests.filter((g) => g.vote !== null).length,
+        guestLink: creatorGuest
+          ? `http://localhost:5001/events/${event.id}/guest/${creatorGuest.nickname}`
+          : null,
+      };
+    });
   }
 }

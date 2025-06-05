@@ -10,6 +10,7 @@ export default function EventListPage() {
       createdAt: string;
       votesCount: number;
       guestsCount: number;
+      guestLink?: string;
     }[]
   >([]);
 
@@ -78,7 +79,13 @@ export default function EventListPage() {
                 View Links
               </a>
               <a
-                href={`/app/vote?id=${event.id}`}
+                href={
+                  event.guestLink
+                    ? `/app/vote?id=${event.id}&guest=${encodeURIComponent(
+                        event.guestLink.split("/guest/")[1]
+                      )}`
+                    : "#"
+                }
                 className="text-sm px-3 py-1 rounded border border-muted-foreground text-muted-foreground hover:bg-muted transition"
               >
                 View Votes
