@@ -63,7 +63,6 @@ export default function VotePageClient() {
     const interval = setInterval(() => {
       fetchEvent();
     }, 10000);
-
     return () => clearInterval(interval);
   }, [fetchEvent]);
 
@@ -111,12 +110,29 @@ export default function VotePageClient() {
     return <p className="text-center mt-20">Loading...</p>;
   }
 
+  const votingClosed =
+    event.votingDeadline && new Date(event.votingDeadline) < new Date();
+
+  const voteCounts: Record<string, number> = {};
+  for (const guest of event.guests) {
+    const voteId = guest.vote?.id;
+    if (voteId) {
+      voteCounts[voteId] = (voteCounts[voteId] || 0) + 1;
+    }
+  }
+
+  const totalVotes = Object.values(voteCounts).reduce((sum, n) => sum + n, 0);
+  const maxVotes = Math.max(...Object.values(voteCounts), 0);
+
   return (
     <main className="max-w-4xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
       <div className="md:col-span-2 space-y-6">
         <h1 className="text-2xl font-bold mb-2">{event.name}</h1>
         <p className="text-muted-foreground text-sm mb-4">
-          Hi {guest}, choose your favorite option 👇
+          Hi {guest},{" "}
+          {votingClosed
+            ? "here are the results 👇"
+            : "choose your favorite option 👇"}
         </p>
 
         {event.votingDeadline && (
@@ -127,54 +143,80 @@ export default function VotePageClient() {
         )}
 
         <div className="space-y-4">
-          {event.options.map((opt: any) => (
-            <div
-              key={opt.id}
-              onClick={() =>
-                setSelectedOption((prev) => (prev === opt.id ? null : opt.id))
-              }
-              className={cn(
-                "border rounded-lg px-4 py-3 cursor-pointer hover:bg-accent transition",
-                selectedOption === opt.id && "border-primary bg-muted"
-              )}
-            >
-              <p className="font-medium">{opt.name}</p>
-              <div className="text-sm text-muted-foreground space-y-1 mt-1">
-                {opt.datetime && (
-                  <p>
-                    <strong>Date:</strong>{" "}
-                    {new Date(opt.datetime).toLocaleString()}
-                  </p>
+          {event.options.map((opt: any) => {
+            const votes = voteCounts[opt.id] || 0;
+            const percentage =
+              totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+
+            const isWinning = votes === maxVotes && maxVotes > 0;
+            const isLosing = !isWinning && votes > 0;
+
+            return (
+              <div
+                key={opt.id}
+                onClick={() =>
+                  !votingClosed &&
+                  setSelectedOption((prev) => (prev === opt.id ? null : opt.id))
+                }
+                className={cn(
+                  "border rounded-lg px-4 py-3 cursor-pointer transition",
+                  selectedOption === opt.id &&
+                    !votingClosed &&
+                    "border-primary bg-muted",
+                  votingClosed &&
+                    (isWinning
+                      ? "border-green-500 bg-green-100"
+                      : isLosing
+                      ? "border-red-500 bg-red-100"
+                      : "opacity-70")
                 )}
-                {opt.price && (
-                  <p>
-                    <strong>Price:</strong> ${opt.price}
-                  </p>
-                )}
+              >
+                <p className="font-medium flex justify-between">
+                  {opt.name}
+                  {votingClosed && (
+                    <span className="text-sm font-normal text-muted-foreground">
+                      {percentage}% ({votes} vote{votes !== 1 ? "s" : ""})
+                    </span>
+                  )}
+                </p>
+
+                <div className="text-sm text-muted-foreground space-y-1 mt-1">
+                  {opt.datetime && (
+                    <p>
+                      <strong>Date:</strong>{" "}
+                      {new Date(opt.datetime).toLocaleString()}
+                    </p>
+                  )}
+                  {opt.price && (
+                    <p>
+                      <strong>Price:</strong> ${opt.price}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        <div className="flex gap-4 mt-4 flex-wrap">
-          <Button onClick={handleVote} disabled={selectedOption === null}>
-            Submit vote
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={() => setSelectedOption("unavailable")}
-            disabled={hasVoted}
-          >
-            I'm unavailable
-          </Button>
-
-          {hasVoted && (
-            <Button variant="outline" onClick={handleCancelVote}>
-              Cancel vote
+        {!votingClosed && (
+          <div className="flex gap-4 mt-4 flex-wrap">
+            <Button onClick={handleVote} disabled={selectedOption === null}>
+              Submit vote
             </Button>
-          )}
-        </div>
+            <Button
+              variant="secondary"
+              onClick={() => setSelectedOption("unavailable")}
+              disabled={hasVoted}
+            >
+              I'm unavailable
+            </Button>
+            {hasVoted && (
+              <Button variant="outline" onClick={handleCancelVote}>
+                Cancel vote
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       <div>
