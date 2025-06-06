@@ -5,23 +5,13 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Home, Plus, Share2, BarChart } from "lucide-react";
+import { Home, Plus } from "lucide-react";
 
 const navItems = [
   {
     href: "/app/create-event",
     label: "Create Event",
     icon: Plus,
-  },
-  {
-    href: "/app/share",
-    label: "Share Event",
-    icon: Share2,
-  },
-  {
-    href: "/app/vote",
-    label: "Votes Overview",
-    icon: BarChart,
   },
   {
     href: "/app/event-list",
