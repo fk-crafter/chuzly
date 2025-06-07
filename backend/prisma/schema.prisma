@@ -64,7 +64,6 @@ model User {
   events           Event[]  @relation("UserEvents")
 }
 
-
 enum Plan {
   TRIAL
   FREE

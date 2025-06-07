@@ -44,6 +44,10 @@ export default function CreateEventPage() {
     setOptions([...options, { name: "", price: "", datetime: "" }]);
   const addGuest = () => setGuests([...guests, ""]);
 
+  const removeOption = (index: number) => {
+    setOptions((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async () => {
     const body = { eventName, votingDeadline, options, guests };
 
@@ -124,7 +128,10 @@ export default function CreateEventPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           {options.map((opt, i) => (
-            <div key={i} className="grid grid-cols-1 gap-2 md:grid-cols-3">
+            <div
+              key={i}
+              className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center"
+            >
               <Input
                 placeholder="Name"
                 value={opt.name}
@@ -144,6 +151,17 @@ export default function CreateEventPage() {
                   handleOptionChange(i, "datetime", e.target.value)
                 }
               />
+              {i > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeOption(i)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  ✕
+                </Button>
+              )}
             </div>
           ))}
           <Button type="button" variant="outline" onClick={addOption}>
