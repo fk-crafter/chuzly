@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { PartyPopper } from "lucide-react";
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -40,16 +42,10 @@ export default function CreateEventPage() {
 
   const addOption = () =>
     setOptions([...options, { name: "", price: "", datetime: "" }]);
-
   const addGuest = () => setGuests([...guests, ""]);
 
   const handleSubmit = async () => {
-    const body = {
-      eventName,
-      votingDeadline,
-      options,
-      guests,
-    };
+    const body = { eventName, votingDeadline, options, guests };
 
     const tryCreate = async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
@@ -91,74 +87,99 @@ export default function CreateEventPage() {
     return <p className="text-center mt-20">Checking authentication...</p>;
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-16">
-      <h1 className="text-2xl font-bold mb-6">Create a new event</h1>
+    <main className="max-w-xl mx-auto px-4 py-16 space-y-8">
+      <h1 className="text-3xl font-bold text-center mb-8 flex items-center justify-center gap-2">
+        <PartyPopper className="w-8 h-8 text-primary" />
+        Create a new event
+      </h1>
 
-      <div className="mb-6">
-        <Label>Event name</Label>
-        <Input
-          placeholder="Saturday plans"
-          value={eventName}
-          onChange={(e) => setEventName(e.target.value)}
-        />
-      </div>
-
-      <div className="mb-6">
-        <Label>Voting deadline</Label>
-        <Input
-          type="datetime-local"
-          value={votingDeadline}
-          onChange={(e) => setVotingDeadline(e.target.value)}
-        />
-      </div>
-
-      <div className="mb-6">
-        <Label>Options</Label>
-        {options.map((opt, i) => (
-          <div key={i} className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+      <Card>
+        <CardHeader>
+          <CardTitle>Event details</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>Event name</Label>
             <Input
-              placeholder="Name"
-              value={opt.name}
-              onChange={(e) => handleOptionChange(i, "name", e.target.value)}
-            />
-            <Input
-              placeholder="Price"
-              value={opt.price}
-              type="number"
-              onChange={(e) => handleOptionChange(i, "price", e.target.value)}
-            />
-            <Input
-              placeholder="Date & time"
-              type="datetime-local"
-              value={opt.datetime}
-              onChange={(e) =>
-                handleOptionChange(i, "datetime", e.target.value)
-              }
+              placeholder="Saturday plans"
+              value={eventName}
+              onChange={(e) => setEventName(e.target.value)}
             />
           </div>
-        ))}
-        <Button type="button" variant="outline" onClick={addOption}>
-          + Add option
+
+          <div>
+            <Label>Voting deadline</Label>
+            <Input
+              type="datetime-local"
+              value={votingDeadline}
+              onChange={(e) => setVotingDeadline(e.target.value)}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Options</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {options.map((opt, i) => (
+            <div key={i} className="grid grid-cols-1 gap-2 md:grid-cols-3">
+              <Input
+                placeholder="Name"
+                value={opt.name}
+                onChange={(e) => handleOptionChange(i, "name", e.target.value)}
+              />
+              <Input
+                placeholder="Price"
+                value={opt.price}
+                type="number"
+                onChange={(e) => handleOptionChange(i, "price", e.target.value)}
+              />
+              <Input
+                placeholder="Date & time"
+                type="datetime-local"
+                value={opt.datetime}
+                onChange={(e) =>
+                  handleOptionChange(i, "datetime", e.target.value)
+                }
+              />
+            </div>
+          ))}
+          <Button type="button" variant="outline" onClick={addOption}>
+            + Add option
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Guests</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {guests.map((g, i) => (
+            <Input
+              key={i}
+              placeholder="Nickname"
+              value={g}
+              onChange={(e) => handleGuestChange(i, e.target.value)}
+            />
+          ))}
+          <Button type="button" variant="outline" onClick={addGuest}>
+            + Add guest
+          </Button>
+        </CardContent>
+      </Card>
+
+      <div className="flex justify-center pt-6">
+        <Button
+          size="lg"
+          onClick={handleSubmit}
+          className="w-full md:w-auto px-12 py-6 text-lg"
+        >
+          Next →
         </Button>
       </div>
-
-      <div className="mb-6">
-        <Label>Guests</Label>
-        {guests.map((g, i) => (
-          <Input
-            key={i}
-            placeholder="Nickname"
-            value={g}
-            onChange={(e) => handleGuestChange(i, e.target.value)}
-            className="mb-2"
-          />
-        ))}
-        <Button type="button" variant="outline" onClick={addGuest}>
-          + Add guest
-        </Button>
-      </div>
-
-      <Button onClick={handleSubmit}>Next</Button>
     </main>
   );
 }
