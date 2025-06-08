@@ -37,4 +37,9 @@ export class AuthController {
 
     return dbUser;
   }
+
+  @Post('oauth-login')
+  async oauthLogin(@Body() body: { email: string; name: string }) {
+    return this.authService.oauthLogin(body);
+  }
 }
