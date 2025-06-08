@@ -1,8 +1,16 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -38,8 +46,16 @@ export class AuthController {
     return dbUser;
   }
 
-  @Post('oauth-login')
-  async oauthLogin(@Body() body: { email: string; name: string }) {
-    return this.authService.oauthLogin(body);
+  @UseGuards(AuthGuard('google'))
+  @Get('google')
+  googleAuth() {}
+
+  @UseGuards(AuthGuard('google'))
+  @Get('google/callback')
+  googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+    const user = req.user as { token: string };
+    const token = user.token;
+
+    res.redirect(`${process.env.FRONT_URL}/auth/callback?token=${token}`);
   }
 }

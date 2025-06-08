@@ -54,32 +54,4 @@ export class AuthService {
     });
     return { token, name: user.name, plan: user.plan };
   }
-
-  async oauthLogin(data: { email: string; name: string }) {
-    let user = await this.prisma.user.findUnique({
-      where: { email: data.email },
-    });
-
-    if (!user) {
-      const trialEndsAt: Date = addDays(new Date(), 7);
-
-      user = await this.prisma.user.create({
-        data: {
-          email: data.email,
-          password: '',
-          name: data.name,
-          plan: 'TRIAL',
-          trialEndsAt,
-        },
-      });
-    }
-
-    const token = this.jwt.sign({
-      userId: user.id,
-      name: user.name,
-      plan: user.plan,
-    });
-
-    return { token, name: user.name, plan: user.plan };
-  }
 }

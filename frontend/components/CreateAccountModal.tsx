@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub, FaApple } from "react-icons/fa";
-import { signIn } from "next-auth/react";
 import {
   ArrowLeft,
   CheckCircle,
@@ -153,7 +152,6 @@ export function CreateAccountModal() {
         <Button
           variant="outline"
           className="w-full flex items-center gap-2 justify-center"
-          onClick={() => signIn("google")}
         >
           <FcGoogle className="text-xl" />
           Continue with Google
@@ -162,7 +160,6 @@ export function CreateAccountModal() {
         <Button
           variant="outline"
           className="w-full flex items-center gap-2 justify-center"
-          onClick={() => signIn("github")}
         >
           <FaGithub className="text-xl" />
           Continue with GitHub
