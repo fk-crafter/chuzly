@@ -58,4 +58,18 @@ export class AuthController {
 
     res.redirect(`${process.env.FRONT_URL}/auth/callback?token=${token}`);
   }
+  @UseGuards(AuthGuard('github'))
+  @Get('github')
+  githubAuth() {
+    // Démarre flow OAuth GitHub
+  }
+
+  @UseGuards(AuthGuard('github'))
+  @Get('github/callback')
+  githubAuthCallback(@Req() req: Request, @Res() res: Response) {
+    const user = req.user as { token: string };
+    const token = user.token;
+
+    res.redirect(`${process.env.FRONT_URL}/auth/callback?token=${token}`);
+  }
 }

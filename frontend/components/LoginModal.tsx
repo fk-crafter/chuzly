@@ -77,13 +77,18 @@ export function LoginModal() {
           </Button>
         </Link>
 
-        <Button
-          variant="outline"
-          className="w-full flex items-center gap-2 justify-center"
+        <Link
+          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
+          className="w-full"
         >
-          <FaGithub className="text-xl" />
-          Continue with GitHub
-        </Button>
+          <Button
+            variant="outline"
+            className="w-full flex items-center gap-2 justify-center"
+          >
+            <FaGithub className="text-xl" />
+            Continue with GitHub
+          </Button>
+        </Link>
 
         <Button
           variant="outline"
