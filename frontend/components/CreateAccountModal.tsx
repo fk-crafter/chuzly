@@ -148,30 +148,47 @@ export function CreateAccountModal() {
 
       <div className="text-2xl font-semibold">Create your account</div>
 
-      <div className="space-y-3">
-        <Button
-          variant="outline"
-          className="w-full flex items-center gap-2 justify-center"
-        >
-          <FcGoogle className="text-xl" />
-          Continue with Google
-        </Button>
+      <div className="space-y-4">
+        <div>
+          <Link
+            href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
+            className="w-full block"
+          >
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center"
+            >
+              <FcGoogle className="text-xl" />
+              Continue with Google
+            </Button>
+          </Link>
+        </div>
 
-        <Button
-          variant="outline"
-          className="w-full flex items-center gap-2 justify-center"
-        >
-          <FaGithub className="text-xl" />
-          Continue with GitHub
-        </Button>
+        <div>
+          <Link
+            href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
+            className="w-full block"
+          >
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center"
+            >
+              <FaGithub className="text-xl" />
+              Continue with GitHub
+            </Button>
+          </Link>
+        </div>
 
-        <Button
-          variant="outline"
-          className="w-full flex items-center gap-2 justify-center"
-        >
-          <FaApple className="text-xl" />
-          Continue with Apple
-        </Button>
+        <div>
+          <Button
+            variant="outline"
+            className="w-full flex items-center justify-center opacity-50 cursor-not-allowed"
+            disabled
+          >
+            <FaApple className="text-xl" />
+            Continue with Apple (Coming soon)
+          </Button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 text-left pt-4">

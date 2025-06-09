@@ -63,41 +63,47 @@ export function LoginModal() {
 
       <div className="text-2xl font-semibold">Welcome to Event-app</div>
 
-      <div className="space-y-3 pt-2">
-        <Link
-          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
-          className="w-full"
-        >
+      <div className="space-y-4">
+        <div>
+          <Link
+            href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
+            className="w-full block"
+          >
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center"
+            >
+              <FcGoogle className="text-xl" />
+              Continue with Google
+            </Button>
+          </Link>
+        </div>
+
+        <div>
+          <Link
+            href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
+            className="w-full block"
+          >
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center"
+            >
+              <FaGithub className="text-xl" />
+              Continue with GitHub
+            </Button>
+          </Link>
+        </div>
+
+        <div>
           <Button
             variant="outline"
-            className="w-full flex items-center gap-2 justify-center"
+            className="w-full flex items-center justify-center opacity-50 cursor-not-allowed"
+            disabled
           >
-            <FcGoogle className="text-xl" />
-            Continue with Google
+            <FaApple className="text-xl" />
+            Continue with Apple (Coming soon)
           </Button>
-        </Link>
-
-        <Link
-          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
-          className="w-full"
-        >
-          <Button
-            variant="outline"
-            className="w-full flex items-center gap-2 justify-center"
-          >
-            <FaGithub className="text-xl" />
-            Continue with GitHub
-          </Button>
-        </Link>
-
-        <Button
-          variant="outline"
-          className="w-full flex items-center gap-2 justify-center opacity-50 cursor-not-allowed"
-          disabled
-        >
-          <FaApple className="text-xl" />
-          Continue with Apple (Coming soon)
-        </Button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 pt-6 text-left">
