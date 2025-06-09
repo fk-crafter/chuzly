@@ -179,15 +179,19 @@ export function CreateAccountModal() {
           </Link>
         </div>
 
-        <div>
+        <div className="relative w-full">
           <Button
             variant="outline"
-            className="w-full flex items-center justify-center opacity-50 cursor-not-allowed"
+            className="w-full flex items-center justify-center opacity-50 cursor-not-allowed relative"
             disabled
           >
             <FaApple className="text-xl" />
-            Continue with Apple (Coming soon)
+            Continue with Apple
           </Button>
+
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow z-10 pointer-events-none">
+            COMING SOON
+          </div>
         </div>
       </div>
 
