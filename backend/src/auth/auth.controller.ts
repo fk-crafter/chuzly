@@ -40,6 +40,7 @@ export class AuthController {
       select: {
         name: true,
         plan: true,
+        trialEndsAt: true,
       },
     });
 

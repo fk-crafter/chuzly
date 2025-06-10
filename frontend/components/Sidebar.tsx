@@ -5,7 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Home, Plus } from "lucide-react";
+import { Home, Plus, User } from "lucide-react";
 
 const navItems = [
   {
@@ -18,6 +18,7 @@ const navItems = [
     label: "My Events",
     icon: Home,
   },
+  { href: "/app/profile", label: "Profile", icon: User },
 ];
 
 export default function Sidebar() {

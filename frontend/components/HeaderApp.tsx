@@ -14,7 +14,7 @@ export default function AppHeader() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      router.push("/login");
+      router.push("/lougiin");
       return;
     }
 
@@ -34,7 +34,7 @@ export default function AppHeader() {
         localStorage.setItem("userPlan", data.plan);
       })
       .catch(() => {
-        router.push("/login");
+        router.push("/lougiin");
       });
   }, [router]);
 
@@ -43,7 +43,7 @@ export default function AppHeader() {
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userName");
     localStorage.removeItem("userPlan");
-    router.push("/login");
+    router.push("/lougiin");
   };
 
   return (

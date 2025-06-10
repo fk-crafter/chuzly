@@ -127,7 +127,7 @@ export function CreateAccountModal() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("userName", data.name);
 
-      window.location.href = "/login";
+      window.location.href = "/lougiin";
     } catch (err) {
       console.error(err);
       alert("Error during registration. See the console.");
@@ -333,7 +333,7 @@ export function CreateAccountModal() {
 
       <p className="text-sm text-center text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/login" className="text-primary hover:underline">
+        <Link href="/lougiin" className="text-primary hover:underline">
           Login
         </Link>
       </p>
