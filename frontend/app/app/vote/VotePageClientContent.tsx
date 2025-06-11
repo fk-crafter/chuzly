@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { Clock } from "lucide-react";
 
 export default function VotePageClientContent() {
   const params = useSearchParams();
@@ -136,9 +137,9 @@ export default function VotePageClientContent() {
         </p>
 
         {event.votingDeadline && (
-          <p className="text-sm text-red-600 font-medium mb-2">
-            🕒 Voting closes on:{" "}
-            {new Date(event.votingDeadline).toLocaleString()}
+          <p className="text-sm text-red-600 font-medium mb-2 flex items-center gap-2">
+            <Clock className="w-4 h-4" />
+            Voting closes on : {new Date(event.votingDeadline).toLocaleString()}
           </p>
         )}
 
