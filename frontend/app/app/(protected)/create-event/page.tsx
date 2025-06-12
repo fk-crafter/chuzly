@@ -101,23 +101,25 @@ export default function CreateEventPage() {
         <CardHeader>
           <CardTitle>Event details</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Event name</Label>
-            <Input
-              placeholder="Saturday plans"
-              value={eventName}
-              onChange={(e) => setEventName(e.target.value)}
-            />
-          </div>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+            <div>
+              <Label>Event name</Label>
+              <Input
+                placeholder="Saturday plans"
+                value={eventName}
+                onChange={(e) => setEventName(e.target.value)}
+              />
+            </div>
 
-          <div>
-            <Label>Voting deadline</Label>
-            <Input
-              type="datetime-local"
-              value={votingDeadline}
-              onChange={(e) => setVotingDeadline(e.target.value)}
-            />
+            <div>
+              <Label>Voting deadline</Label>
+              <Input
+                type="datetime-local"
+                value={votingDeadline}
+                onChange={(e) => setVotingDeadline(e.target.value)}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
