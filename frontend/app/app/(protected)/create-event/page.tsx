@@ -102,9 +102,9 @@ export default function CreateEventPage() {
           <CardTitle>Event details</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label>Event name</Label>
+              <Label className="mb-2 block">Event name</Label>
               <Input
                 placeholder="Saturday plans"
                 value={eventName}
@@ -113,7 +113,7 @@ export default function CreateEventPage() {
             </div>
 
             <div>
-              <Label>Voting deadline</Label>
+              <Label className="mb-2 block">Voting deadline</Label>
               <Input
                 type="datetime-local"
                 value={votingDeadline}
