@@ -152,8 +152,9 @@ export default function CreateEventPage() {
                 onChange={(e) =>
                   handleOptionChange(i, "datetime", e.target.value)
                 }
+                className="min-w-[12rem]"
               />
-              {i > 0 && (
+              {i > 0 ? (
                 <Button
                   type="button"
                   variant="ghost"
@@ -163,6 +164,8 @@ export default function CreateEventPage() {
                 >
                   ✕
                 </Button>
+              ) : (
+                <div className="w-10" />
               )}
             </div>
           ))}
