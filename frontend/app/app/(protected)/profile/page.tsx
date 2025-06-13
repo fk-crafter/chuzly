@@ -16,7 +16,7 @@ export default function ProfilePage() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      window.location.href = "/login";
+      window.location.href = "/lougiin";
       return;
     }
 
@@ -81,7 +81,7 @@ export default function ProfilePage() {
             localStorage.removeItem("userEmail");
             localStorage.removeItem("userName");
             localStorage.removeItem("userPlan");
-            window.location.href = "/login";
+            window.location.href = "/lougiin";
           }}
         >
           Log out

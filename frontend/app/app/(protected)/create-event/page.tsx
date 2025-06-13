@@ -22,7 +22,7 @@ export default function CreateEventPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/login");
+      router.push("/lougiin");
     } else {
       setCheckingAuth(false);
     }
