@@ -4,6 +4,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function AppHeader() {
   const router = useRouter();
@@ -46,24 +52,35 @@ export default function AppHeader() {
     router.push("/lougiin");
   };
 
+  const handleGoToProfile = () => {
+    router.push("/app/profile");
+  };
+
   return (
     <header className="flex justify-end items-center gap-4 p-4 border-b border-border bg-white dark:bg-zinc-900">
       <Badge className="bg-green-200" variant="secondary">
         Connected
       </Badge>
       {userName && (
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">{userName}</span>
-          {userPlan === "PRO" && (
-            <Badge className="bg-yellow-400 text-black" variant="secondary">
-              PRO
-            </Badge>
-          )}
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="flex items-center gap-2 text-sm">
+              {userName}
+              {userPlan === "PRO" && (
+                <Badge className="bg-yellow-400 text-black" variant="secondary">
+                  PRO
+                </Badge>
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleGoToProfile}>
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
-      <Button onClick={handleLogout} variant="outline">
-        Log out
-      </Button>
     </header>
   );
 }
