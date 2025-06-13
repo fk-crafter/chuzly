@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<{
@@ -33,22 +36,56 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="max-w-xl mx-auto px-4 py-16 space-y-6">
-      <h1 className="text-3xl font-bold mb-6">My Profile</h1>
+    <main className="max-w-xl mx-auto px-4 py-16 space-y-8">
+      <h1 className="text-3xl font-bold text-center">My Profile</h1>
 
-      <div className="space-y-2 text-lg">
-        <p>
-          <strong>Name:</strong> {profile.name}
-        </p>
-        <p>
-          <strong>Plan:</strong> {profile.plan}
-        </p>
-        {profile.plan === "TRIAL" && profile.trialEndsAt && (
-          <p>
-            <strong>Trial ends at:</strong>{" "}
-            {new Date(profile.trialEndsAt).toLocaleDateString()}
-          </p>
-        )}
+      <Card>
+        <CardHeader>
+          <CardTitle>Account Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 text-lg">
+          <div className="flex justify-between items-center">
+            <span className="text-muted-foreground">Name</span>
+            <span className="font-medium">{profile.name}</span>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <span className="text-muted-foreground">Plan</span>
+            <Badge
+              className={
+                profile.plan === "PRO"
+                  ? "bg-yellow-400 text-black"
+                  : "bg-green-200 text-green-800"
+              }
+            >
+              {profile.plan}
+            </Badge>
+          </div>
+
+          {profile.plan === "TRIAL" && profile.trialEndsAt && (
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Trial ends on</span>
+              <span className="font-medium">
+                {new Date(profile.trialEndsAt).toLocaleDateString()}
+              </span>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <div className="flex justify-center pt-4">
+        <Button
+          variant="outline"
+          onClick={() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("userEmail");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userPlan");
+            window.location.href = "/login";
+          }}
+        >
+          Log out
+        </Button>
       </div>
     </main>
   );
