@@ -2,6 +2,6 @@
   "build": {
     "builder": "NIXPACKS",
     "buildCommand": "cd backend && pnpm install && pnpm run build",
-    "startCommand": "cd backend && pnpm run start:prod"
+    "startCommand": "cd backend && pnpm start"
   }
 }
