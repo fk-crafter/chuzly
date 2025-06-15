@@ -41,6 +41,7 @@ export class AuthController {
         name: true,
         plan: true,
         trialEndsAt: true,
+        isAdmin: true,
       },
     });
 

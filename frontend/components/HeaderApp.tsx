@@ -36,8 +36,10 @@ export default function AppHeader() {
       .then((data) => {
         setUserName(data.name);
         setUserPlan(data.plan);
+
         localStorage.setItem("userName", data.name);
         localStorage.setItem("userPlan", data.plan);
+        localStorage.setItem("isAdmin", data.isAdmin ? "true" : "false");
       })
       .catch(() => {
         router.push("/lougiin");
@@ -49,6 +51,7 @@ export default function AppHeader() {
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userName");
     localStorage.removeItem("userPlan");
+    localStorage.removeItem("isAdmin");
     router.push("/lougiin");
   };
 
