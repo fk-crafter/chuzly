@@ -20,4 +20,10 @@ export class AdminService {
       },
     });
   }
+
+  async deleteUser(id: string) {
+    return this.prisma.user.delete({
+      where: { id },
+    });
+  }
 }

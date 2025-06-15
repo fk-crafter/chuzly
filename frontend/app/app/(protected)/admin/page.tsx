@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function AdminDashboardPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -49,6 +50,31 @@ export default function AdminDashboardPage() {
     return <p className="text-center mt-20">Loading users...</p>;
   }
 
+  const handleDelete = async (userId: string) => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+    if (!confirm) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to delete user");
+
+      setUsers((prev) => prev.filter((user) => user.id !== userId));
+    } catch (err) {
+      console.error("Error deleting user", err);
+    }
+  };
+
   return (
     <main className="max-w-5xl mx-auto px-4 py-16 space-y-8">
       <h1 className="text-3xl font-bold">Admin Dashboard</h1>
@@ -61,6 +87,7 @@ export default function AdminDashboardPage() {
                 <span>
                   {user.name} ({user.email})
                 </span>
+
                 <Badge variant="outline">{user.plan}</Badge>
               </CardTitle>
             </CardHeader>
@@ -74,6 +101,16 @@ export default function AdminDashboardPage() {
                 </div>
               )}
               <div>Admin: {user.isAdmin ? "Yes" : "No"}</div>
+
+              <div className="pt-2">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDelete(user.id)}
+                >
+                  Delete
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}
