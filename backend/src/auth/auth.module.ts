@@ -6,6 +6,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { GoogleStrategy } from './google.strategy';
 import { GithubStrategy } from './github.strategy';
+import { PrismaModule } from '../prisma/prisma.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { GithubStrategy } from './github.strategy';
       secret: process.env.JWT_SECRET || 'default_secret',
       signOptions: { expiresIn: '1d' },
     }),
+    PrismaModule,
+    MailModule,
   ],
   providers: [AuthService, JwtStrategy, GoogleStrategy, GithubStrategy],
   controllers: [AuthController],
