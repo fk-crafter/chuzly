@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Post,
-  Query,
   Req,
   Res,
   UseGuards,
@@ -32,11 +31,6 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
-  @Get('confirm')
-  confirm(@Query('token') token: string) {
-    return this.authService.confirmEmail(token);
-  }
-
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
   async getMe(@Req() req: Request) {
@@ -62,9 +56,9 @@ export class AuthController {
   googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     const user = req.user as { token: string };
     const token = user.token;
+
     res.redirect(`${process.env.FRONT_URL}/auth/callback?token=${token}`);
   }
-
   @UseGuards(AuthGuard('github'))
   @Get('github')
   githubAuth() {}
@@ -74,6 +68,7 @@ export class AuthController {
   githubAuthCallback(@Req() req: Request, @Res() res: Response) {
     const user = req.user as { token: string };
     const token = user.token;
+
     res.redirect(`${process.env.FRONT_URL}/auth/callback?token=${token}`);
   }
 }

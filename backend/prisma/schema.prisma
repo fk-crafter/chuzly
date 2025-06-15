@@ -50,9 +50,6 @@ model Guest {
 model User {
   id               String   @id @default(cuid())
   email            String   @unique
-  emailVerified    Boolean  @default(false)
-  emailToken       String?
-  emailTokenExpires DateTime?
   password         String
   name             String
   createdAt        DateTime @default(now())
@@ -65,6 +62,7 @@ model User {
   stripeSubId      String?
 
   events           Event[]  @relation("UserEvents")
+  isAdmin          Boolean  @default(false)
 }
 
 enum Plan {
