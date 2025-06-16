@@ -23,9 +23,9 @@ export function FAQSection() {
       <div className="max-w-2xl mx-auto text-left">
         <Accordion type="single" collapsible className="space-y-4">
           <AccordionItem value="item-1">
-            <AccordionTrigger>What is Togeda?</AccordionTrigger>
+            <AccordionTrigger>What is Chuzly?</AccordionTrigger>
             <AccordionContent>
-              Togeda is a tool to easily plan group activities by letting
+              Chuzly is a tool to easily plan group activities by letting
               friends vote on options. No sign-up, no confusion — just fast,
               clear decisions.
             </AccordionContent>
@@ -34,7 +34,7 @@ export function FAQSection() {
           <AccordionItem value="item-2">
             <AccordionTrigger>Does everyone need an account?</AccordionTrigger>
             <AccordionContent>
-              Nope. Only the organizer needs Togeda. Friends can vote directly
+              Nope. Only the organizer needs Chuzly. Friends can vote directly
               via a shared link.
             </AccordionContent>
           </AccordionItem>
@@ -58,7 +58,7 @@ export function FAQSection() {
           <AccordionItem value="item-5">
             <AccordionTrigger>Is it really free?</AccordionTrigger>
             <AccordionContent>
-              Yes, Togeda has a free plan with all the basics. Advanced features
+              Yes, Chuzly has a free plan with all the basics. Advanced features
               will be part of upcoming paid plans.
             </AccordionContent>
           </AccordionItem>
@@ -68,7 +68,7 @@ export function FAQSection() {
               What happens after everyone votes?
             </AccordionTrigger>
             <AccordionContent>
-              Togeda picks the best option automatically based on votes. No
+              Chuzly picks the best option automatically based on votes. No
               debate needed.
             </AccordionContent>
           </AccordionItem>
@@ -84,7 +84,7 @@ export function FAQSection() {
           <AccordionItem value="item-8">
             <AccordionTrigger>Does it work on mobile?</AccordionTrigger>
             <AccordionContent>
-              Absolutely — Togeda works seamlessly on phones, tablets, and
+              Absolutely — Chuzly works seamlessly on phones, tablets, and
               desktop.
             </AccordionContent>
           </AccordionItem>

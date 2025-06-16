@@ -20,7 +20,7 @@ export function BoldStatementSection() {
           Stop relying on chaotic group chats and vague polls.
         </p>
         <p className="text-lg text-zinc-400">
-          Togeda helps you actually make decisions — fast and simple.
+          Chuzly helps you actually make decisions — fast and simple.
         </p>
       </motion.div>
     </section>

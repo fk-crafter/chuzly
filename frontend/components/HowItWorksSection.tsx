@@ -21,7 +21,7 @@ const steps = [
   },
   {
     title: "Vote & decide",
-    description: "Friends vote. Togeda picks the best plan automatically.",
+    description: "Friends vote. Chuzly picks the best plan automatically.",
     image: "/step3.png",
   },
 ];

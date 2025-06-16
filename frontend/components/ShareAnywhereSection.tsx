@@ -33,7 +33,7 @@ export function ShareAnywhereSection() {
           Share it where your friends already are
         </h2>
         <p className="text-muted-foreground text-lg mb-12">
-          Send your Togeda event through WhatsApp, Messenger, Discord, or
+          Send your Chuzly event through WhatsApp, Messenger, Discord, or
           wherever your group hangs out.
         </p>
       </motion.div>

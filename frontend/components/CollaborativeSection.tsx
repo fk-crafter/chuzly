@@ -12,7 +12,7 @@ export function CollaborativeSection() {
             No more endless group chats
           </h3>
           <p className="text-muted-foreground text-sm text-center">
-            Togeda replaces scattered messages with a single link that gets
+            Chuzly replaces scattered messages with a single link that gets
             everyone aligned instantly.
           </p>
         </div>

@@ -7,7 +7,7 @@ export function PlanningSection() {
         </h2>
         <p className="text-muted-foreground text-lg">
           Endless group chats, undecided plans, people dropping out last
-          minute... Togeda makes group outings effortless: set options, share a
+          minute... Chuzly makes group outings effortless: set options, share a
           link, let friends vote.
         </p>
       </div>

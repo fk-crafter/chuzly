@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Togeda",
-  description: "Togeda - Event Management",
+  title: "Chuzly",
+  description: "Chuzly - Event Management",
 };
 
 export default function RootLayout({

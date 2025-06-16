@@ -107,6 +107,7 @@ export default function AdminDashboardPage() {
                   variant="destructive"
                   size="sm"
                   onClick={() => handleDelete(user.id)}
+                  disabled={user.isAdmin}
                 >
                   Delete
                 </Button>
