@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function AdminDashboardPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -46,10 +52,6 @@ export default function AdminDashboardPage() {
     fetchUsers();
   }, [router]);
 
-  if (loading) {
-    return <p className="text-center mt-20">Loading users...</p>;
-  }
-
   const handleDelete = async (userId: string) => {
     const confirm = window.confirm(
       "Are you sure you want to delete this user?"
@@ -75,23 +77,84 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handlePromote = async (userId: string) => {
+    const confirm = window.confirm("Promote this user to admin?");
+    if (!confirm) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/promote`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to promote user");
+
+      const updated = await res.json();
+      setUsers((prev) =>
+        prev.map((user) => (user.id === userId ? updated.user : user))
+      );
+    } catch (err) {
+      console.error("Error promoting user", err);
+    }
+  };
+
+  const handleDemote = async (userId: string) => {
+    const confirm = window.confirm("Demote this admin to regular user?");
+    if (!confirm) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/demote`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to demote user");
+
+      const updated = await res.json();
+      setUsers((prev) =>
+        prev.map((user) => (user.id === userId ? updated.user : user))
+      );
+    } catch (err) {
+      console.error("Error demoting user", err);
+    }
+  };
+
+  if (loading) {
+    return <p className="text-center mt-20">Loading users...</p>;
+  }
+
   return (
-    <main className="max-w-5xl mx-auto px-4 py-16 space-y-8">
-      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+    <main className="max-w-5xl mx-auto px-4 py-12 space-y-6">
+      <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
 
-      <div className="grid gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {users.map((user) => (
-          <Card key={user.id}>
+          <Card key={user.id} className="w-full max-w-xs mx-auto text-center">
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>
-                  {user.name} ({user.email})
-                </span>
-
-                <Badge variant="outline">{user.plan}</Badge>
+              <CardTitle className="text-lg">
+                {user.name}
+                <div className="text-xs text-muted-foreground">
+                  {user.email}
+                </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-sm space-y-2">
+
+            <CardContent className="space-y-2 text-sm">
+              <div>
+                <Badge variant="outline" className="mb-2">
+                  {user.plan}
+                </Badge>
+              </div>
               <div>
                 Created: {new Date(user.createdAt).toLocaleDateString()}
               </div>
@@ -102,15 +165,35 @@ export default function AdminDashboardPage() {
               )}
               <div>Admin: {user.isAdmin ? "Yes" : "No"}</div>
 
-              <div className="pt-2">
+              <div className="pt-3 space-y-2">
                 <Button
                   variant="destructive"
                   size="sm"
                   onClick={() => handleDelete(user.id)}
                   disabled={user.isAdmin}
+                  className="w-full"
                 >
                   Delete
                 </Button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full">
+                      Change Role
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {!user.isAdmin ? (
+                      <DropdownMenuItem onClick={() => handlePromote(user.id)}>
+                        Make Admin
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem onClick={() => handleDemote(user.id)}>
+                        Make User
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </CardContent>
           </Card>
