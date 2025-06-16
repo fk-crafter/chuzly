@@ -80,6 +80,14 @@ export default function AppHeader() {
             <DropdownMenuItem onClick={handleGoToProfile}>
               Profile
             </DropdownMenuItem>
+
+            {typeof window !== "undefined" &&
+              localStorage.getItem("isAdmin") === "true" && (
+                <DropdownMenuItem onClick={() => router.push("/app/admin")}>
+                  Admin Dashboard
+                </DropdownMenuItem>
+              )}
+
             <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
