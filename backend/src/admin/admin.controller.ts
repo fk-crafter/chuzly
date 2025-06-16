@@ -1,4 +1,11 @@
-import { Controller, Delete, Get, UseGuards, Param } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  UseGuards,
+  Param,
+  Patch,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminGuard } from './admin.guard';
@@ -20,5 +27,16 @@ export class AdminController {
   @Delete('users/:id')
   deleteUser(@Param('id') id: string) {
     return this.adminService.deleteUser(id);
+  }
+
+  @Patch('users/:id/promote')
+  @UseGuards(AuthGuard('jwt'), AdminGuard)
+  async promoteUser(@Param('id') id: string) {
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: { isAdmin: true },
+    });
+
+    return { message: 'User promoted to admin', user };
   }
 }
