@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -22,8 +26,16 @@ export class AdminService {
   }
 
   async deleteUser(id: string) {
-    return this.prisma.user.delete({
-      where: { id },
-    });
+    const user = await this.prisma.user.findUnique({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.isAdmin) {
+      throw new ForbiddenException('Cannot delete an admin user');
+    }
+
+    return this.prisma.user.delete({ where: { id } });
   }
 }

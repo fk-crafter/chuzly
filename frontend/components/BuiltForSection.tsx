@@ -43,7 +43,7 @@ export function BuiltForSection() {
           For every kind of group
         </p>
         <h2 className="text-3xl md:text-4xl font-bold mb-16 text-foreground leading-tight">
-          Togeda works for everyone
+          Chuzly works for everyone
         </h2>
       </motion.div>
 

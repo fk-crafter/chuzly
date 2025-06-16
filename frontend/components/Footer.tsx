@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="w-full border-t border-border bg-background text-muted-foreground py-12 px-4">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-8">
         <div>
-          <h3 className="text-lg font-bold text-foreground mb-2">Togeda</h3>
+          <h3 className="text-lg font-bold text-foreground mb-2">Chuzly</h3>
           <p className="max-w-sm text-sm">
             Plan events, vote, decide — all in one place. Simple, no sign-up
             required.
@@ -60,7 +60,7 @@ export function Footer() {
       </div>
 
       <div className="mt-10 text-xs text-center text-muted-foreground">
-        © {new Date().getFullYear()} Togeda. All rights reserved.
+        © {new Date().getFullYear()} Chuzly. All rights reserved.
       </div>
     </footer>
   );

@@ -15,7 +15,7 @@ export function WithCard() {
   return (
     <Card className="w-[420px] rounded-2xl bg-background border border-border shadow-2xl px-8 py-6 space-y-4">
       <p className="text-primary text-center font-semibold text-lg tracking-tight">
-        With Togeda
+        With Chuzly
       </p>
 
       <ul className="space-y-3">
