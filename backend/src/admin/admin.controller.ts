@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -12,6 +13,7 @@ import { AdminService } from './admin.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminGuard } from './admin.guard';
 import { PrismaService } from '../prisma/prisma.service';
+import { UpdatePlanDto } from './dto/update-plan.dto';
 
 @Controller('admin')
 @UseGuards(AuthGuard('jwt'), AdminGuard)
@@ -63,6 +65,40 @@ export class AdminController {
 
     return {
       message: 'User demoted to regular user',
+      user: await this.prisma.user.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          plan: true,
+          createdAt: true,
+          trialEndsAt: true,
+          isAdmin: true,
+        },
+      }),
+    };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('users/:id/plan')
+  async updatePlan(@Param('id') id: string, @Body() body: UpdatePlanDto) {
+    const { plan } = body;
+
+    if (!['TRIAL', 'FREE', 'PRO'].includes(plan)) {
+      throw new BadRequestException('Invalid plan');
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+
+    await this.prisma.user.update({
+      where: { id },
+      data: { plan },
+    });
+
+    return {
+      message: `Plan updated to ${plan}`,
       user: await this.prisma.user.findUnique({
         where: { id },
         select: {
