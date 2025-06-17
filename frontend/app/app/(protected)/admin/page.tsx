@@ -10,10 +10,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 export default function AdminDashboardPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dialog, setDialog] = useState<null | {
+    type: "plan" | "role";
+    userId: string;
+    newValue: string;
+    currentValue: string;
+  }>(null);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -49,18 +66,62 @@ export default function AdminDashboardPage() {
     fetchUsers();
   }, [router]);
 
+  const confirmChange = async () => {
+    if (!dialog) return;
+
+    const { userId, type, newValue } = dialog;
+
+    try {
+      const url =
+        type === "plan"
+          ? `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/plan`
+          : newValue === "Admin"
+          ? `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/promote`
+          : `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/demote`;
+
+      const options: RequestInit =
+        type === "plan"
+          ? {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: JSON.stringify({ plan: newValue }),
+            }
+          : {
+              method: "PATCH",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            };
+
+      const res = await fetch(url, options);
+      if (!res.ok) throw new Error("Update failed");
+
+      const updated = await res.json();
+      setUsers((prev) => prev.map((u) => (u.id === userId ? updated.user : u)));
+    } catch (err) {
+      console.error("Update error", err);
+    } finally {
+      setDialog(null);
+    }
+  };
+
   const handleDelete = async (userId: string) => {
-    const confirm = window.confirm(
+    const confirmed = window.confirm(
       "Are you sure you want to delete this user?"
     );
-    if (!confirm) return;
+    if (!confirmed) return;
 
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}`,
         {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
 
@@ -68,74 +129,7 @@ export default function AdminDashboardPage() {
 
       setUsers((prev) => prev.filter((u) => u.id !== userId));
     } catch (err) {
-      console.error("Error deleting user", err);
-    }
-  };
-
-  const handleChangeRole = async (
-    userId: string,
-    toAdmin: boolean,
-    current: boolean
-  ) => {
-    const newRole = toAdmin ? "Admin" : "User";
-    const oldRole = current ? "Admin" : "User";
-    const confirmed = window.confirm(
-      `Are you sure you want to change the role from ${oldRole} to ${newRole}?`
-    );
-    if (!confirmed) return;
-
-    const url = toAdmin
-      ? `/admin/users/${userId}/promote`
-      : `/admin/users/${userId}/demote`;
-
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-
-      if (!res.ok) throw new Error("Failed to change role");
-
-      const updated = await res.json();
-      setUsers((prev) =>
-        prev.map((user) => (user.id === userId ? updated.user : user))
-      );
-    } catch (err) {
-      console.error("Role update error", err);
-    }
-  };
-
-  const handleChangePlan = async (
-    userId: string,
-    plan: string,
-    current: string
-  ) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to change the plan from ${current} to ${plan}?`
-    );
-    if (!confirmed) return;
-
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/plan`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ plan }),
-        }
-      );
-
-      if (!res.ok) throw new Error("Failed to update plan");
-
-      const updated = await res.json();
-      setUsers((prev) =>
-        prev.map((user) => (user.id === userId ? updated.user : user))
-      );
-    } catch (err) {
-      console.error("Error updating plan", err);
+      console.error("Delete user failed", err);
     }
   };
 
@@ -197,7 +191,12 @@ export default function AdminDashboardPage() {
                       {!user.isAdmin ? (
                         <DropdownMenuItem
                           onClick={() =>
-                            handleChangeRole(user.id, true, user.isAdmin)
+                            setDialog({
+                              type: "role",
+                              userId: user.id,
+                              currentValue: "User",
+                              newValue: "Admin",
+                            })
                           }
                         >
                           Make Admin
@@ -205,7 +204,12 @@ export default function AdminDashboardPage() {
                       ) : (
                         <DropdownMenuItem
                           onClick={() =>
-                            handleChangeRole(user.id, false, user.isAdmin)
+                            setDialog({
+                              type: "role",
+                              userId: user.id,
+                              currentValue: "Admin",
+                              newValue: "User",
+                            })
                           }
                         >
                           Make User
@@ -225,7 +229,12 @@ export default function AdminDashboardPage() {
                         <DropdownMenuItem
                           key={plan}
                           onClick={() =>
-                            handleChangePlan(user.id, plan, user.plan)
+                            setDialog({
+                              type: "plan",
+                              userId: user.id,
+                              currentValue: user.plan,
+                              newValue: plan,
+                            })
                           }
                           disabled={user.plan === plan}
                         >
@@ -240,6 +249,31 @@ export default function AdminDashboardPage() {
           </tbody>
         </table>
       </div>
+
+      {/* AlertDialog pour confirmation */}
+      <AlertDialog
+        open={dialog !== null}
+        onOpenChange={(open) => !open && setDialog(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm change</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to change {dialog?.type} from{" "}
+              <strong>{dialog?.currentValue}</strong> to{" "}
+              <strong>{dialog?.newValue}</strong>?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDialog(null)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmChange}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }
