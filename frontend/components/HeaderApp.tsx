@@ -46,7 +46,15 @@ export default function AppHeader() {
       });
   }, [router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+        method: "POST",
+      });
+    } catch (err) {
+      console.error("Logout request failed:", err);
+    }
+
     localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userName");

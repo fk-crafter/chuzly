@@ -34,6 +34,11 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
+  @Post('logout')
+  logout(@Req() req: Request, @Res() res: Response) {
+    return res.status(200).json({ message: 'Logged out' });
+  }
+
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
   async getMe(@Req() req: Request) {
