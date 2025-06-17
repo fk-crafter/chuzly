@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { User, ShieldCheck, LogOut } from "lucide-react";
 
 export default function AppHeader() {
   const router = useRouter();
@@ -86,17 +87,22 @@ export default function AppHeader() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={handleGoToProfile}>
+              <User className="mr-2 h-4 w-4" />
               Profile
             </DropdownMenuItem>
 
             {typeof window !== "undefined" &&
               localStorage.getItem("isAdmin") === "true" && (
                 <DropdownMenuItem onClick={() => router.push("/app/admin")}>
+                  <ShieldCheck className="mr-2 h-4 w-4" />
                   Admin Dashboard
                 </DropdownMenuItem>
               )}
 
-            <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Log out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}

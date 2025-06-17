@@ -110,16 +110,6 @@ export default function ProfilePage() {
       </Card>
 
       <div className="flex flex-col items-center gap-4 pt-4">
-        <Button
-          variant="outline"
-          onClick={() => {
-            localStorage.clear();
-            window.location.href = "/lougiin";
-          }}
-        >
-          Log out
-        </Button>
-
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive">Delete Account</Button>
