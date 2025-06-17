@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,9 +30,7 @@ export default function AdminDashboardPage() {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/admin/users`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
@@ -63,80 +60,41 @@ export default function AdminDashboardPage() {
         `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
 
       if (!res.ok) throw new Error("Failed to delete user");
 
-      setUsers((prev) => prev.filter((user) => user.id !== userId));
+      setUsers((prev) => prev.filter((u) => u.id !== userId));
     } catch (err) {
       console.error("Error deleting user", err);
     }
   };
 
-  const handlePromote = async (userId: string) => {
-    const confirm = window.confirm("Promote this user to admin?");
-    if (!confirm) return;
+  const handleChangeRole = async (userId: string, toAdmin: boolean) => {
+    const url = toAdmin
+      ? `/admin/users/${userId}/promote`
+      : `/admin/users/${userId}/demote`;
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/promote`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
 
-      if (!res.ok) throw new Error("Failed to promote user");
+      if (!res.ok) throw new Error("Failed to change role");
 
       const updated = await res.json();
       setUsers((prev) =>
         prev.map((user) => (user.id === userId ? updated.user : user))
       );
     } catch (err) {
-      console.error("Error promoting user", err);
+      console.error("Role update error", err);
     }
   };
-
-  const handleDemote = async (userId: string) => {
-    const confirm = window.confirm("Demote this admin to regular user?");
-    if (!confirm) return;
-
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/demote`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (!res.ok) throw new Error("Failed to demote user");
-
-      const updated = await res.json();
-      setUsers((prev) =>
-        prev.map((user) => (user.id === userId ? updated.user : user))
-      );
-    } catch (err) {
-      console.error("Error demoting user", err);
-    }
-  };
-
-  if (loading) {
-    return <p className="text-center mt-20">Loading users...</p>;
-  }
 
   const handleChangePlan = async (userId: string, plan: string) => {
-    const confirm = window.confirm(`Set plan to ${plan}?`);
-    if (!confirm) return;
-
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/plan`,
@@ -161,90 +119,100 @@ export default function AdminDashboardPage() {
     }
   };
 
+  if (loading) {
+    return <p className="text-center mt-20">Loading users...</p>;
+  }
+
   return (
-    <main className="max-w-5xl mx-auto px-4 py-12 space-y-6">
-      <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
+    <main className="max-w-7xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-        {users.map((user) => (
-          <Card key={user.id} className="w-full max-w-xs mx-auto text-center">
-            <CardHeader>
-              <CardTitle className="text-lg">
-                {user.name}
-                <div className="text-xs text-muted-foreground">
-                  {user.email}
-                </div>
-              </CardTitle>
-            </CardHeader>
+      <div className="overflow-x-auto border rounded-lg">
+        <table className="min-w-full text-sm text-left">
+          <thead className="bg-gray-100 dark:bg-zinc-800">
+            <tr>
+              <th className="p-3 font-medium">Name</th>
+              <th className="p-3 font-medium">Email</th>
+              <th className="p-3 font-medium">Plan</th>
+              <th className="p-3 font-medium">Trial Ends</th>
+              <th className="p-3 font-medium">Admin</th>
+              <th className="p-3 font-medium">Created</th>
+              <th className="p-3 font-medium">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id} className="border-t hover:bg-muted">
+                <td className="p-3">{user.name}</td>
+                <td className="p-3">{user.email}</td>
+                <td className="p-3">
+                  <Badge variant="outline">{user.plan}</Badge>
+                </td>
+                <td className="p-3">
+                  {user.trialEndsAt
+                    ? new Date(user.trialEndsAt).toLocaleDateString()
+                    : "-"}
+                </td>
+                <td className="p-3">{user.isAdmin ? "Yes" : "No"}</td>
+                <td className="p-3">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </td>
+                <td className="p-3 space-x-2 flex flex-wrap">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleDelete(user.id)}
+                    disabled={user.isAdmin}
+                  >
+                    Delete
+                  </Button>
 
-            <CardContent className="space-y-2 text-sm">
-              <div>
-                <Badge variant="outline" className="mb-2">
-                  {user.plan}
-                </Badge>
-              </div>
-              <div>
-                Created: {new Date(user.createdAt).toLocaleDateString()}
-              </div>
-              {user.trialEndsAt && (
-                <div>
-                  Trial ends: {new Date(user.trialEndsAt).toLocaleDateString()}
-                </div>
-              )}
-              <div>Admin: {user.isAdmin ? "Yes" : "No"}</div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="outline">
+                        Role
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {!user.isAdmin ? (
+                        <DropdownMenuItem
+                          onClick={() => handleChangeRole(user.id, true)}
+                        >
+                          Make Admin
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem
+                          onClick={() => handleChangeRole(user.id, false)}
+                        >
+                          Make User
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
 
-              <div className="pt-3 space-y-2">
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDelete(user.id)}
-                  disabled={user.isAdmin}
-                  className="w-full"
-                >
-                  Delete
-                </Button>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="w-full">
-                      Change Role
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {!user.isAdmin ? (
-                      <DropdownMenuItem onClick={() => handlePromote(user.id)}>
-                        Make Admin
-                      </DropdownMenuItem>
-                    ) : (
-                      <DropdownMenuItem onClick={() => handleDemote(user.id)}>
-                        Make User
-                      </DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="w-full">
-                      Change Plan
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {["TRIAL", "FREE", "PRO"].map((planOption) => (
-                      <DropdownMenuItem
-                        key={planOption}
-                        onClick={() => handleChangePlan(user.id, planOption)}
-                        disabled={user.plan === planOption}
-                      >
-                        {planOption}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="outline">
+                        Plan
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {["TRIAL", "FREE", "PRO"].map((plan) => (
+                        <DropdownMenuItem
+                          key={plan}
+                          onClick={() => handleChangePlan(user.id, plan)}
+                          disabled={user.plan === plan}
+                        >
+                          {plan}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </main>
   );
