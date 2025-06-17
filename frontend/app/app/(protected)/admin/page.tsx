@@ -133,6 +133,34 @@ export default function AdminDashboardPage() {
     return <p className="text-center mt-20">Loading users...</p>;
   }
 
+  const handleChangePlan = async (userId: string, plan: string) => {
+    const confirm = window.confirm(`Set plan to ${plan}?`);
+    if (!confirm) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/plan`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ plan }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to update plan");
+
+      const updated = await res.json();
+      setUsers((prev) =>
+        prev.map((user) => (user.id === userId ? updated.user : user))
+      );
+    } catch (err) {
+      console.error("Error updating plan", err);
+    }
+  };
+
   return (
     <main className="max-w-5xl mx-auto px-4 py-12 space-y-6">
       <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
@@ -192,6 +220,25 @@ export default function AdminDashboardPage() {
                         Make User
                       </DropdownMenuItem>
                     )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full">
+                      Change Plan
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {["TRIAL", "FREE", "PRO"].map((planOption) => (
+                      <DropdownMenuItem
+                        key={planOption}
+                        onClick={() => handleChangePlan(user.id, planOption)}
+                        disabled={user.plan === planOption}
+                      >
+                        {planOption}
+                      </DropdownMenuItem>
+                    ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
