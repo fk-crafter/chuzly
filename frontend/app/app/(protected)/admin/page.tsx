@@ -72,7 +72,18 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleChangeRole = async (userId: string, toAdmin: boolean) => {
+  const handleChangeRole = async (
+    userId: string,
+    toAdmin: boolean,
+    current: boolean
+  ) => {
+    const newRole = toAdmin ? "Admin" : "User";
+    const oldRole = current ? "Admin" : "User";
+    const confirmed = window.confirm(
+      `Are you sure you want to change the role from ${oldRole} to ${newRole}?`
+    );
+    if (!confirmed) return;
+
     const url = toAdmin
       ? `/admin/users/${userId}/promote`
       : `/admin/users/${userId}/demote`;
@@ -94,7 +105,16 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleChangePlan = async (userId: string, plan: string) => {
+  const handleChangePlan = async (
+    userId: string,
+    plan: string,
+    current: string
+  ) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to change the plan from ${current} to ${plan}?`
+    );
+    if (!confirmed) return;
+
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/plan`,
@@ -176,13 +196,17 @@ export default function AdminDashboardPage() {
                     <DropdownMenuContent>
                       {!user.isAdmin ? (
                         <DropdownMenuItem
-                          onClick={() => handleChangeRole(user.id, true)}
+                          onClick={() =>
+                            handleChangeRole(user.id, true, user.isAdmin)
+                          }
                         >
                           Make Admin
                         </DropdownMenuItem>
                       ) : (
                         <DropdownMenuItem
-                          onClick={() => handleChangeRole(user.id, false)}
+                          onClick={() =>
+                            handleChangeRole(user.id, false, user.isAdmin)
+                          }
                         >
                           Make User
                         </DropdownMenuItem>
@@ -200,7 +224,9 @@ export default function AdminDashboardPage() {
                       {["TRIAL", "FREE", "PRO"].map((plan) => (
                         <DropdownMenuItem
                           key={plan}
-                          onClick={() => handleChangePlan(user.id, plan)}
+                          onClick={() =>
+                            handleChangePlan(user.id, plan, user.plan)
+                          }
                           disabled={user.plan === plan}
                         >
                           {plan}
