@@ -4,6 +4,17 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<{
@@ -11,6 +22,7 @@ export default function ProfilePage() {
     plan: string;
     trialEndsAt?: string | null;
   } | null>(null);
+  const [confirmText, setConfirmText] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -30,6 +42,30 @@ export default function ProfilePage() {
         setProfile(data);
       });
   }, []);
+
+  const handleDeleteAccount = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/delete`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to delete account");
+
+      localStorage.clear();
+      window.location.href = "/lougiin";
+    } catch (err) {
+      console.error("Delete account failed:", err);
+    }
+  };
 
   if (!profile) {
     return <p className="text-center mt-20">Loading profile...</p>;
@@ -73,19 +109,46 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      <div className="flex justify-center pt-4">
+      <div className="flex flex-col items-center gap-4 pt-4">
         <Button
           variant="outline"
           onClick={() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("userEmail");
-            localStorage.removeItem("userName");
-            localStorage.removeItem("userPlan");
+            localStorage.clear();
             window.location.href = "/lougiin";
           }}
         >
           Log out
         </Button>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive">Delete Account</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Account</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action is irreversible. Type <strong>DELETE</strong> to
+                confirm.
+              </AlertDialogDescription>
+              <Input
+                placeholder="Type DELETE to confirm"
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
+              />
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteAccount}
+                disabled={confirmText.trim() !== "DELETE"}
+              >
+                Confirm
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </main>
   );

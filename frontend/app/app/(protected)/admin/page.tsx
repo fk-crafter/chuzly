@@ -250,7 +250,6 @@ export default function AdminDashboardPage() {
         </table>
       </div>
 
-      {/* AlertDialog pour confirmation */}
       <AlertDialog
         open={dialog !== null}
         onOpenChange={(open) => !open && setDialog(null)}

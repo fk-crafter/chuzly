@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   Req,
@@ -13,6 +14,8 @@ import { LoginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from '../prisma/prisma.service';
+import { RequestWithUser } from './types/request-user';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -48,6 +51,12 @@ export class AuthController {
     return dbUser;
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Delete('delete')
+  async deleteAccount(@Req() req: RequestWithUser) {
+    await this.authService.deleteAccount(req.user.userId);
+  }
+
   @UseGuards(AuthGuard('google'))
   @Get('google')
   googleAuth() {}
@@ -60,6 +69,7 @@ export class AuthController {
 
     res.redirect(`${process.env.FRONT_URL}/auth/callback?token=${token}`);
   }
+
   @UseGuards(AuthGuard('github'))
   @Get('github')
   githubAuth() {}
