@@ -1,43 +1,43 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import SidebarAdmin from "./SidebarAdmin";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Home, Plus } from "lucide-react";
+import { BarChart2, Users, Settings } from "lucide-react";
 
-const userNavItems = [
+const adminNavItems = [
   {
-    href: "/app/create-event",
-    label: "Create Event",
-    icon: Plus,
+    href: "/app/admin",
+    label: "Dashboard",
+    icon: BarChart2,
   },
   {
-    href: "/app/event-list",
-    label: "My Events",
-    icon: Home,
+    href: "/app/admin/users",
+    label: "Manage Users",
+    icon: Users,
+  },
+  {
+    href: "/app/admin/settings",
+    label: "Settings",
+    icon: Settings,
   },
 ];
 
-export default function Sidebar() {
+export default function SidebarAdmin() {
   const pathname = usePathname();
-
-  const isAdminPage = pathname.startsWith("/app/admin");
-
-  if (isAdminPage) return <SidebarAdmin />;
 
   return (
     <aside className="w-64 bg-white dark:bg-zinc-900 border-r h-screen flex flex-col">
       <div className="p-6 border-b">
-        <h1 className="text-lg font-semibold tracking-tight">Event App</h1>
-        <p className="text-xs text-muted-foreground">Plan. Vote. Share.</p>
+        <h1 className="text-lg font-semibold tracking-tight">Admin Panel</h1>
+        <p className="text-xs text-muted-foreground">Admin controls</p>
       </div>
 
       <ScrollArea className="flex-1">
         <nav className="px-4 py-6 space-y-2">
-          {userNavItems.map(({ href, label, icon: Icon }) => (
+          {adminNavItems.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
