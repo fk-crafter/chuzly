@@ -28,8 +28,40 @@ export default function ChoosePlanPage() {
       .catch(() => toast.error("Unable to load current plan"));
   }, [router]);
 
-  const handleSelectPlan = (plan: "FREE" | "PRO") => {
-    toast.info(`Selected plan: ${plan} (no action yet)`);
+  const handleSelectPlan = async (plan: "FREE" | "PRO") => {
+    if (plan === "FREE") {
+      toast.info("Free plan is active by default.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("You must be logged in.");
+      return;
+    }
+
+    try {
+      console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stripe/checkout-session`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.message || "Checkout failed");
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+      toast.error("Failed to start checkout session");
+    }
   };
 
   if (!profile) {
