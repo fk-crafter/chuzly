@@ -44,17 +44,19 @@ export default function SettingsPage() {
           />
         </Link>
 
-        <CardItem
-          icon={<CreditCard />}
-          title="Subscription"
-          desc={
-            profile.plan === "TRIAL" && profile.trialEndsAt
-              ? `Plan: ${profile.plan} (trial ends ${new Date(
-                  profile.trialEndsAt
-                ).toLocaleDateString()})`
-              : `Plan: ${profile.plan}`
-          }
-        />
+        <Link href="/app/setting/subscription" className="block">
+          <CardItem
+            icon={<CreditCard />}
+            title="Subscription"
+            desc={
+              profile.plan === "TRIAL" && profile.trialEndsAt
+                ? `Plan: ${profile.plan} (trial ends ${new Date(
+                    profile.trialEndsAt
+                  ).toLocaleDateString()})`
+                : `Plan: ${profile.plan}`
+            }
+          />
+        </Link>
       </div>
     </main>
   );
