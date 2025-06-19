@@ -54,7 +54,27 @@ export class AuthService {
     });
     return { token, name: user.name, plan: user.plan };
   }
+
   async deleteAccount(userId: string): Promise<void> {
+    const events = await this.prisma.event.findMany({
+      where: { creatorId: userId },
+      select: { id: true },
+    });
+
+    const eventIds = events.map((e) => e.id);
+
+    await this.prisma.guest.deleteMany({
+      where: { eventId: { in: eventIds } },
+    });
+
+    await this.prisma.option.deleteMany({
+      where: { eventId: { in: eventIds } },
+    });
+
+    await this.prisma.event.deleteMany({
+      where: { id: { in: eventIds } },
+    });
+
     await this.prisma.user.delete({
       where: { id: userId },
     });
