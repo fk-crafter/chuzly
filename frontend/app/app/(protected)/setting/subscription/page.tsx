@@ -26,46 +26,22 @@ export default function SubscriptionPage() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => {
+      .then((data) =>
         setProfile({
           plan: data.plan,
           trialEndsAt: data.trialEndsAt,
           createdAt: data.createdAt,
-        });
-      })
-      .catch(() => {
-        toast.error("Failed to load subscription data");
-      });
+        })
+      )
+      .catch(() => toast.error("Failed to load subscription data"));
   }, [router]);
 
-  const handleManagePlan = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/billing/create-checkout-session`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        toast.error("Could not retrieve Stripe session URL");
-      }
-    } catch (err) {
-      toast.error("Failed to redirect to Stripe");
-    }
+  const handleChoosePlan = () => {
+    router.push("/app/setting/choose-plan");
   };
 
   if (!profile) {
-    return <p className="text-center mt-20">Loading subscription...</p>;
+    return <p className="text-center mt-20">Loading subscription…</p>;
   }
 
   return (
@@ -77,8 +53,7 @@ export default function SubscriptionPage() {
           <CardTitle>Your Plan</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-base">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Current Plan</span>
+          <Row label="Current Plan">
             <Badge
               className={
                 profile.plan === "PRO"
@@ -88,33 +63,40 @@ export default function SubscriptionPage() {
             >
               {profile.plan}
             </Badge>
-          </div>
+          </Row>
 
           {profile.plan === "TRIAL" && profile.trialEndsAt && (
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Trial ends on</span>
-              <span className="font-medium">
-                {new Date(profile.trialEndsAt).toLocaleDateString()}
-              </span>
-            </div>
+            <Row label="Trial ends on">
+              {new Date(profile.trialEndsAt).toLocaleDateString()}
+            </Row>
           )}
 
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Account created on</span>
-            <span className="font-medium">
-              {new Date(profile.createdAt).toLocaleDateString()}
-            </span>
-          </div>
+          <Row label="Account created on">
+            {new Date(profile.createdAt).toLocaleDateString()}
+          </Row>
 
           <div className="pt-4">
-            <Button onClick={handleManagePlan} className="w-full md:w-fit">
-              {profile.plan === "PRO"
-                ? "Manage subscription"
-                : "Upgrade to PRO"}
+            <Button onClick={handleChoosePlan} className="w-full md:w-fit">
+              {profile.plan === "PRO" ? "Change plan" : "Upgrade to PRO"}
             </Button>
           </div>
         </CardContent>
       </Card>
     </main>
+  );
+}
+
+function Row({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="font-medium">{children}</span>
+    </div>
   );
 }
