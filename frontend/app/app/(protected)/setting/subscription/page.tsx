@@ -38,13 +38,35 @@ export default function SubscriptionPage() {
       });
   }, [router]);
 
+  const handleManagePlan = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/billing/create-checkout-session`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        toast.error("Could not retrieve Stripe session URL");
+      }
+    } catch (err) {
+      toast.error("Failed to redirect to Stripe");
+    }
+  };
+
   if (!profile) {
     return <p className="text-center mt-20">Loading subscription...</p>;
   }
-
-  const handleManagePlan = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/billing/portal`;
-  };
 
   return (
     <main className="max-w-2xl mx-auto px-6 py-12 space-y-8">
