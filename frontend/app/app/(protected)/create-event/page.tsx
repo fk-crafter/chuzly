@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { PartyPopper } from "lucide-react";
+import { PartyPopper, Trash, Plus } from "lucide-react";
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -43,14 +43,11 @@ export default function CreateEventPage() {
   const addOption = () =>
     setOptions([...options, { name: "", price: "", datetime: "" }]);
   const addGuest = () => setGuests([...guests, ""]);
-
-  const removeOption = (index: number) => {
+  const removeOption = (index: number) =>
     setOptions((prev) => prev.filter((_, i) => i !== index));
-  };
 
   const handleSubmit = async () => {
     const body = { eventName, votingDeadline, options, guests };
-
     const tryCreate = async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
         method: "POST",
@@ -91,31 +88,32 @@ export default function CreateEventPage() {
     return <p className="text-center mt-20">Checking authentication...</p>;
 
   return (
-    <main className="max-w-xl mx-auto px-4 py-16 space-y-8">
-      <h1 className="text-3xl font-bold text-center mb-8 flex items-center justify-center gap-2">
+    <main className="max-w-3xl mx-auto px-4 py-16 space-y-10">
+      <h1 className="text-3xl font-bold text-center mb-6 flex items-center justify-center gap-2">
         <PartyPopper className="w-8 h-8 text-primary" />
         Create a new event
       </h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>Event details</CardTitle>
+          <CardTitle>Event Details</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label className="mb-2 block">Event name</Label>
               <Input
+                className="w-full max-w-sm"
                 placeholder="Saturday plans"
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
               />
             </div>
-
             <div>
               <Label className="mb-2 block">Voting deadline</Label>
               <Input
                 type="datetime-local"
+                className="w-full max-w-sm"
                 value={votingDeadline}
                 onChange={(e) => setVotingDeadline(e.target.value)}
               />
@@ -132,45 +130,57 @@ export default function CreateEventPage() {
           {options.map((opt, i) => (
             <div
               key={i}
-              className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center"
+              className="border p-4 rounded-lg bg-muted grid md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end"
             >
-              <Input
-                placeholder="Name"
-                value={opt.name}
-                onChange={(e) => handleOptionChange(i, "name", e.target.value)}
-              />
-              <Input
-                placeholder="Price"
-                value={opt.price}
-                type="number"
-                onChange={(e) => handleOptionChange(i, "price", e.target.value)}
-              />
-              <Input
-                placeholder="Date & time"
-                type="datetime-local"
-                value={opt.datetime}
-                onChange={(e) =>
-                  handleOptionChange(i, "datetime", e.target.value)
-                }
-                className="min-w-[12rem]"
-              />
-              {i > 0 ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeOption(i)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  ✕
-                </Button>
-              ) : (
-                <div className="w-10" />
-              )}
+              <div className="flex-1 w-full">
+                <Label>Name</Label>
+                <Input
+                  placeholder="Ex: Pizza night"
+                  value={opt.name}
+                  onChange={(e) =>
+                    handleOptionChange(i, "name", e.target.value)
+                  }
+                />
+              </div>
+              <div className="flex-1 w-full">
+                <Label>Price</Label>
+                <Input
+                  placeholder="Ex: 20"
+                  type="number"
+                  value={opt.price}
+                  onChange={(e) =>
+                    handleOptionChange(i, "price", e.target.value)
+                  }
+                />
+              </div>
+              <div className="flex-1 w-full">
+                <Label>Date & Time</Label>
+                <Input
+                  type="datetime-local"
+                  value={opt.datetime}
+                  onChange={(e) =>
+                    handleOptionChange(i, "datetime", e.target.value)
+                  }
+                />
+              </div>
+              <div className="flex items-end h-full">
+                {i > 0 ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeOption(i)}
+                    className="self-center"
+                  >
+                    <Trash className="w-4 h-4 mt-3 text-red-500" />
+                  </Button>
+                ) : (
+                  <div className="w-10" />
+                )}
+              </div>
             </div>
           ))}
-          <Button type="button" variant="outline" onClick={addOption}>
-            + Add option
+          <Button variant="outline" onClick={addOption} className="w-fit">
+            <Plus className="w-4 h-4 mr-2" /> Add option
           </Button>
         </CardContent>
       </Card>
@@ -180,16 +190,18 @@ export default function CreateEventPage() {
           <CardTitle>Guests</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {guests.map((g, i) => (
-            <Input
-              key={i}
-              placeholder="Nickname"
-              value={g}
-              onChange={(e) => handleGuestChange(i, e.target.value)}
-            />
-          ))}
-          <Button type="button" variant="outline" onClick={addGuest}>
-            + Add guest
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {guests.map((g, i) => (
+              <Input
+                key={i}
+                placeholder="Nickname"
+                value={g}
+                onChange={(e) => handleGuestChange(i, e.target.value)}
+              />
+            ))}
+          </div>
+          <Button variant="outline" onClick={addGuest} className="w-fit">
+            <Plus className="w-4 h-4 mr-2" /> Add guest
           </Button>
         </CardContent>
       </Card>
