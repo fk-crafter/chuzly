@@ -51,7 +51,7 @@ export default function ChoosePlanPage() {
 
         <PlanCard
           title="Pro Plan"
-          features={["Unlimited events", "Access to chat"]}
+          features={["Unlimited events/month", "Access to chat"]}
           price="$9.99 / month"
           current={profile.plan === "PRO"}
           onSelect={() => handleSelectPlan("PRO")}
