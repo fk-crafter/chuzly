@@ -64,8 +64,8 @@ export default function AppHeader() {
     router.push("/lougiin");
   };
 
-  const handleGoToProfile = () => {
-    router.push("/app/profile");
+  const handleGoToSetting = () => {
+    router.push("/app/setting");
   };
 
   return (
@@ -77,7 +77,7 @@ export default function AppHeader() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-3 text-sm">
-              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center uppercase font-medium text-xs">
+              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center uppercase font-semibold text-sm">
                 {userName
                   ?.split(" ")
                   .map((n) => n[0])
@@ -93,9 +93,9 @@ export default function AppHeader() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleGoToProfile}>
+            <DropdownMenuItem onClick={handleGoToSetting}>
               <User className="mr-2 h-4 w-4" />
-              Profile
+              Account settings
             </DropdownMenuItem>
 
             {typeof window !== "undefined" &&
