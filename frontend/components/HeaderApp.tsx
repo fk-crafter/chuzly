@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, ShieldCheck, LogOut } from "lucide-react";
+import { User, ShieldCheck, LogOut, ChevronDown } from "lucide-react";
 
 export default function AppHeader() {
   const router = useRouter();
@@ -89,6 +89,7 @@ export default function AppHeader() {
                   PRO
                 </Badge>
               )}
+              <ChevronDown className="w-4 h-4 opacity-60" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
