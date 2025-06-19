@@ -76,8 +76,14 @@ export default function AppHeader() {
       {userName && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-2 text-sm">
-              {userName}
+            <Button variant="ghost" className="flex items-center gap-3 text-sm">
+              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center uppercase font-medium text-xs">
+                {userName
+                  ?.split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .slice(0, 2)}
+              </div>
               {userPlan === "PRO" && (
                 <Badge className="bg-yellow-400 text-black" variant="secondary">
                   PRO
