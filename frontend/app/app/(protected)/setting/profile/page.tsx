@@ -6,10 +6,21 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [confirmText, setConfirmText] = useState("");
   const [profile, setProfile] = useState<{
     name: string;
     email: string;
@@ -36,6 +47,27 @@ export default function ProfileSettingsPage() {
         setLoading(false);
       });
   }, [router]);
+
+  const deleteAccount = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/delete`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!res.ok) throw new Error();
+
+      localStorage.clear();
+      router.push("/lougiin");
+    } catch {
+      console.error("Account deletion failed");
+    }
+  };
 
   if (loading)
     return (
@@ -101,6 +133,37 @@ export default function ProfileSettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Account deletion section */}
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="destructive">Delete my account</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete account</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. Type <strong>DELETE</strong> to
+              confirm.
+            </AlertDialogDescription>
+            <Input
+              placeholder="Type DELETE"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
+            />
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button
+              variant="destructive"
+              disabled={confirmText !== "DELETE"}
+              onClick={deleteAccount}
+            >
+              Confirm
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }
