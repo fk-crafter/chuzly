@@ -29,20 +29,22 @@ export default function ChoosePlanPage() {
   }, [router]);
 
   const handleSelectPlan = async (plan: "FREE" | "PRO") => {
-    if (plan === "FREE") {
-      toast.info("Free plan is active by default.");
-      return;
-    }
-
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("You must be logged in.");
       return;
     }
 
-    try {
-      console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+    if (plan === "FREE") {
+      if (profile?.plan === "FREE") {
+        toast.info("Free plan is already active.");
+      } else if (profile?.plan === "PRO") {
+        toast.info("You will be downgraded at the end of your billing period.");
+      }
+      return;
+    }
 
+    try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/stripe/checkout-session`,
         {
