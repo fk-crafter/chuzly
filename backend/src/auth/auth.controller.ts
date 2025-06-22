@@ -51,6 +51,7 @@ export class AuthController {
         trialEndsAt: true,
         isAdmin: true,
         cancelAt: true,
+        createdAt: true,
       },
     });
 
