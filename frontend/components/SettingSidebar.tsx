@@ -1,3 +1,4 @@
+// app/components/SettingSidebar.tsx
 "use client";
 
 import { usePathname } from "next/navigation";
@@ -5,43 +6,40 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Home, Plus } from "lucide-react";
+import { CreditCard, ListOrdered, UserCog } from "lucide-react";
 
-import SidebarAdmin from "./SidebarAdmin";
-import SettingSidebar from "./SettingSidebar";
-
-const userNavItems = [
+const settingNav = [
   {
-    href: "/app/create-event",
-    label: "Create Event",
-    icon: Plus,
+    href: "/app/setting/subscription",
+    label: "Subscription",
+    icon: CreditCard,
   },
   {
-    href: "/app/event-list",
-    label: "My Events",
-    icon: Home,
+    href: "/app/setting/choose-plan",
+    label: "Choose Plan",
+    icon: ListOrdered,
   },
+  {
+    href: "/app/setting/profile",
+    label: "Profile",
+    icon: UserCog,
+  },
+  // ajoute d’autres liens si nécessaire
 ];
 
-export default function Sidebar() {
+export default function SettingSidebar() {
   const pathname = usePathname();
-
-  const isAdminPage = pathname.startsWith("/app/admin");
-  const isSettingPage = pathname.startsWith("/app/setting");
-
-  if (isAdminPage) return <SidebarAdmin />;
-  if (isSettingPage) return <SettingSidebar />;
 
   return (
     <aside className="w-64 bg-white dark:bg-zinc-900 border-r h-screen flex flex-col">
       <div className="p-6 border-b">
-        <h1 className="text-lg font-semibold tracking-tight">Event App</h1>
-        <p className="text-xs text-muted-foreground">Plan. Vote. Share.</p>
+        <h2 className="text-lg font-semibold tracking-tight">Settings</h2>
+        <p className="text-xs text-muted-foreground">Manage your account</p>
       </div>
 
       <ScrollArea className="flex-1">
         <nav className="px-4 py-6 space-y-2">
-          {userNavItems.map(({ href, label, icon: Icon }) => (
+          {settingNav.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
