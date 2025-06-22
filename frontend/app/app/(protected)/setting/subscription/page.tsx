@@ -69,31 +69,35 @@ export default function SubscriptionPage() {
   };
 
   if (!profile) {
-    return <p className="text-center mt-20">Loading subscription…</p>;
+    return (
+      <p className="text-center mt-20 text-muted-foreground">
+        Loading subscription…
+      </p>
+    );
   }
 
   return (
-    <main className="max-w-2xl mx-auto px-6 py-12 space-y-8">
-      <h1 className="text-3xl font-bold text-center">Subscription</h1>
+    <main className="max-w-xl mx-auto px-6 py-12 space-y-8">
+      <h1 className="text-3xl font-bold text-center">Your Subscription</h1>
 
-      <Card>
+      <Card className="shadow-md rounded-2xl">
         <CardHeader>
-          <CardTitle>Your Plan</CardTitle>
+          <CardTitle className="text-xl font-semibold">Plan Overview</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 text-base">
+        <CardContent className="space-y-4">
           <Row label="Current Plan">
             <Badge
               className={
                 profile.plan === "PRO"
-                  ? "bg-yellow-400 text-black"
-                  : "bg-green-200 text-green-800"
+                  ? "bg-yellow-300 text-black"
+                  : "bg-muted text-foreground"
               }
             >
               {profile.plan}
             </Badge>
           </Row>
 
-          {profile.plan === "TRIAL" && profile.trialEndsAt && (
+          {profile.trialEndsAt && profile.plan === "TRIAL" && (
             <Row label="Trial ends on">
               {new Date(profile.trialEndsAt).toLocaleDateString()}
             </Row>
@@ -109,16 +113,16 @@ export default function SubscriptionPage() {
             </Row>
           )}
 
-          <div className="pt-4 flex gap-4 flex-wrap">
-            <Button onClick={handleChoosePlan} className="w-full md:w-fit">
-              {profile.plan === "PRO" ? "Change plan" : "Upgrade to PRO"}
+          <div className="pt-6 flex flex-col sm:flex-row gap-4">
+            <Button onClick={handleChoosePlan} className="w-full sm:w-auto">
+              {profile.plan === "PRO" ? "Change Plan" : "Upgrade to PRO"}
             </Button>
 
             {profile.plan === "PRO" && !profile.cancelAt && (
               <Button
                 onClick={handleCancel}
                 variant="outline"
-                className="w-full md:w-fit"
+                className="w-full sm:w-auto"
               >
                 Cancel subscription
               </Button>
@@ -138,7 +142,7 @@ function Row({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between border-b py-3 text-sm">
       <span className="text-muted-foreground">{label}</span>
       <span className="font-medium">{children}</span>
     </div>
