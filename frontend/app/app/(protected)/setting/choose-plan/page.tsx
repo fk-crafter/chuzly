@@ -45,14 +45,17 @@ export default function ChoosePlanPage() {
         toast.info("Free plan is already active.");
       } else if (profile?.cancelAt) {
         toast.info(
-          `You are already scheduled to switch to Free on ${new Date(
+          `You're already scheduled to switch to Free on ${new Date(
             profile.cancelAt
           ).toLocaleDateString()}.`
         );
       } else {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/stripe/cancel-subscription`,
-          { method: "PATCH", headers: { Authorization: `Bearer ${token}` } }
+          {
+            method: "PATCH",
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         const data = await res.json();
         toast.success(
@@ -68,8 +71,12 @@ export default function ChoosePlanPage() {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/stripe/checkout-session`,
-        { method: "POST", headers: { Authorization: `Bearer ${token}` } }
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
+
       const data = await res.json();
       if (res.ok && data.url) {
         window.location.href = data.url;
@@ -89,7 +96,10 @@ export default function ChoosePlanPage() {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/stripe/portal-session`,
-        { method: "POST", headers: { Authorization: `Bearer ${token}` } }
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = await res.json();
       window.location.href = data.url;
@@ -104,12 +114,16 @@ export default function ChoosePlanPage() {
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-12 space-y-8">
-      <h1 className="text-3xl font-bold text-center">Choose your plan</h1>
+      <h1 className="text-3xl font-bold text-center">Choose Your Plan</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PlanCard
           title="Free Plan"
-          features={["Create 2 events/month", "Invite guests"]}
+          features={[
+            "Create up to 2 events per month",
+            "Invite guests via email",
+            "Basic notifications",
+          ]}
           price="$0 / month"
           current={profile.plan === "FREE"}
           disabled={!!profile.cancelAt}
@@ -125,14 +139,22 @@ export default function ChoosePlanPage() {
 
         <PlanCard
           title="Pro Plan"
-          features={["Unlimited events/month", "Access to chat"]}
+          features={[
+            "Unlimited events per month",
+            "Access to group chat",
+            "Priority support",
+          ]}
           price="$9.99 / month"
           current={profile.plan === "PRO"}
           onSelect={() => handleSelectPlan("PRO")}
         >
           {profile.plan === "PRO" && (
-            <Button variant="link" className="w-full mt-1" onClick={openPortal}>
-              Manage subscription
+            <Button
+              variant="link"
+              className="w-full mt-1 text-center text-sm text-muted-foreground"
+              onClick={openPortal}
+            >
+              Manage your subscription
             </Button>
           )}
         </PlanCard>
@@ -161,9 +183,9 @@ function PlanCard({
   children?: React.ReactNode;
 }) {
   return (
-    <Card>
+    <Card className="rounded-2xl shadow-sm border">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="text-xl font-semibold">{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         {features.map((f) => (
