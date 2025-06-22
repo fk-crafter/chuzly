@@ -50,6 +50,7 @@ export class AuthController {
         plan: true,
         trialEndsAt: true,
         isAdmin: true,
+        cancelAt: true,
       },
     });
 

@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { CheckCircle } from "lucide-react";
 
-type Profile = { plan: "FREE" | "TRIAL" | "PRO" };
+type Profile = {
+  plan: "FREE" | "TRIAL" | "PRO";
+  cancelAt?: string | null;
+};
 
 export default function ChoosePlanPage() {
   const router = useRouter();
@@ -24,7 +27,9 @@ export default function ChoosePlanPage() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())
-      .then((data) => setProfile({ plan: data.plan }))
+      .then((data) =>
+        setProfile({ plan: data.plan, cancelAt: data.cancelAt ?? null })
+      )
       .catch(() => toast.error("Unable to load current plan"));
   }, [router]);
 
@@ -38,8 +43,27 @@ export default function ChoosePlanPage() {
     if (plan === "FREE") {
       if (profile?.plan === "FREE") {
         toast.info("Free plan is already active.");
-      } else if (profile?.plan === "PRO") {
-        toast.info("You will be downgraded at the end of your billing period.");
+      } else if (profile?.cancelAt) {
+        toast.info(
+          `You are already scheduled to switch to Free on ${new Date(
+            profile.cancelAt
+          ).toLocaleDateString()}.`
+        );
+      } else {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/stripe/cancel-subscription`,
+          {
+            method: "PATCH",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const data = await res.json();
+        toast.success(
+          `Your plan will switch to Free on ${new Date(
+            data.cancelAt
+          ).toLocaleDateString()}.`
+        );
+        setProfile((p) => (p ? { ...p, cancelAt: data.cancelAt } : p));
       }
       return;
     }
@@ -81,6 +105,14 @@ export default function ChoosePlanPage() {
           price="$0 / month"
           current={profile.plan === "FREE"}
           onSelect={() => handleSelectPlan("FREE")}
+          disabled={!!profile.cancelAt}
+          message={
+            profile.cancelAt
+              ? `You will be switched to Free on ${new Date(
+                  profile.cancelAt
+                ).toLocaleDateString()}`
+              : null
+          }
         />
 
         <PlanCard
@@ -101,12 +133,16 @@ function PlanCard({
   price,
   current,
   onSelect,
+  disabled = false,
+  message,
 }: {
   title: string;
   features: string[];
   price: string;
   current: boolean;
   onSelect: () => void;
+  disabled?: boolean;
+  message?: string | null;
 }) {
   return (
     <Card>
@@ -122,10 +158,15 @@ function PlanCard({
           className="w-full mt-4"
           variant={current ? "secondary" : "outline"}
           onClick={onSelect}
-          disabled={current}
+          disabled={current || disabled}
         >
           {current ? "Current plan" : "Select this plan"}
         </Button>
+        {message && (
+          <p className="text-xs text-muted-foreground text-center mt-1">
+            {message}
+          </p>
+        )}
       </CardContent>
     </Card>
   );

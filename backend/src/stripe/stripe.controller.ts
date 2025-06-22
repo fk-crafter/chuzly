@@ -6,6 +6,7 @@ import {
   Headers,
   UseGuards,
   BadRequestException,
+  Patch,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
@@ -84,7 +85,6 @@ export class StripeController {
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
-
       const subscriptionId = session.subscription as string;
       const customerId = session.customer as string;
       const userId = session.metadata?.userId;
@@ -100,12 +100,69 @@ export class StripeController {
           stripeCustomerId: customerId,
           stripeSubId: subscriptionId,
           plan: 'PRO',
+          cancelAt: null,
         },
       });
 
-      console.log(`User ${userId} successfully upgraded to PRO`);
+      console.log(`✅ User ${userId} successfully upgraded to PRO`);
+    } else if (
+      event.type === 'customer.subscription.deleted' ||
+      (event.type === 'customer.subscription.updated' &&
+        event.data.object.status === 'canceled')
+    ) {
+      const sub = event.data.object;
+      const customerId = sub.customer as string;
+
+      const user = await this.prisma.user.findFirst({
+        where: { stripeCustomerId: customerId },
+        select: { id: true },
+      });
+
+      if (!user) {
+        console.warn('Stripe customer not linked to any user');
+        return res.json({ received: true });
+      }
+
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          plan: 'FREE',
+          stripeSubId: null,
+          cancelAt: null,
+        },
+      });
+
+      console.log(`✅ User ${user.id} downgraded to FREE (subscription ended)`);
     }
 
     return res.json({ received: true });
+  }
+
+  @Patch('cancel-subscription')
+  @UseGuards(AuthGuard('jwt'))
+  async cancelSubscription(@Req() req: RequestWithUser) {
+    const userId = req.user.userId;
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user?.stripeSubId) {
+      throw new BadRequestException('No active subscription found');
+    }
+
+    const stripe = this.stripeService.getRawStripeInstance();
+    const subscription = await stripe.subscriptions.update(user.stripeSubId, {
+      cancel_at_period_end: true,
+    });
+
+    const cancelDate = new Date((subscription.cancel_at as number) * 1000);
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { cancelAt: cancelDate },
+    });
+
+    return { cancelAt: cancelDate };
   }
 }
