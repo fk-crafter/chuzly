@@ -13,6 +13,7 @@ export default function SubscriptionPage() {
     plan: string;
     trialEndsAt?: string | null;
     createdAt: string;
+    cancelAt?: string | null;
   } | null>(null);
 
   useEffect(() => {
@@ -31,6 +32,7 @@ export default function SubscriptionPage() {
           plan: data.plan,
           trialEndsAt: data.trialEndsAt,
           createdAt: data.createdAt,
+          cancelAt: data.cancelAt ?? null,
         })
       )
       .catch(() => toast.error("Failed to load subscription data"));
@@ -38,6 +40,32 @@ export default function SubscriptionPage() {
 
   const handleChoosePlan = () => {
     router.push("/app/setting/choose-plan");
+  };
+
+  const handleCancel = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stripe/cancel-subscription`,
+        {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+
+      setProfile((p) => (p ? { ...p, cancelAt: data.cancelAt } : p));
+
+      toast.success(
+        `Your subscription will end on ${new Date(
+          data.cancelAt
+        ).toLocaleDateString()}`
+      );
+    } catch (err) {
+      toast.error("Failed to cancel subscription");
+    }
   };
 
   if (!profile) {
@@ -75,10 +103,26 @@ export default function SubscriptionPage() {
             {new Date(profile.createdAt).toLocaleDateString()}
           </Row>
 
-          <div className="pt-4">
+          {profile.cancelAt && (
+            <Row label="Subscription ends on">
+              {new Date(profile.cancelAt).toLocaleDateString()}
+            </Row>
+          )}
+
+          <div className="pt-4 flex gap-4 flex-wrap">
             <Button onClick={handleChoosePlan} className="w-full md:w-fit">
               {profile.plan === "PRO" ? "Change plan" : "Upgrade to PRO"}
             </Button>
+
+            {profile.plan === "PRO" && !profile.cancelAt && (
+              <Button
+                onClick={handleCancel}
+                variant="outline"
+                className="w-full md:w-fit"
+              >
+                Cancel subscription
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
