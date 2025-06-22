@@ -52,10 +52,7 @@ export default function ChoosePlanPage() {
       } else {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/stripe/cancel-subscription`,
-          {
-            method: "PATCH",
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { method: "PATCH", headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.json();
         toast.success(
@@ -71,14 +68,9 @@ export default function ChoosePlanPage() {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/stripe/checkout-session`,
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { method: "POST", headers: { Authorization: `Bearer ${token}` } }
       );
-
       const data = await res.json();
-
       if (res.ok && data.url) {
         window.location.href = data.url;
       } else {
@@ -87,6 +79,22 @@ export default function ChoosePlanPage() {
     } catch (err) {
       console.error("Checkout error:", err);
       toast.error("Failed to start checkout session");
+    }
+  };
+
+  const openPortal = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stripe/portal-session`,
+        { method: "POST", headers: { Authorization: `Bearer ${token}` } }
+      );
+      const data = await res.json();
+      window.location.href = data.url;
+    } catch {
+      toast.error("Unable to open Stripe portal");
     }
   };
 
@@ -104,15 +112,15 @@ export default function ChoosePlanPage() {
           features={["Create 2 events/month", "Invite guests"]}
           price="$0 / month"
           current={profile.plan === "FREE"}
-          onSelect={() => handleSelectPlan("FREE")}
           disabled={!!profile.cancelAt}
           message={
             profile.cancelAt
               ? `You will be switched to Free on ${new Date(
-                  profile.cancelAt
+                  profile.cancelAt!
                 ).toLocaleDateString()}`
               : null
           }
+          onSelect={() => handleSelectPlan("FREE")}
         />
 
         <PlanCard
@@ -121,7 +129,13 @@ export default function ChoosePlanPage() {
           price="$9.99 / month"
           current={profile.plan === "PRO"}
           onSelect={() => handleSelectPlan("PRO")}
-        />
+        >
+          {profile.plan === "PRO" && (
+            <Button variant="link" className="w-full mt-1" onClick={openPortal}>
+              Manage subscription
+            </Button>
+          )}
+        </PlanCard>
       </div>
     </main>
   );
@@ -135,6 +149,7 @@ function PlanCard({
   onSelect,
   disabled = false,
   message,
+  children,
 }: {
   title: string;
   features: string[];
@@ -143,6 +158,7 @@ function PlanCard({
   onSelect: () => void;
   disabled?: boolean;
   message?: string | null;
+  children?: React.ReactNode;
 }) {
   return (
     <Card>
@@ -154,6 +170,7 @@ function PlanCard({
           <Feature key={f} label={f} />
         ))}
         <p className="font-bold text-lg mt-4">{price}</p>
+
         <Button
           className="w-full mt-4"
           variant={current ? "secondary" : "outline"}
@@ -162,11 +179,14 @@ function PlanCard({
         >
           {current ? "Current plan" : "Select this plan"}
         </Button>
+
         {message && (
           <p className="text-xs text-muted-foreground text-center mt-1">
             {message}
           </p>
         )}
+
+        {children}
       </CardContent>
     </Card>
   );
