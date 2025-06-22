@@ -61,6 +61,8 @@ model User {
   stripeCustomerId String?
   stripeSubId      String?
 
+  cancelAt         DateTime? 
+
   events           Event[]  @relation("UserEvents")
   isAdmin          Boolean  @default(false)
 }
