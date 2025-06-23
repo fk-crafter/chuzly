@@ -7,84 +7,66 @@ import { addDays } from 'date-fns';
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
-    private jwt: JwtService,
+    private readonly prisma: PrismaService,
+    private readonly jwt: JwtService,
   ) {}
 
-  async register(data: { email: string; password: string; name: string }) {
-    const hashed: string = await bcrypt.hash(data.password, 10);
-    const trialEndsAt: Date = addDays(new Date(), 7);
+  async register(dto: { email: string; password: string; name: string }) {
+    const hash = await bcrypt.hash(dto.password, 10);
 
-    const user = await this.prisma.user.create({
+    await this.prisma.user.create({
       data: {
-        email: data.email,
-        password: hashed,
-        name: data.name,
+        email: dto.email,
+        password: hash,
+        name: dto.name,
         plan: 'TRIAL',
-        trialEndsAt,
+        trialEndsAt: addDays(new Date(), 7),
+        emailVerified: false,
       },
     });
 
-    const token = this.jwt.sign({
-      userId: user.id,
-      name: user.name,
-      plan: user.plan,
-    });
-    return { token, name: user.name, plan: user.plan };
+    return { message: 'user_created' };
   }
 
-  async login(data: { email: string; password: string }) {
+  async login(dto: { email: string; password: string }) {
     const user = await this.prisma.user.findUnique({
-      where: { email: data.email },
+      where: { email: dto.email },
     });
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+    if (!user || !user.emailVerified) {
+      throw new UnauthorizedException(
+        'Invalid credentials / email not verified',
+      );
     }
 
-    const isMatch = await bcrypt.compare(data.password, user.password);
-    if (!isMatch) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    const ok = await bcrypt.compare(dto.password, user.password);
+    if (!ok) throw new UnauthorizedException('Invalid credentials');
 
-    const token = this.jwt.sign({
-      userId: user.id,
-      name: user.name,
-      plan: user.plan,
-    });
+    const token = this.jwt.sign(
+      { userId: user.id, name: user.name, plan: user.plan },
+      { expiresIn: '24h' },
+    );
     return { token, name: user.name, plan: user.plan };
   }
 
-  async deleteAccount(userId: string): Promise<void> {
-    const events = await this.prisma.event.findMany({
-      where: { creatorId: userId },
-      select: { id: true },
-    });
-
-    const eventIds = events.map((e) => e.id);
-
-    await this.prisma.guest.deleteMany({
-      where: { eventId: { in: eventIds } },
-    });
-
-    await this.prisma.option.deleteMany({
-      where: { eventId: { in: eventIds } },
-    });
-
-    await this.prisma.event.deleteMany({
-      where: { id: { in: eventIds } },
-    });
-
-    await this.prisma.user.delete({
-      where: { id: userId },
-    });
-  }
-
-  generateMagicLinkToken(userId: string): string {
+  generateMagicLinkToken(userId: string) {
     return this.jwt.sign({ userId }, { expiresIn: '15m' });
   }
-
-  loginFromMagicLink(userId: string): string {
+  loginFromMagicLink(userId: string) {
     return this.jwt.sign({ userId }, { expiresIn: '24h' });
+  }
+
+  async deleteAccount(userId: string) {
+    const ids = (
+      await this.prisma.event.findMany({
+        where: { creatorId: userId },
+        select: { id: true },
+      })
+    ).map((e) => e.id);
+
+    await this.prisma.guest.deleteMany({ where: { eventId: { in: ids } } });
+    await this.prisma.option.deleteMany({ where: { eventId: { in: ids } } });
+    await this.prisma.event.deleteMany({ where: { id: { in: ids } } });
+    await this.prisma.user.delete({ where: { id: userId } });
   }
 }

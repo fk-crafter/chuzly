@@ -20,141 +20,119 @@ import { z } from "zod";
 const passwordSchema = z
   .string()
   .min(12, "Minimum 12 characters")
-  .regex(/[A-Z]/, "At least one uppercase letter")
-  .regex(/[a-z]/, "At least one lowercase letter")
-  .regex(/[0-9]/, "At least one number")
-  .regex(/[^A-Za-z0-9]/, "At least one special character");
+  .regex(/[A-Z]/, "1 uppercase")
+  .regex(/[a-z]/, "1 lowercase")
+  .regex(/[0-9]/, "1 number")
+  .regex(/[^A-Za-z0-9]/, "1 special");
 
-function PasswordRule({ valid, text }: { valid: boolean; text: string }) {
-  const Icon = valid ? CheckCircle : XCircle;
+function Rule({ ok, text }: { ok: boolean; text: string }) {
+  const Icon = ok ? CheckCircle : XCircle;
   return (
-    <div
+    <p
       className={`flex items-center text-sm ${
-        valid ? "text-green-600" : "text-red-500"
+        ok ? "text-green-600" : "text-red-500"
       }`}
     >
-      <Icon className="w-4 h-4 mr-2" />
-      {text}
-    </div>
+      <Icon className="w-4 h-4 mr-2" /> {text}
+    </p>
   );
 }
 
 export function CreateAccountModal() {
-  const [formData, setFormData] = useState({
+  const [f, setF] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    confirm: "",
   });
-
-  const [passwordValidations, setPasswordValidations] = useState({
-    length: false,
-    uppercase: false,
-    lowercase: false,
-    number: false,
-    special: false,
+  const [valid, setValid] = useState({
+    len: false,
+    up: false,
+    low: false,
+    num: false,
+    spec: false,
   });
+  const [showP, setShowP] = useState(false);
+  const [showC, setShowC] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
 
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
-
-  const passwordsMatch =
-    formData.password.length > 0 &&
-    formData.confirmPassword.length > 0 &&
-    formData.password === formData.confirmPassword;
-
-  /* ------------------------------------------------------------------ */
-  /* Password live-checks                                               */
-  /* ------------------------------------------------------------------ */
   useEffect(() => {
-    const v = formData.password;
-    setPasswordValidations({
-      length: v.length >= 12,
-      uppercase: /[A-Z]/.test(v),
-      lowercase: /[a-z]/.test(v),
-      number: /[0-9]/.test(v),
-      special: /[^A-Za-z0-9]/.test(v),
+    const p = f.password;
+    setValid({
+      len: p.length >= 12,
+      up: /[A-Z]/.test(p),
+      low: /[a-z]/.test(p),
+      num: /[0-9]/.test(p),
+      spec: /[^A-Za-z0-9]/.test(p),
     });
-  }, [formData.password]);
+  }, [f.password]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setF({ ...f, [e.target.name]: e.target.value });
 
-  /* ------------------------------------------------------------------ */
-  /* Submit – register + magic-link                                     */
-  /* ------------------------------------------------------------------ */
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    /* 1. password checks (front only) */
-    if (!passwordsMatch) return alert("The passwords do not match.");
-    if (!Object.values(passwordValidations).every(Boolean))
-      return alert("The password does not meet all the rules.");
+    if (f.password !== f.confirm) return alert("Passwords do not match");
+    if (!Object.values(valid).every(Boolean))
+      return alert("Password not strong enough");
     try {
-      passwordSchema.parse(formData.password);
+      passwordSchema.parse(f.password);
     } catch (err: any) {
-      return alert(
-        "Invalid password: " + (err.errors?.[0]?.message ?? "Error")
-      );
+      return alert(err.message);
     }
 
-    setLoading(true);
+    setSending(true);
     try {
-      /* 2. create account */
-      const res = await fetch(
+      /* 1️⃣ registration */
+      const r1 = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-            name: formData.name,
+            email: f.email,
+            password: f.password,
+            name: f.name,
           }),
         }
       );
-      if (!res.ok) throw new Error(await res.text());
+      if (!r1.ok) throw new Error(await r1.text());
 
-      /* 3. send magic-link */
+      /* 2️⃣ magic-link */
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/send-magic-link`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email }),
+        body: JSON.stringify({ email: f.email }),
       });
 
-      setEmailSent(true);
-      /* on vide les mdp pour ne pas les garder en mémoire */
-      setFormData((p) => ({ ...p, password: "", confirmPassword: "" }));
+      setSent(true);
+      setF({ ...f, password: "", confirm: "" });
     } catch (err) {
       console.error(err);
-      alert("Error during registration / email sending.");
+      alert("Registration or email failed");
     } finally {
-      setLoading(false);
+      setSending(false);
     }
-  };
+  }
 
-  /* ------------------------------------------------------------------ */
-  /* UI                                                                 */
-  /* ------------------------------------------------------------------ */
+  const pwdMatch = f.password && f.confirm && f.password === f.confirm;
+
   return (
-    <div className="relative z-10 max-w-sm w-full bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6 pt-10 text-center space-y-4 border border-border">
-      {/* back */}
+    <div className="relative z-10 max-w-sm w-full bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6 pt-10 border">
       <Link
         href="/"
-        className="absolute top-4 left-4 flex items-center text-sm text-muted-foreground hover:text-foreground transition"
+        className="absolute top-4 left-4 flex items-center text-sm text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="w-4 h-4 mr-1" />
-        Back
+        <ArrowLeft className="w-4 h-4 mr-1" /> Back
       </Link>
 
-      <div className="text-2xl font-semibold">Create your account</div>
+      <h1 className="text-2xl font-semibold text-center">
+        Create your account
+      </h1>
 
-      {/* OAuth shortcuts */}
-      <div className="space-y-4">
+      {/* OAuth buttons */}
+      <div className="space-y-3 mt-5">
         <Link
           href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
           className="block"
@@ -163,11 +141,9 @@ export function CreateAccountModal() {
             variant="outline"
             className="w-full flex items-center justify-center"
           >
-            <FcGoogle className="text-xl" />
-            Continue with Google
+            <FcGoogle className="text-xl" /> Continue with Google
           </Button>
         </Link>
-
         <Link
           href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
           className="block"
@@ -176,37 +152,34 @@ export function CreateAccountModal() {
             variant="outline"
             className="w-full flex items-center justify-center"
           >
-            <FaGithub className="text-xl" />
-            Continue with GitHub
+            <FaGithub className="text-xl" /> Continue with GitHub
           </Button>
         </Link>
-
-        <div className="relative w-full">
+        <div className="relative">
           <Button
             variant="outline"
             disabled
-            className="w-full flex items-center justify-center opacity-50 cursor-not-allowed relative"
+            className="w-full flex items-center justify-center opacity-50"
           >
-            <FaApple className="text-xl" />
-            Continue with Apple
+            <FaApple className="text-xl" /> Continue with Apple
           </Button>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow">
-            COMING SOON
-          </div>
+          <span className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 bg-yellow-400 text-black px-2 py-0.5 rounded text-[10px] font-bold">
+            COMING&nbsp;SOON
+          </span>
         </div>
       </div>
 
-      {/* form */}
-      <form onSubmit={handleSubmit} className="space-y-4 text-left pt-4">
+      {/* Form */}
+      <form onSubmit={onSubmit} className="space-y-4 mt-6 text-left">
         <div>
           <Label htmlFor="name">Full Name</Label>
           <Input
             id="name"
             name="name"
-            placeholder="John Doe"
-            value={formData.name}
-            onChange={handleChange}
             required
+            placeholder="John Doe"
+            value={f.name}
+            onChange={onChange}
           />
         </div>
 
@@ -216,122 +189,105 @@ export function CreateAccountModal() {
             id="email"
             name="email"
             type="email"
-            placeholder="you@example.com"
-            value={formData.email}
-            onChange={handleChange}
             required
+            placeholder="you@example.com"
+            value={f.email}
+            onChange={onChange}
           />
         </div>
 
-        {/* password */}
-        <div className="relative">
+        <div>
           <Label htmlFor="password">Password</Label>
           <div className="relative">
             <Input
               id="password"
               name="password"
-              type={showPassword ? "text" : "password"}
-              value={formData.password}
-              onChange={handleChange}
+              type={showP ? "text" : "password"}
               required
+              value={f.password}
+              onChange={onChange}
             />
             <button
               type="button"
-              tabIndex={-1}
               className="absolute right-2 top-2"
-              onClick={() => setShowPassword((p) => !p)}
+              onClick={() => setShowP(!showP)}
+              tabIndex={-1}
             >
-              {showPassword ? (
+              {showP ? (
                 <EyeOff className="w-5 h-5" />
               ) : (
                 <Eye className="w-5 h-5" />
               )}
             </button>
           </div>
-          {/* helper tooltip */}
-          <div className="relative group mt-2">
-            <div className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer">
-              <Info className="w-4 h-4" /> Password rules
-            </div>
-            <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-zinc-800 p-3 rounded-md shadow-md mt-2 border space-y-1 w-64">
-              <PasswordRule
-                valid={passwordValidations.length}
-                text="Minimum 12 characters"
-              />
-              <PasswordRule
-                valid={passwordValidations.uppercase}
-                text="1 uppercase letter"
-              />
-              <PasswordRule
-                valid={passwordValidations.lowercase}
-                text="1 lowercase letter"
-              />
-              <PasswordRule
-                valid={passwordValidations.number}
-                text="1 number"
-              />
-              <PasswordRule
-                valid={passwordValidations.special}
-                text="1 special char"
-              />
+          {/* rules */}
+          <div className="relative group mt-1">
+            <span className="flex items-center gap-1 text-xs cursor-pointer text-muted-foreground">
+              <Info className="w-3 h-3" /> Password rules
+            </span>
+            <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-zinc-800 border p-3 rounded-md mt-1 w-64 space-y-1">
+              <Rule ok={valid.len} text="≥ 12 chars" />
+              <Rule ok={valid.up} text="1 upper-case" />
+              <Rule ok={valid.low} text="1 lower-case" />
+              <Rule ok={valid.num} text="1 number" />
+              <Rule ok={valid.spec} text="1 special char" />
             </div>
           </div>
         </div>
 
-        {/* confirm */}
-        <div className="relative">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            id="confirmPassword"
-            name="confirmPassword"
-            type={showConfirmPassword ? "text" : "password"}
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-          <button
-            type="button"
-            tabIndex={-1}
-            className="absolute right-2 top-2"
-            onClick={() => setShowConfirmPassword((p) => !p)}
-          >
-            {showConfirmPassword ? (
-              <EyeOff className="w-5 h-5" />
-            ) : (
-              <Eye className="w-5 h-5" />
-            )}
-          </button>
-          {formData.confirmPassword && (
-            <div
-              className={`flex items-center mt-1 text-sm ${
-                passwordsMatch ? "text-green-600" : "text-red-500"
+        <div>
+          <Label htmlFor="confirm">Confirm Password</Label>
+          <div className="relative">
+            <Input
+              id="confirm"
+              name="confirm"
+              type={showC ? "text" : "password"}
+              required
+              value={f.confirm}
+              onChange={onChange}
+            />
+            <button
+              type="button"
+              className="absolute right-2 top-2"
+              onClick={() => setShowC(!showC)}
+              tabIndex={-1}
+            >
+              {showC ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+          {f.confirm && (
+            <p
+              className={`flex items-center text-sm mt-1 ${
+                pwdMatch ? "text-green-600" : "text-red-500"
               }`}
             >
-              {passwordsMatch ? (
+              {pwdMatch ? (
                 <CheckCircle className="w-4 h-4 mr-1" />
               ) : (
                 <XCircle className="w-4 h-4 mr-1" />
               )}
-              {passwordsMatch ? "Password confirmed" : "Passwords do not match"}
-            </div>
+              {pwdMatch ? "Password confirmed" : "Passwords do not match"}
+            </p>
           )}
         </div>
 
-        {/* feedback if email sent */}
-        {emailSent && (
-          <p className="text-green-600 text-sm text-center">
-            A magic link has been sent to{" "}
-            <span className="font-medium">{formData.email}</span>. Check your
-            mailbox to activate your account.
+        {sent && (
+          <p className="text-sm text-center text-green-600">
+            Magic-link sent to <span className="font-medium">{f.email}</span>.
+            Check your inbox to activate your account.
           </p>
         )}
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Creating account…" : "Create Account"}
+        <Button type="submit" className="w-full" disabled={sending}>
+          {sending ? "Creating…" : "Create Account"}
         </Button>
       </form>
 
-      <p className="text-sm text-center text-muted-foreground">
+      <p className="text-sm text-center text-muted-foreground mt-4">
         Already have an account?{" "}
         <Link href="/lougiin" className="text-primary hover:underline">
           Login
