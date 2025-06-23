@@ -84,7 +84,6 @@ export function CreateAccountModal() {
 
     setSending(true);
     try {
-      /* 1️⃣ registration */
       const r1 = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
         {
@@ -99,7 +98,6 @@ export function CreateAccountModal() {
       );
       if (!r1.ok) throw new Error(await r1.text());
 
-      /* 2️⃣ magic-link */
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/send-magic-link`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -131,7 +129,6 @@ export function CreateAccountModal() {
         Create your account
       </h1>
 
-      {/* OAuth buttons */}
       <div className="space-y-3 mt-5">
         <Link
           href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
@@ -169,7 +166,6 @@ export function CreateAccountModal() {
         </div>
       </div>
 
-      {/* Form */}
       <form onSubmit={onSubmit} className="space-y-4 mt-6 text-left">
         <div>
           <Label htmlFor="name">Full Name</Label>
@@ -220,7 +216,6 @@ export function CreateAccountModal() {
               )}
             </button>
           </div>
-          {/* rules */}
           <div className="relative group mt-1">
             <span className="flex items-center gap-1 text-xs cursor-pointer text-muted-foreground">
               <Info className="w-3 h-3" /> Password rules

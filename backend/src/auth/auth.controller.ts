@@ -61,7 +61,8 @@ export class AuthController {
       return res.redirect(
         `${process.env.FRONT_URL}/auth/callback?token=${session}`,
       );
-    } catch {
+    } catch (err) {
+      console.error('Magic link error:', err);
       return res.status(400).send('Link invalid / expired');
     }
   }
