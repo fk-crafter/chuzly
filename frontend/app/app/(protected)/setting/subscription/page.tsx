@@ -76,6 +76,27 @@ export default function SubscriptionPage() {
     );
   }
 
+  const handleUndoCancel = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stripe/undo-cancel`,
+        {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+
+      setProfile((p) => (p ? { ...p, cancelAt: null } : p));
+      toast.success("Cancellation undone. Subscription remains active.");
+    } catch (err) {
+      toast.error("Failed to undo cancellation");
+    }
+  };
+
   return (
     <main className="max-w-xl mx-auto px-6 py-12 space-y-8">
       <h1 className="text-3xl font-bold text-center">Your Subscription</h1>
@@ -118,15 +139,24 @@ export default function SubscriptionPage() {
               {profile.plan === "PRO" ? "Change Plan" : "Upgrade to PRO"}
             </Button>
 
-            {profile.plan === "PRO" && !profile.cancelAt && (
-              <Button
-                onClick={handleCancel}
-                variant="outline"
-                className="w-full sm:w-auto"
-              >
-                Cancel subscription
-              </Button>
-            )}
+            {profile.plan === "PRO" &&
+              (profile.cancelAt ? (
+                <Button
+                  onClick={handleUndoCancel}
+                  variant="outline"
+                  className="w-full md:w-fit"
+                >
+                  Undo cancellation
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleCancel}
+                  variant="outline"
+                  className="w-full md:w-fit"
+                >
+                  Cancel subscription
+                </Button>
+              ))}
           </div>
         </CardContent>
       </Card>

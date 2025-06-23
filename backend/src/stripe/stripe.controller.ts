@@ -165,4 +165,31 @@ export class StripeController {
 
     return { cancelAt: cancelDate };
   }
+
+  @Patch('undo-cancel')
+  @UseGuards(AuthGuard('jwt'))
+  async undoCancel(@Req() req: RequestWithUser) {
+    const userId = req.user.userId;
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user?.stripeSubId) {
+      throw new BadRequestException('No active subscription found');
+    }
+
+    const stripe = this.stripeService.getRawStripeInstance();
+
+    await stripe.subscriptions.update(user.stripeSubId, {
+      cancel_at_period_end: false,
+    });
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { cancelAt: null },
+    });
+
+    return { cancelAt: null };
+  }
 }
