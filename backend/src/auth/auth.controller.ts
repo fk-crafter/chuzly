@@ -16,12 +16,16 @@ import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from '../prisma/prisma.service';
 import { RequestWithUser } from './types/request-user';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { ResendService } from 'src/resend/resend.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly prisma: PrismaService,
+    private readonly resendService: ResendService,
+    private readonly jwt: JwtService,
   ) {}
 
   @Post('register')
@@ -88,5 +92,41 @@ export class AuthController {
     const token = user.token;
 
     res.redirect(`${process.env.FRONT_URL}/auth/callback?token=${token}`);
+  }
+
+  @Post('send-magic-link')
+  async sendMagicLink(@Body('email') email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return { message: 'If this email exists, a magic link has been sent' };
+    }
+
+    const token = this.authService.generateMagicLinkToken(user.id);
+    const link = `${process.env.FRONT_URL}/auth/callback?token=${token}`;
+
+    console.log('📩 [send-magic-link] Sending magic link to:', email);
+
+    await this.resendService.sendMagicLink(email, link);
+    return { message: 'Magic link sent' };
+  }
+
+  @Get('magic-callback')
+  handleMagicCallback(@Req() req: Request, @Res() res: Response) {
+    const { token } = req.query;
+
+    if (typeof token !== 'string') {
+      return res.status(400).send('Invalid token');
+    }
+
+    try {
+      const decoded = this.jwt.verify<{ userId: string }>(token);
+      const newToken = this.authService.loginFromMagicLink(decoded.userId);
+
+      return res.redirect(
+        `${process.env.FRONT_URL}/auth/callback?token=${newToken}`,
+      );
+    } catch {
+      return res.status(401).send('Magic link expired or invalid');
+    }
   }
 }
