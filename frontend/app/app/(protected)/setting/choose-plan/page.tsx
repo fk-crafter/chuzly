@@ -151,7 +151,7 @@ export default function ChoosePlanPage() {
           {profile.plan === "PRO" && (
             <Button
               variant="link"
-              className="w-full mt-1 text-center text-sm text-muted-foreground"
+              className="w-full mt-1 cursor-pointer text-center text-sm text-muted-foreground"
               onClick={openPortal}
             >
               Manage your subscription
