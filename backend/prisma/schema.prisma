@@ -63,6 +63,8 @@ model User {
 
   cancelAt         DateTime? 
 
+  emailVerified    Boolean  @default(false)
+
   events           Event[]  @relation("UserEvents")
   isAdmin          Boolean  @default(false)
 }
