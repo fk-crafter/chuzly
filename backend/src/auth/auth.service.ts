@@ -79,4 +79,12 @@ export class AuthService {
       where: { id: userId },
     });
   }
+
+  generateMagicLinkToken(userId: string): string {
+    return this.jwt.sign({ userId }, { expiresIn: '15m' });
+  }
+
+  loginFromMagicLink(userId: string): string {
+    return this.jwt.sign({ userId }, { expiresIn: '24h' });
+  }
 }

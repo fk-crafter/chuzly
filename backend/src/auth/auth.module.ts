@@ -6,6 +6,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { GoogleStrategy } from './google.strategy';
 import { GithubStrategy } from './github.strategy';
+import { ResendModule } from '../resend/resend.module';
+import { ResendService } from 'src/resend/resend.service';
 
 @Module({
   imports: [
@@ -14,8 +16,15 @@ import { GithubStrategy } from './github.strategy';
       secret: process.env.JWT_SECRET || 'default_secret',
       signOptions: { expiresIn: '1d' },
     }),
+    ResendModule,
   ],
-  providers: [AuthService, JwtStrategy, GoogleStrategy, GithubStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    GoogleStrategy,
+    GithubStrategy,
+    ResendService,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

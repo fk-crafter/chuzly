@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, ShieldCheck, LogOut, ChevronDown } from "lucide-react";
+import { User, ShieldCheck, LogOut, ChevronDown, Calendar } from "lucide-react";
 
 export default function AppHeader() {
   const router = useRouter();
@@ -93,6 +93,11 @@ export default function AppHeader() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => router.push("/app/create-event")}>
+              <Calendar className="mr-2 h-4 w-4" />
+              Create Event
+            </DropdownMenuItem>
+
             <DropdownMenuItem onClick={handleGoToSetting}>
               <User className="mr-2 h-4 w-4" />
               Account settings
