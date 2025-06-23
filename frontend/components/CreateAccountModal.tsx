@@ -58,20 +58,24 @@ export function CreateAccountModal() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const passwordsMatch =
     formData.password.length > 0 &&
     formData.confirmPassword.length > 0 &&
     formData.password === formData.confirmPassword;
 
+  /* ------------------------------------------------------------------ */
+  /* Password live-checks                                               */
+  /* ------------------------------------------------------------------ */
   useEffect(() => {
-    const value = formData.password;
+    const v = formData.password;
     setPasswordValidations({
-      length: value.length >= 12,
-      uppercase: /[A-Z]/.test(value),
-      lowercase: /[a-z]/.test(value),
-      number: /[0-9]/.test(value),
-      special: /[^A-Za-z0-9]/.test(value),
+      length: v.length >= 12,
+      uppercase: /[A-Z]/.test(v),
+      lowercase: /[a-z]/.test(v),
+      number: /[0-9]/.test(v),
+      special: /[^A-Za-z0-9]/.test(v),
     });
   }, [formData.password]);
 
@@ -80,30 +84,27 @@ export function CreateAccountModal() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  /* ------------------------------------------------------------------ */
+  /* Submit – register + magic-link                                     */
+  /* ------------------------------------------------------------------ */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation();
 
-    if (!passwordsMatch) {
-      alert("The passwords do not match.");
-      return;
-    }
-
-    const allValid = Object.values(passwordValidations).every(Boolean);
-    if (!allValid) {
-      alert("The password does not meet all the rules.");
-      return;
-    }
-
+    /* 1. password checks (front only) */
+    if (!passwordsMatch) return alert("The passwords do not match.");
+    if (!Object.values(passwordValidations).every(Boolean))
+      return alert("The password does not meet all the rules.");
     try {
       passwordSchema.parse(formData.password);
     } catch (err: any) {
-      alert("Invalid password: " + (err.errors?.[0]?.message || "Error"));
-      return;
+      return alert(
+        "Invalid password: " + (err.errors?.[0]?.message ?? "Error")
+      );
     }
 
     setLoading(true);
     try {
+      /* 2. create account */
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
         {
@@ -116,28 +117,32 @@ export function CreateAccountModal() {
           }),
         }
       );
+      if (!res.ok) throw new Error(await res.text());
 
-      if (!res.ok) {
-        const err = await res.text();
-        throw new Error(err || "Registration failed.");
-      }
+      /* 3. send magic-link */
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/send-magic-link`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email }),
+      });
 
-      const data = await res.json();
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userName", data.name);
-
-      window.location.href = "/lougiin";
+      setEmailSent(true);
+      /* on vide les mdp pour ne pas les garder en mémoire */
+      setFormData((p) => ({ ...p, password: "", confirmPassword: "" }));
     } catch (err) {
       console.error(err);
-      alert("Error during registration. See the console.");
+      alert("Error during registration / email sending.");
     } finally {
       setLoading(false);
     }
   };
 
+  /* ------------------------------------------------------------------ */
+  /* UI                                                                 */
+  /* ------------------------------------------------------------------ */
   return (
     <div className="relative z-10 max-w-sm w-full bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6 pt-10 text-center space-y-4 border border-border">
+      {/* back */}
       <Link
         href="/"
         className="absolute top-4 left-4 flex items-center text-sm text-muted-foreground hover:text-foreground transition"
@@ -148,87 +153,79 @@ export function CreateAccountModal() {
 
       <div className="text-2xl font-semibold">Create your account</div>
 
+      {/* OAuth shortcuts */}
       <div className="space-y-4">
-        <div>
-          <Link
-            href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
-            className="w-full block"
+        <Link
+          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
+          className="block"
+        >
+          <Button
+            variant="outline"
+            className="w-full flex items-center justify-center"
           >
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center"
-            >
-              <FcGoogle className="text-xl" />
-              Continue with Google
-            </Button>
-          </Link>
-        </div>
+            <FcGoogle className="text-xl" />
+            Continue with Google
+          </Button>
+        </Link>
 
-        <div>
-          <Link
-            href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
-            className="w-full block"
+        <Link
+          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
+          className="block"
+        >
+          <Button
+            variant="outline"
+            className="w-full flex items-center justify-center"
           >
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center"
-            >
-              <FaGithub className="text-xl" />
-              Continue with GitHub
-            </Button>
-          </Link>
-        </div>
+            <FaGithub className="text-xl" />
+            Continue with GitHub
+          </Button>
+        </Link>
 
         <div className="relative w-full">
           <Button
             variant="outline"
-            className="w-full flex items-center justify-center opacity-50 cursor-not-allowed relative"
             disabled
+            className="w-full flex items-center justify-center opacity-50 cursor-not-allowed relative"
           >
             <FaApple className="text-xl" />
             Continue with Apple
           </Button>
-
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow z-10 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow">
             COMING SOON
           </div>
         </div>
       </div>
 
+      {/* form */}
       <form onSubmit={handleSubmit} className="space-y-4 text-left pt-4">
         <div>
-          <Label htmlFor="name" className="pb-2">
-            Full Name
-          </Label>
+          <Label htmlFor="name">Full Name</Label>
           <Input
             id="name"
             name="name"
+            placeholder="John Doe"
             value={formData.name}
             onChange={handleChange}
-            placeholder="John Doe"
             required
           />
         </div>
 
         <div>
-          <Label htmlFor="email" className="pb-2">
-            Email
-          </Label>
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             name="email"
             type="email"
+            placeholder="you@example.com"
             value={formData.email}
             onChange={handleChange}
-            placeholder="you@example.com"
             required
           />
         </div>
 
+        {/* password */}
         <div className="relative">
-          <Label htmlFor="password" className="pb-2">
-            Password
-          </Label>
+          <Label htmlFor="password">Password</Label>
           <div className="relative">
             <Input
               id="password"
@@ -240,9 +237,9 @@ export function CreateAccountModal() {
             />
             <button
               type="button"
-              className="absolute right-2 top-2"
-              onClick={() => setShowPassword((prev) => !prev)}
               tabIndex={-1}
+              className="absolute right-2 top-2"
+              onClick={() => setShowPassword((p) => !p)}
             >
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />
@@ -251,11 +248,10 @@ export function CreateAccountModal() {
               )}
             </button>
           </div>
-
+          {/* helper tooltip */}
           <div className="relative group mt-2">
             <div className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer">
-              <Info className="w-4 h-4" />
-              Password rules
+              <Info className="w-4 h-4" /> Password rules
             </div>
             <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-zinc-800 p-3 rounded-md shadow-md mt-2 border space-y-1 w-64">
               <PasswordRule
@@ -264,51 +260,48 @@ export function CreateAccountModal() {
               />
               <PasswordRule
                 valid={passwordValidations.uppercase}
-                text="At least one uppercase letter"
+                text="1 uppercase letter"
               />
               <PasswordRule
                 valid={passwordValidations.lowercase}
-                text="At least one lowercase letter"
+                text="1 lowercase letter"
               />
               <PasswordRule
                 valid={passwordValidations.number}
-                text="At least one number"
+                text="1 number"
               />
               <PasswordRule
                 valid={passwordValidations.special}
-                text="At least one special character"
+                text="1 special char"
               />
             </div>
           </div>
         </div>
 
+        {/* confirm */}
         <div className="relative">
-          <Label htmlFor="confirmPassword" className="pb-2">
-            Confirm Password
-          </Label>
-          <div className="relative">
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-            <button
-              type="button"
-              className="absolute right-2 top-2"
-              onClick={() => setShowConfirmPassword((prev) => !prev)}
-              tabIndex={-1}
-            >
-              {showConfirmPassword ? (
-                <EyeOff className="w-5 h-5" />
-              ) : (
-                <Eye className="w-5 h-5" />
-              )}
-            </button>
-          </div>
-          {formData.confirmPassword.length > 0 && (
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Input
+            id="confirmPassword"
+            name="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          <button
+            type="button"
+            tabIndex={-1}
+            className="absolute right-2 top-2"
+            onClick={() => setShowConfirmPassword((p) => !p)}
+          >
+            {showConfirmPassword ? (
+              <EyeOff className="w-5 h-5" />
+            ) : (
+              <Eye className="w-5 h-5" />
+            )}
+          </button>
+          {formData.confirmPassword && (
             <div
               className={`flex items-center mt-1 text-sm ${
                 passwordsMatch ? "text-green-600" : "text-red-500"
@@ -319,15 +312,22 @@ export function CreateAccountModal() {
               ) : (
                 <XCircle className="w-4 h-4 mr-1" />
               )}
-              {passwordsMatch
-                ? "Password confirmed"
-                : "The passwords do not match"}
+              {passwordsMatch ? "Password confirmed" : "Passwords do not match"}
             </div>
           )}
         </div>
 
+        {/* feedback if email sent */}
+        {emailSent && (
+          <p className="text-green-600 text-sm text-center">
+            A magic link has been sent to{" "}
+            <span className="font-medium">{formData.email}</span>. Check your
+            mailbox to activate your account.
+          </p>
+        )}
+
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Creating account..." : "Create Account"}
+          {loading ? "Creating account…" : "Create Account"}
         </Button>
       </form>
 
