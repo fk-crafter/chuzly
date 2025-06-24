@@ -3,17 +3,19 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
+import { EmailVerificationService } from './email-verification.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
-    private jwt: JwtService,
+    private readonly prisma: PrismaService,
+    private readonly jwt: JwtService,
+    private readonly emailVerificationService: EmailVerificationService,
   ) {}
 
   async register(data: { email: string; password: string; name: string }) {
-    const hashed: string = await bcrypt.hash(data.password, 10);
-    const trialEndsAt: Date = addDays(new Date(), 7);
+    const hashed = await bcrypt.hash(data.password, 10);
+    const trialEndsAt = addDays(new Date(), 7);
 
     const user = await this.prisma.user.create({
       data: {
@@ -25,11 +27,17 @@ export class AuthService {
       },
     });
 
+    await this.emailVerificationService.sendVerificationEmail(
+      user.id,
+      user.email,
+    );
+
     const token = this.jwt.sign({
       userId: user.id,
       name: user.name,
       plan: user.plan,
     });
+
     return { token, name: user.name, plan: user.plan };
   }
 
@@ -42,6 +50,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if (!user.emailVerified) {
+      throw new UnauthorizedException(
+        'Please verify your email address first.',
+      );
+    }
+
     const isMatch = await bcrypt.compare(data.password, user.password);
     if (!isMatch) {
       throw new UnauthorizedException('Invalid credentials');
@@ -52,6 +66,7 @@ export class AuthService {
       name: user.name,
       plan: user.plan,
     });
+
     return { token, name: user.name, plan: user.plan };
   }
 
