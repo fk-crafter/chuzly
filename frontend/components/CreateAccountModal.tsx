@@ -152,7 +152,6 @@ export function CreateAccountModal() {
         </div>
       )}
 
-      {/* Login Providers */}
       <div className="space-y-4">
         <div>
           <Link
@@ -200,9 +199,7 @@ export function CreateAccountModal() {
         </div>
       </div>
 
-      {/* Register Form */}
       <form onSubmit={handleSubmit} className="space-y-4 text-left pt-4">
-        {/* Name */}
         <div>
           <Label htmlFor="name" className="pb-2">
             Full Name
@@ -217,7 +214,6 @@ export function CreateAccountModal() {
           />
         </div>
 
-        {/* Email */}
         <div>
           <Label htmlFor="email" className="pb-2">
             Email
@@ -233,7 +229,6 @@ export function CreateAccountModal() {
           />
         </div>
 
-        {/* Password */}
         <div className="relative">
           <Label htmlFor="password" className="pb-2">
             Password
@@ -291,7 +286,6 @@ export function CreateAccountModal() {
           </div>
         </div>
 
-        {/* Confirm Password */}
         <div className="relative">
           <Label htmlFor="confirmPassword" className="pb-2">
             Confirm Password
