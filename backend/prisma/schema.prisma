@@ -61,7 +61,8 @@ model User {
   stripeCustomerId String?
   stripeSubId      String?
 
-  cancelAt         DateTime? 
+  cancelAt         DateTime?
+  emailVerified    Boolean  @default(false)
 
   events           Event[]  @relation("UserEvents")
   isAdmin          Boolean  @default(false)

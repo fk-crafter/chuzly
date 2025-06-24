@@ -6,6 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { GoogleStrategy } from './google.strategy';
 import { GithubStrategy } from './github.strategy';
+import { EmailVerificationModule } from './email-verification.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { GithubStrategy } from './github.strategy';
       secret: process.env.JWT_SECRET || 'default_secret',
       signOptions: { expiresIn: '1d' },
     }),
+    EmailVerificationModule,
   ],
   providers: [AuthService, JwtStrategy, GoogleStrategy, GithubStrategy],
   controllers: [AuthController],
