@@ -56,6 +56,7 @@ export function CreateAccountModal() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -122,12 +123,9 @@ export function CreateAccountModal() {
         throw new Error(err || "Registration failed.");
       }
 
-      const data = await res.json();
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userName", data.name);
-
-      window.location.href = "/lougiin";
+      setSuccessMessage(
+        "Account created! Please check your email to verify your address."
+      );
     } catch (err) {
       console.error(err);
       alert("Error during registration. See the console.");
@@ -148,6 +146,13 @@ export function CreateAccountModal() {
 
       <div className="text-2xl font-semibold">Create your account</div>
 
+      {successMessage && (
+        <div className="text-green-600 text-sm font-medium">
+          ✅ {successMessage}
+        </div>
+      )}
+
+      {/* Login Providers */}
       <div className="space-y-4">
         <div>
           <Link
@@ -195,7 +200,9 @@ export function CreateAccountModal() {
         </div>
       </div>
 
+      {/* Register Form */}
       <form onSubmit={handleSubmit} className="space-y-4 text-left pt-4">
+        {/* Name */}
         <div>
           <Label htmlFor="name" className="pb-2">
             Full Name
@@ -210,6 +217,7 @@ export function CreateAccountModal() {
           />
         </div>
 
+        {/* Email */}
         <div>
           <Label htmlFor="email" className="pb-2">
             Email
@@ -225,6 +233,7 @@ export function CreateAccountModal() {
           />
         </div>
 
+        {/* Password */}
         <div className="relative">
           <Label htmlFor="password" className="pb-2">
             Password
@@ -282,6 +291,7 @@ export function CreateAccountModal() {
           </div>
         </div>
 
+        {/* Confirm Password */}
         <div className="relative">
           <Label htmlFor="confirmPassword" className="pb-2">
             Confirm Password
