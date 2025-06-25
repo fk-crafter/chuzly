@@ -49,4 +49,17 @@ export class EmailVerificationService {
       return { success: false, message: 'Invalid or expired token' };
     }
   }
+
+  async sendPasswordResetEmail(email: string, resetUrl: string) {
+    await this.resend.emails.send({
+      from: 'Chuzly <no-reply@chuzly.app>',
+      to: email,
+      subject: 'Reset your password',
+      html: `
+        <p>Click below to reset your password:</p>
+        <a href="${resetUrl}">${resetUrl}</a>
+        <p>This link expires in 15 minutes.</p>
+      `,
+    });
+  }
 }

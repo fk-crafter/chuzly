@@ -141,6 +141,15 @@ export function LoginModal() {
               onChange={handleChange}
               required
             />
+            <div className="flex items-center justify-between text-sm pt-1">
+              <span />
+              <Link
+                href="/auth/forgot-password"
+                className="text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <button
               type="button"
               className="absolute right-2 top-2"

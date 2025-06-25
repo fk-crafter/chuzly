@@ -89,4 +89,14 @@ export class AuthController {
 
     res.redirect(`${process.env.FRONT_URL}/auth/callback?token=${token}`);
   }
+  @Post('forgot-password')
+  async forgotPassword(@Body('email') email: string) {
+    await this.authService.sendPasswordReset(email);
+    return { success: true };
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() body: { token: string; newPassword: string }) {
+    return this.authService.resetPassword(body.token, body.newPassword);
+  }
 }

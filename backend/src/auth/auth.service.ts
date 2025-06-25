@@ -94,4 +94,37 @@ export class AuthService {
       where: { id: userId },
     });
   }
+
+  async sendPasswordReset(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return;
+    }
+
+    const token = this.jwt.sign({ userId: user.id }, { expiresIn: '15m' });
+
+    const resetUrl = `${process.env.FRONT_URL}/auth/reset-password?token=${token}`;
+
+    await this.emailVerificationService.sendPasswordResetEmail(
+      user.email,
+      resetUrl,
+    );
+  }
+  async resetPassword(token: string, newPassword: string) {
+    try {
+      const payload = await this.jwt.verifyAsync<{ userId: string }>(token);
+
+      const hashed = await bcrypt.hash(newPassword, 10);
+
+      await this.prisma.user.update({
+        where: { id: payload.userId },
+        data: { password: hashed },
+      });
+
+      return { success: true };
+    } catch (err) {
+      console.error('Password reset error:', err);
+      return { success: false, message: 'Invalid or expired token' };
+    }
+  }
 }
