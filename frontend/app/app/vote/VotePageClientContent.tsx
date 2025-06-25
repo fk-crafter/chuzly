@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Clock } from "lucide-react";
+import Chat from "@/components/Chat";
 
 export default function VotePageClientContent() {
   const params = useSearchParams();
@@ -255,6 +256,12 @@ export default function VotePageClientContent() {
           ))}
         </ul>
       </div>
+      {eventId && guest && !votingClosed && (
+        <div className="mt-10">
+          <h2 className="text-lg font-semibold mb-4">Live Chat</h2>
+          <Chat eventId={eventId} nickname={guest} />
+        </div>
+      )}
     </main>
   );
 }
