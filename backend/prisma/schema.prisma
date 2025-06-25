@@ -23,6 +23,8 @@ model Event {
 
   creator        User?    @relation("UserEvents", fields: [creatorId], references: [id])
   creatorId      String?
+
+  messages       Message[]
 }
 
 
@@ -65,8 +67,23 @@ model User {
   emailVerified    Boolean  @default(false)
 
   events           Event[]  @relation("UserEvents")
+  messages         Message[]
   isAdmin          Boolean  @default(false)
 }
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  nickname  String
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id])
+
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
 
 enum Plan {
   TRIAL
