@@ -5,6 +5,30 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Eye, EyeOff, CheckCircle, XCircle, Info } from "lucide-react";
+import { z } from "zod";
+
+const passwordSchema = z
+  .string()
+  .min(12, "Minimum 12 characters")
+  .regex(/[A-Z]/, "At least one uppercase letter")
+  .regex(/[a-z]/, "At least one lowercase letter")
+  .regex(/[0-9]/, "At least one number")
+  .regex(/[^A-Za-z0-9]/, "At least one special character");
+
+function PasswordRule({ valid, text }: { valid: boolean; text: string }) {
+  const Icon = valid ? CheckCircle : XCircle;
+  return (
+    <div
+      className={`flex items-center text-sm ${
+        valid ? "text-green-600" : "text-red-500"
+      }`}
+    >
+      <Icon className="w-4 h-4 mr-2" />
+      {text}
+    </div>
+  );
+}
 
 export default function ResetPasswordContent() {
   const params = useSearchParams();
@@ -13,8 +37,29 @@ export default function ResetPasswordContent() {
 
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const [rules, setRules] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false,
+  });
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    setRules({
+      length: password.length >= 12,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[^A-Za-z0-9]/.test(password),
+    });
+  }, [password]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +67,13 @@ export default function ResetPasswordContent() {
 
     if (password !== confirm) {
       setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      passwordSchema.parse(password);
+    } catch (err: any) {
+      setError(err?.errors?.[0]?.message ?? "Invalid password");
       return;
     }
 
@@ -42,7 +94,7 @@ export default function ResetPasswordContent() {
       } else {
         setError(data.message || "Something went wrong");
       }
-    } catch (err) {
+    } catch {
       setError("Request failed");
     }
   };
@@ -61,27 +113,81 @@ export default function ResetPasswordContent() {
           ✅ Password updated! Redirecting...
         </p>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="relative">
             <Label htmlFor="password">New Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-2"
+                onClick={() => setShowPassword((p) => !p)}
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+
+            <div className="relative group mt-2">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer">
+                <Info className="w-4 h-4" />
+                Password rules
+              </div>
+              <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-zinc-800 p-3 rounded-md shadow-md mt-2 border space-y-1 w-64">
+                <PasswordRule
+                  valid={rules.length}
+                  text="Minimum 12 characters"
+                />
+                <PasswordRule
+                  valid={rules.uppercase}
+                  text="At least one uppercase letter"
+                />
+                <PasswordRule
+                  valid={rules.lowercase}
+                  text="At least one lowercase letter"
+                />
+                <PasswordRule valid={rules.number} text="At least one number" />
+                <PasswordRule
+                  valid={rules.special}
+                  text="At least one special character"
+                />
+              </div>
+            </div>
           </div>
 
-          <div>
+          <div className="relative">
             <Label htmlFor="confirm">Confirm Password</Label>
-            <Input
-              id="confirm"
-              type="password"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Input
+                id="confirm"
+                type={showConfirm ? "text" : "password"}
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-2"
+                onClick={() => setShowConfirm((p) => !p)}
+                tabIndex={-1}
+              >
+                {showConfirm ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
