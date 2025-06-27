@@ -4,10 +4,14 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/user.decorator';
 import { PlanGuard } from '../auth/plan.guard';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('events')
 export class EventController {
-  constructor(private readonly eventService: EventService) {}
+  constructor(
+    private readonly eventService: EventService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   @Post()
   @UseGuards(AuthGuard('jwt'), PlanGuard)
@@ -51,5 +55,37 @@ export class EventController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.eventService.findOne(id);
+  }
+
+  @Post(':id/access')
+  async checkAccessToChat(
+    @Param('id') eventId: string,
+    @Body() body: { guest?: string; userId?: string },
+  ) {
+    const { guest, userId } = body;
+
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+      include: { creator: true },
+    });
+
+    if (!event || !event.creator || event.creator.plan !== 'PRO') {
+      return { allowed: false };
+    }
+
+    if (userId && event.creatorId === userId) {
+      return { allowed: true };
+    }
+
+    if (guest) {
+      const guestInDb = await this.prisma.guest.findFirst({
+        where: { eventId, nickname: guest },
+      });
+      if (guestInDb) {
+        return { allowed: true };
+      }
+    }
+
+    return { allowed: false };
   }
 }

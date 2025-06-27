@@ -5,17 +5,20 @@ import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { Clock } from "lucide-react";
+import { Clock, Lock } from "lucide-react";
+import ChatBox from "@/components/ChatBox";
 
 export default function VotePageClientContent() {
   const params = useSearchParams();
-
   const [event, setEvent] = useState<any>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [hasVoted, setHasVoted] = useState(false);
+  const [isAllowedToChat, setIsAllowedToChat] = useState(false);
 
   const eventId = params.get("id");
   const guest = params.get("guest");
+  const userId =
+    typeof window !== "undefined" ? localStorage.getItem("userId") : null;
 
   const fetchEvent = useCallback(async () => {
     if (!eventId || !guest) return;
@@ -56,9 +59,28 @@ export default function VotePageClientContent() {
     }
   }, [eventId, guest]);
 
+  const checkChatAccess = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/access`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ guest: guest, userId }),
+        }
+      );
+
+      const { allowed } = await res.json();
+      setIsAllowedToChat(allowed === true);
+    } catch (err) {
+      setIsAllowedToChat(false);
+    }
+  }, [eventId, guest, userId]);
+
   useEffect(() => {
     fetchEvent();
-  }, [fetchEvent]);
+    checkChatAccess();
+  }, [fetchEvent, checkChatAccess]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -126,7 +148,7 @@ export default function VotePageClientContent() {
   const maxVotes = Math.max(...Object.values(voteCounts), 0);
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+    <main className="max-w-6xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
       <div className="md:col-span-2 space-y-6">
         <h1 className="text-2xl font-bold mb-2">{event.name}</h1>
         <p className="text-muted-foreground text-sm mb-4">
@@ -229,31 +251,52 @@ export default function VotePageClientContent() {
         )}
       </div>
 
-      <div>
-        <h2 className="text-lg font-semibold mb-4">Who's voted?</h2>
-        <ul className="space-y-2 text-sm">
-          {event.guests.map((g: any) => (
-            <li key={g.nickname} className="flex items-center justify-between">
-              <span>{g.nickname}</span>
-              <span
-                className={cn(
-                  "text-xs px-2 py-1 rounded-full",
-                  g.vote?.name === "Not available"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : g.vote
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-200 text-gray-500"
-                )}
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Who's voted?</h2>
+          <ul className="space-y-2 text-sm">
+            {event.guests.map((g: any) => (
+              <li
+                key={g.nickname}
+                className="flex items-center justify-between"
               >
-                {g.vote?.name === "Not available"
-                  ? "Unavailable"
-                  : g.vote
-                  ? "Voted"
-                  : "Pending"}
-              </span>
-            </li>
-          ))}
-        </ul>
+                <span>{g.nickname}</span>
+                <span
+                  className={cn(
+                    "text-xs px-2 py-1 rounded-full",
+                    g.vote?.name === "Not available"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : g.vote
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-200 text-gray-500"
+                  )}
+                >
+                  {g.vote?.name === "Not available"
+                    ? "Unavailable"
+                    : g.vote
+                    ? "Voted"
+                    : "Pending"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold mb-2">Chat</h2>
+          {isAllowedToChat ? (
+            <ChatBox
+              eventId={eventId!}
+              nickname={guest!}
+              userId={userId ?? undefined}
+            />
+          ) : (
+            <div className="border p-4 text-center text-muted-foreground rounded-md">
+              <Lock className="w-5 h-5 mx-auto mb-2" />
+              Chat is only available for Pro users or invited guests.
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );
