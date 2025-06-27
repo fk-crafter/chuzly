@@ -47,11 +47,13 @@ export class AuthController {
       where: { id: user.userId },
       select: {
         name: true,
+        email: true,
         plan: true,
         trialEndsAt: true,
         isAdmin: true,
         cancelAt: true,
         createdAt: true,
+        avatarColor: true,
       },
     });
 
@@ -89,6 +91,7 @@ export class AuthController {
 
     res.redirect(`${process.env.FRONT_URL}/auth/callback?token=${token}`);
   }
+
   @Post('forgot-password')
   async forgotPassword(@Body('email') email: string) {
     await this.authService.sendPasswordReset(email);
@@ -98,5 +101,22 @@ export class AuthController {
   @Post('reset-password')
   async resetPassword(@Body() body: { token: string; newPassword: string }) {
     return this.authService.resetPassword(body.token, body.newPassword);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('avatar-color')
+  async updateAvatarColor(
+    @Req() req: Request,
+    @Body() body: { color: string },
+  ) {
+    const user = req.user as { userId: string };
+    const { color } = body;
+
+    await this.prisma.user.update({
+      where: { id: user.userId },
+      data: { avatarColor: color },
+    });
+
+    return { success: true };
   }
 }

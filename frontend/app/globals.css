@@ -5,6 +5,14 @@ html {
   scroll-behavior: smooth;
 }
 
+@theme {
+  --color-pastel-green: #b5ead7;
+  --color-pastel-blue: #a2d2ff;
+  --color-pastel-yellow: #fff1a8;
+  --color-pastel-pink: #fdcfe8;
+  --color-pastel-lavender: #cdb4db;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
