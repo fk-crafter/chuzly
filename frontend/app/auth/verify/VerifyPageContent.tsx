@@ -2,6 +2,8 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function VerifyPageContent() {
   const params = useSearchParams();
@@ -31,18 +33,41 @@ export default function VerifyPageContent() {
   }, [params, router]);
 
   return (
-    <main className="max-w-xl mx-auto py-20 text-center">
-      {status === "loading" && <p>Verifying your email...</p>}
-      {status === "success" && (
-        <p className="text-green-600 font-semibold">
-          ✅ Email verified! Redirecting...
-        </p>
-      )}
-      {status === "error" && (
-        <p className="text-red-600 font-semibold">
-          ❌ Invalid or expired link.
-        </p>
-      )}
+    <main className="min-h-screen flex items-center justify-center px-4">
+      <div className="max-w-md w-full text-center bg-white dark:bg-zinc-900 p-8 rounded-xl shadow-md border">
+        {status === "loading" && (
+          <div className="flex flex-col items-center gap-4 animate-pulse">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+            <p className="text-sm text-muted-foreground">
+              Verifying your email...
+            </p>
+          </div>
+        )}
+
+        {status === "success" && (
+          <div className="flex flex-col items-center gap-4">
+            <CheckCircle className="w-10 h-10 text-green-600" />
+            <p className="text-lg font-semibold text-green-700">
+              Email verified!
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Redirecting to login...
+            </p>
+          </div>
+        )}
+
+        {status === "error" && (
+          <div className="flex flex-col items-center gap-4">
+            <XCircle className="w-10 h-10 text-red-600" />
+            <p className="text-lg font-semibold text-red-600">
+              Invalid or expired link.
+            </p>
+            <Button variant="outline" onClick={() => router.push("/lougiin")}>
+              Go to login
+            </Button>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
