@@ -55,6 +55,7 @@ model User {
   password         String
   name             String
   createdAt        DateTime @default(now())
+  avatarColor      String?
 
   plan             Plan     @default(TRIAL)
   trialEndsAt      DateTime?

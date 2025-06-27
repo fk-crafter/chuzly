@@ -16,7 +16,6 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
@@ -26,12 +25,10 @@ export default function ProfileSettingsPage() {
     name: string;
     email: string;
     plan: string;
+    avatarColor?: string;
   } | null>(null);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-  });
-  const [saving, setSaving] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("bg-muted");
+  const [showSave, setShowSave] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -45,37 +42,16 @@ export default function ProfileSettingsPage() {
     })
       .then((r) => r.json())
       .then((data) => {
-        setProfile(data);
-        setForm({ name: data.name, email: data.email ?? "" });
+        setProfile({
+          name: data.name,
+          email: data.email ?? "example@email.com",
+          plan: data.plan,
+          avatarColor: data.avatarColor || "bg-muted",
+        });
+        setSelectedColor(data.avatarColor || "bg-muted");
         setLoading(false);
       });
   }, [router]);
-
-  const handleUpdate = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    setSaving(true);
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) throw new Error("Update failed");
-
-      toast.success("Profile updated");
-    } catch (err) {
-      toast.error("Update failed");
-      console.error(err);
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const deleteAccount = async () => {
     const token = localStorage.getItem("token");
@@ -98,6 +74,26 @@ export default function ProfileSettingsPage() {
     }
   };
 
+  const saveColor = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/avatar-color`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ color: selectedColor }),
+      });
+
+      setShowSave(false);
+    } catch {
+      console.error("Failed to save color");
+    }
+  };
+
   if (loading)
     return (
       <main className="max-w-3xl mx-auto px-6 py-12 space-y-8">
@@ -105,6 +101,22 @@ export default function ProfileSettingsPage() {
         <Skeleton className="h-56 w-full" />
       </main>
     );
+
+  const initials = profile!.name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const colors = [
+    "bg-muted", // default gray
+    "bg-[var(--color-pastel-green)]",
+    "bg-[var(--color-pastel-blue)]",
+    "bg-[var(--color-pastel-yellow)]",
+    "bg-[var(--color-pastel-pink)]",
+    "bg-[var(--color-pastel-lavender)]",
+  ];
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-12 space-y-10">
@@ -116,29 +128,46 @@ export default function ProfileSettingsPage() {
         </CardHeader>
 
         <CardContent className="space-y-8">
+          <div className="flex items-center gap-6">
+            <div
+              className={`w-24 h-24 rounded-full flex items-center justify-center text-xl font-semibold text-primary uppercase transition-all ${selectedColor}`}
+            >
+              {initials}
+            </div>
+          </div>
+
+          <div className="flex gap-2 flex-wrap">
+            {colors.map((color) => (
+              <button
+                key={color}
+                className={`w-10 h-10 rounded-full border-2 ${
+                  selectedColor === color
+                    ? "border-black"
+                    : "border-transparent"
+                } ${color}`}
+                onClick={() => {
+                  setSelectedColor(color);
+                  setShowSave(true);
+                }}
+              />
+            ))}
+          </div>
+
+          {showSave && <Button onClick={saveColor}>Save changes</Button>}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
               <label className="text-sm font-medium text-muted-foreground">
                 Full name
               </label>
-              <Input
-                value={form.name}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, name: e.target.value }))
-                }
-              />
+              <Input value={profile!.name} disabled />
             </div>
 
             <div className="space-y-1">
               <label className="text-sm font-medium text-muted-foreground">
                 Email
               </label>
-              <Input
-                value={form.email}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, email: e.target.value }))
-                }
-              />
+              <Input value={profile!.email} disabled />
             </div>
 
             <div className="space-y-1 md:col-span-2">
@@ -148,14 +177,6 @@ export default function ProfileSettingsPage() {
               <Input value={profile!.plan} disabled />
             </div>
           </div>
-
-          <Button
-            className="mt-4"
-            onClick={handleUpdate}
-            disabled={saving || !form.name.trim() || !form.email.trim()}
-          >
-            {saving ? "Saving..." : "Save Changes"}
-          </Button>
         </CardContent>
       </Card>
 
