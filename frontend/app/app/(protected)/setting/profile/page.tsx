@@ -16,6 +16,7 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
@@ -26,6 +27,11 @@ export default function ProfileSettingsPage() {
     email: string;
     plan: string;
   } | null>(null);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+  });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,14 +45,37 @@ export default function ProfileSettingsPage() {
     })
       .then((r) => r.json())
       .then((data) => {
-        setProfile({
-          name: data.name,
-          email: data.email ?? "example@email.com",
-          plan: data.plan,
-        });
+        setProfile(data);
+        setForm({ name: data.name, email: data.email ?? "" });
         setLoading(false);
       });
   }, [router]);
+
+  const handleUpdate = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    setSaving(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) throw new Error("Update failed");
+
+      toast.success("Profile updated");
+    } catch (err) {
+      toast.error("Update failed");
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const deleteAccount = async () => {
     const token = localStorage.getItem("token");
@@ -77,13 +106,6 @@ export default function ProfileSettingsPage() {
       </main>
     );
 
-  const initials = profile!.name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
   return (
     <main className="max-w-3xl mx-auto px-6 py-12 space-y-10">
       <h1 className="text-3xl font-bold">Public profile</h1>
@@ -94,34 +116,29 @@ export default function ProfileSettingsPage() {
         </CardHeader>
 
         <CardContent className="space-y-8">
-          <div className="flex items-center gap-6">
-            <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center text-xl font-semibold text-primary uppercase">
-              {initials}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Button variant="secondary" disabled>
-                Change picture
-              </Button>
-              <Button variant="outline" disabled>
-                Delete picture
-              </Button>
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
               <label className="text-sm font-medium text-muted-foreground">
                 Full name
               </label>
-              <Input value={profile!.name} disabled />
+              <Input
+                value={form.name}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, name: e.target.value }))
+                }
+              />
             </div>
 
             <div className="space-y-1">
               <label className="text-sm font-medium text-muted-foreground">
                 Email
               </label>
-              <Input value={profile!.email} disabled />
+              <Input
+                value={form.email}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, email: e.target.value }))
+                }
+              />
             </div>
 
             <div className="space-y-1 md:col-span-2">
@@ -131,10 +148,17 @@ export default function ProfileSettingsPage() {
               <Input value={profile!.plan} disabled />
             </div>
           </div>
+
+          <Button
+            className="mt-4"
+            onClick={handleUpdate}
+            disabled={saving || !form.name.trim() || !form.email.trim()}
+          >
+            {saving ? "Saving..." : "Save Changes"}
+          </Button>
         </CardContent>
       </Card>
 
-      {/* Account deletion section */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant="destructive">Delete my account</Button>
