@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub, FaApple } from "react-icons/fa";
+import { z } from "zod";
 import {
   ArrowLeft,
   CheckCircle,
@@ -15,7 +16,15 @@ import {
   EyeOff,
   Info,
 } from "lucide-react";
-import { z } from "zod";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 const passwordSchema = z
   .string()
@@ -59,6 +68,7 @@ export function CreateAccountModal() {
   const [successMessage, setSuccessMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const passwordsMatch =
     formData.password.length > 0 &&
@@ -123,9 +133,7 @@ export function CreateAccountModal() {
         throw new Error(err || "Registration failed.");
       }
 
-      setSuccessMessage(
-        "Account created! Please check your email to verify your address."
-      );
+      setShowSuccessModal(true);
     } catch (err) {
       console.error(err);
       alert("Error during registration. See the console.");
@@ -145,12 +153,6 @@ export function CreateAccountModal() {
       </Link>
 
       <div className="text-2xl font-semibold">Create your account</div>
-
-      {successMessage && (
-        <div className="text-green-600 text-sm font-medium">
-          ✅ {successMessage}
-        </div>
-      )}
 
       <div className="space-y-4">
         <div>
@@ -341,6 +343,24 @@ export function CreateAccountModal() {
           Login
         </Link>
       </p>
+
+      <AlertDialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Account created 🎉</AlertDialogTitle>
+            <AlertDialogDescription>
+              Please check your email to verify your address before logging in.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction asChild>
+              <Link href="/lougiin" className="w-full">
+                Continue to Login
+              </Link>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
