@@ -7,10 +7,10 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <AppHeader />
-      <div className="flex flex-1">
-        <Sidebar />
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <div className="flex flex-col flex-1">
+        <AppHeader />
         <main className="flex-1 p-6">{children}</main>
       </div>
     </div>

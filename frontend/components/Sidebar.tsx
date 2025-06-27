@@ -33,29 +33,40 @@ export default function Sidebar() {
   if (isSettingPage) return <SettingSidebar />;
 
   return (
-    <aside className="w-64 bg-white dark:bg-zinc-900 border-r h-screen flex flex-col">
-      <div className="p-6 border-b">
-        <h1 className="text-lg font-semibold tracking-tight">Event App</h1>
-        <p className="text-xs text-muted-foreground">Plan. Vote. Share.</p>
+    <aside className="w-64 bg-white dark:bg-zinc-900 border-r flex flex-col">
+      <div className="p-4 h-16 flex items-center border-b">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight">Chuzly</h1>
+          <p className="text-xs text-muted-foreground">Plan. Vote. Share.</p>
+        </div>
       </div>
 
       <ScrollArea className="flex-1">
-        <nav className="px-4 py-6 space-y-2">
-          {userNavItems.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                "flex items-center gap-3 text-sm font-medium px-3 py-2 rounded-lg transition hover:bg-muted hover:text-foreground",
-                pathname === href
-                  ? "bg-primary text-white"
-                  : "text-muted-foreground"
-              )}
-            >
-              <Icon className="w-4 h-4" />
-              {label}
-            </Link>
-          ))}
+        <nav className="px-4 py-4">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3 px-1">
+            Navigation
+          </p>
+          <div className="space-y-1">
+            {userNavItems.map(({ href, label, icon: Icon }) => {
+              const isActive = pathname === href;
+
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-primary text-white"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                >
+                  <Icon className={cn("w-4 h-4", !isActive && "opacity-70")} />
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
         </nav>
       </ScrollArea>
 
