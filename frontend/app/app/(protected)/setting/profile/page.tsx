@@ -16,6 +16,7 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import { motion, AnimatePresence } from "motion/react";
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
@@ -29,6 +30,7 @@ export default function ProfileSettingsPage() {
   } | null>(null);
   const [selectedColor, setSelectedColor] = useState("bg-muted");
   const [showSave, setShowSave] = useState(false);
+  const [hovering, setHovering] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -110,7 +112,7 @@ export default function ProfileSettingsPage() {
     .toUpperCase();
 
   const colors = [
-    "bg-muted", // default gray
+    "bg-muted",
     "bg-[var(--color-pastel-green)]",
     "bg-[var(--color-pastel-blue)]",
     "bg-[var(--color-pastel-yellow)]",
@@ -128,29 +130,42 @@ export default function ProfileSettingsPage() {
         </CardHeader>
 
         <CardContent className="space-y-8">
-          <div className="flex items-center gap-6">
+          <div
+            className="flex items-center gap-6 relative"
+            onMouseEnter={() => setHovering(true)}
+            onMouseLeave={() => setHovering(false)}
+          >
             <div
               className={`w-24 h-24 rounded-full flex items-center justify-center text-xl font-semibold text-primary uppercase transition-all ${selectedColor}`}
             >
               {initials}
             </div>
-          </div>
 
-          <div className="flex gap-2 flex-wrap">
-            {colors.map((color) => (
-              <button
-                key={color}
-                className={`w-10 h-10 rounded-full border-2 ${
-                  selectedColor === color
-                    ? "border-black"
-                    : "border-transparent"
-                } ${color}`}
-                onClick={() => {
-                  setSelectedColor(color);
-                  setShowSave(true);
-                }}
-              />
-            ))}
+            <AnimatePresence>
+              {hovering && (
+                <motion.div
+                  className="flex gap-2 absolute left-32"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                >
+                  {colors.map((color) => (
+                    <button
+                      key={color}
+                      className={`w-10 h-10 rounded-full border-2 ${
+                        selectedColor === color
+                          ? "border-black"
+                          : "border-transparent"
+                      } ${color}`}
+                      onClick={() => {
+                        setSelectedColor(color);
+                        setShowSave(true);
+                      }}
+                    />
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {showSave && <Button onClick={saveColor}>Save changes</Button>}
