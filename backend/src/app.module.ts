@@ -4,8 +4,16 @@ import { EventModule } from 'src/event/event.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
 import { StripeModule } from './stripe/stripe.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
-  imports: [PrismaModule, EventModule, AuthModule, AdminModule, StripeModule],
+  imports: [
+    PrismaModule,
+    EventModule,
+    AuthModule,
+    AdminModule,
+    StripeModule,
+    ChatModule,
+  ],
 })
 export class AppModule {}

@@ -23,6 +23,8 @@ model Event {
 
   creator        User?    @relation("UserEvents", fields: [creatorId], references: [id])
   creatorId      String?
+
+  messages        Message[]
 }
 
 
@@ -66,6 +68,21 @@ model User {
 
   events           Event[]  @relation("UserEvents")
   isAdmin          Boolean  @default(false)
+
+  messages         Message[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+
+  nickname  String?  
+  userId    String? 
+  user      User?    @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 enum Plan {
