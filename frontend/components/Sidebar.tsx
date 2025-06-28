@@ -3,25 +3,9 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Home, Plus } from "lucide-react";
-
-import SidebarAdmin from "./SidebarAdmin";
+import { LayoutDashboard, Calendar, Plus } from "lucide-react";
 import SettingSidebar from "./SettingSidebar";
-
-const userNavItems = [
-  {
-    href: "/app/create-event",
-    label: "Create Event",
-    icon: Plus,
-  },
-  {
-    href: "/app/event-list",
-    label: "My Events",
-    icon: Home,
-  },
-];
+import SidebarAdmin from "./SidebarAdmin";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -32,24 +16,36 @@ export default function Sidebar() {
   if (isAdminPage) return <SidebarAdmin />;
   if (isSettingPage) return <SettingSidebar />;
 
-  return (
-    <aside className="w-64 bg-white dark:bg-zinc-900 border-r flex flex-col">
-      <div className="p-4 h-16 flex items-center border-b">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight">Chuzly</h1>
-          <p className="text-xs text-muted-foreground">Plan. Vote. Share.</p>
-        </div>
-      </div>
+  const navItems = [
+    { href: "/app/overview", label: "Overview", icon: LayoutDashboard },
+    { href: "/app/event-list", label: "Events", icon: Calendar },
+  ];
 
-      <ScrollArea className="flex-1">
-        <nav className="px-4 py-4">
+  return (
+    <>
+      <aside className="hidden md:flex w-64 bg-white dark:bg-zinc-900 border-r flex-col">
+        <div className="p-4 h-16 flex items-center justify-between border-b">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight">Chuzly</h1>
+            <p className="text-xs text-muted-foreground">Plan. Vote. Share.</p>
+          </div>
+          <Link href="/app/create-event">
+            <button
+              className="p-2 rounded-md bg-primary text-white hover:bg-primary/90 transition"
+              title="Create Event"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+          </Link>
+        </div>
+
+        <nav className="px-4 py-4 flex-1">
           <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3 px-1">
             Navigation
           </p>
           <div className="space-y-1">
-            {userNavItems.map(({ href, label, icon: Icon }) => {
+            {navItems.map(({ href, label, icon: Icon }) => {
               const isActive = pathname === href;
-
               return (
                 <Link
                   key={href}
@@ -68,9 +64,44 @@ export default function Sidebar() {
             })}
           </div>
         </nav>
-      </ScrollArea>
+      </aside>
 
-      <Separator />
-    </aside>
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t flex justify-between items-center px-6 py-2 md:hidden">
+        <Link
+          href="/app/overview"
+          className={cn(
+            "flex flex-col items-center text-xs font-medium",
+            pathname === "/app/overview"
+              ? "text-primary"
+              : "text-muted-foreground"
+          )}
+        >
+          <LayoutDashboard className="w-5 h-5 mb-1" />
+          Overview
+        </Link>
+
+        <Link href="/app/create-event">
+          <button
+            className="p-4 rounded-full bg-primary text-white hover:bg-primary/90 transition -translate-y-6 shadow-lg"
+            title="Create"
+          >
+            <Plus className="w-5 h-5" />
+          </button>
+        </Link>
+
+        <Link
+          href="/app/event-list"
+          className={cn(
+            "flex flex-col items-center text-xs font-medium",
+            pathname === "/app/event-list"
+              ? "text-primary"
+              : "text-muted-foreground"
+          )}
+        >
+          <Calendar className="w-5 h-5 mb-1" />
+          Events
+        </Link>
+      </div>
+    </>
   );
 }
