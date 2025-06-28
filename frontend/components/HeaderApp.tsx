@@ -16,6 +16,7 @@ export default function AppHeader() {
   const router = useRouter();
   const [userName, setUserName] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<string | null>(null);
+  const [avatarColor, setAvatarColor] = useState<string>("bg-muted");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -37,10 +38,12 @@ export default function AppHeader() {
       .then((data) => {
         setUserName(data.name);
         setUserPlan(data.plan);
+        setAvatarColor(data.avatarColor || "bg-muted");
 
         localStorage.setItem("userName", data.name);
         localStorage.setItem("userPlan", data.plan);
         localStorage.setItem("isAdmin", data.isAdmin ? "true" : "false");
+        localStorage.setItem("avatarColor", data.avatarColor || "bg-muted");
       })
       .catch(() => {
         router.push("/lougiin");
@@ -56,17 +59,21 @@ export default function AppHeader() {
       console.error("Logout request failed:", err);
     }
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userPlan");
-    localStorage.removeItem("isAdmin");
+    localStorage.clear();
     router.push("/lougiin");
   };
 
   const handleGoToSetting = () => {
     router.push("/app/setting");
   };
+
+  const initials =
+    userName
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "";
 
   return (
     <header className="h-16 flex justify-end items-center gap-4 px-6 border-b border-border bg-white dark:bg-zinc-900">
@@ -77,12 +84,10 @@ export default function AppHeader() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-3 text-sm">
-              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center uppercase font-semibold text-sm">
-                {userName
-                  ?.split(" ")
-                  .map((n) => n[0])
-                  .join("")
-                  .slice(0, 2)}
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center uppercase font-semibold text-sm transition-all ${avatarColor}`}
+              >
+                {initials}
               </div>
               {userPlan === "PRO" && (
                 <Badge className="bg-yellow-400 text-black" variant="secondary">
