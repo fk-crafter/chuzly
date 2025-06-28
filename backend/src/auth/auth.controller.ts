@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -117,6 +118,17 @@ export class AuthController {
       data: { avatarColor: color },
     });
 
+    return { success: true };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('update-name')
+  async updateName(@Req() req: RequestWithUser, @Body('name') name: string) {
+    if (!name || name.trim().length < 2) {
+      throw new BadRequestException('Invalid name');
+    }
+
+    await this.authService.updateName(req.user.userId, name.trim());
     return { success: true };
   }
 }

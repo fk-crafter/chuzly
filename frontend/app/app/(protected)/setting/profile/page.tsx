@@ -17,6 +17,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { motion, AnimatePresence } from "motion/react";
+import { Pencil } from "lucide-react";
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
@@ -28,9 +29,12 @@ export default function ProfileSettingsPage() {
     plan: string;
     avatarColor?: string;
   } | null>(null);
+
+  const [nameInput, setNameInput] = useState("");
+  const [editingName, setEditingName] = useState(false);
   const [selectedColor, setSelectedColor] = useState("bg-muted");
-  const [showSave, setShowSave] = useState(false);
-  const [hovering, setHovering] = useState(false);
+  const [showSaveColor, setShowSaveColor] = useState(false);
+  const [hoveringAvatar, setHoveringAvatar] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -50,29 +54,30 @@ export default function ProfileSettingsPage() {
           plan: data.plan,
           avatarColor: data.avatarColor || "bg-muted",
         });
+        setNameInput(data.name);
         setSelectedColor(data.avatarColor || "bg-muted");
         setLoading(false);
       });
   }, [router]);
 
-  const deleteAccount = async () => {
+  const saveName = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/delete`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      if (!res.ok) throw new Error();
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/update-name`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: nameInput }),
+      });
 
-      localStorage.clear();
-      router.push("/lougiin");
+      setProfile((prev) => prev && { ...prev, name: nameInput });
+      setEditingName(false);
     } catch {
-      console.error("Account deletion failed");
+      console.error("Failed to update name");
     }
   };
 
@@ -90,9 +95,26 @@ export default function ProfileSettingsPage() {
         body: JSON.stringify({ color: selectedColor }),
       });
 
-      setShowSave(false);
+      setShowSaveColor(false);
     } catch {
       console.error("Failed to save color");
+    }
+  };
+
+  const deleteAccount = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/delete`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      localStorage.clear();
+      router.push("/lougiin");
+    } catch {
+      console.error("Account deletion failed");
     }
   };
 
@@ -132,8 +154,8 @@ export default function ProfileSettingsPage() {
         <CardContent className="space-y-8">
           <div
             className="flex items-center gap-6 relative"
-            onMouseEnter={() => setHovering(true)}
-            onMouseLeave={() => setHovering(false)}
+            onMouseEnter={() => setHoveringAvatar(true)}
+            onMouseLeave={() => setHoveringAvatar(false)}
           >
             <div
               className={`w-24 h-24 rounded-full flex items-center justify-center text-xl font-semibold text-primary uppercase transition-all ${selectedColor}`}
@@ -142,7 +164,7 @@ export default function ProfileSettingsPage() {
             </div>
 
             <AnimatePresence>
-              {hovering && (
+              {hoveringAvatar && (
                 <motion.div
                   className="flex gap-2 absolute left-32"
                   initial={{ opacity: 0, x: 20 }}
@@ -159,7 +181,7 @@ export default function ProfileSettingsPage() {
                       } ${color}`}
                       onClick={() => {
                         setSelectedColor(color);
-                        setShowSave(true);
+                        setShowSaveColor(true);
                       }}
                     />
                   ))}
@@ -168,14 +190,34 @@ export default function ProfileSettingsPage() {
             </AnimatePresence>
           </div>
 
-          {showSave && <Button onClick={saveColor}>Save changes</Button>}
+          {showSaveColor && (
+            <Button onClick={saveColor}>Save avatar color</Button>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-1">
+            <div
+              className="relative group space-y-1"
+              onMouseEnter={() => setEditingName(false)}
+            >
               <label className="text-sm font-medium text-muted-foreground">
                 Full name
               </label>
-              <Input value={profile!.name} disabled />
+              <div className="flex items-center gap-2">
+                <Input
+                  value={nameInput}
+                  disabled={!editingName}
+                  onChange={(e) => setNameInput(e.target.value)}
+                />
+                <Pencil
+                  className="w-4 h-4 opacity-60 group-hover:opacity-100 cursor-pointer transition"
+                  onClick={() => setEditingName(true)}
+                />
+              </div>
+              {editingName && (
+                <Button onClick={saveName} size="sm">
+                  Save name
+                </Button>
+              )}
             </div>
 
             <div className="space-y-1">
