@@ -127,4 +127,11 @@ export class AuthService {
       return { success: false, message: 'Invalid or expired token' };
     }
   }
+
+  async updateName(userId: string, newName: string) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { name: newName },
+    });
+  }
 }
