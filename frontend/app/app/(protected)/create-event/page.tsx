@@ -48,7 +48,7 @@ export default function CreateEventPage() {
 
   const handleSubmit = async () => {
     const body = { eventName, votingDeadline, options, guests };
-    const tryCreate = async () => {
+    try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
         method: "POST",
         headers: {
@@ -59,25 +59,17 @@ export default function CreateEventPage() {
       });
 
       if (!res.ok) {
-        if (res.status === 403) return "FORBIDDEN";
+        if (res.status === 403) {
+          toast.error(
+            "Your plan limit has been reached. Please upgrade or wait for next month."
+          );
+          return;
+        }
         throw new Error("Something went wrong");
       }
 
       const data = await res.json();
       router.push(`/app/share?id=${data.id}`);
-      return "SUCCESS";
-    };
-
-    try {
-      const result = await tryCreate();
-      if (result === "FORBIDDEN") {
-        const retry = await tryCreate();
-        if (retry === "FORBIDDEN") {
-          toast.error(
-            "Your plan limit has been reached. Please upgrade or wait for next month."
-          );
-        }
-      }
     } catch (err) {
       console.error("Failed to create event:", err);
       toast.error("Failed to create event");
@@ -88,9 +80,9 @@ export default function CreateEventPage() {
     return <p className="text-center mt-20">Checking authentication...</p>;
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-16 space-y-10">
-      <h1 className="text-3xl font-bold text-center mb-6 flex items-center justify-center gap-2">
-        <PartyPopper className="w-8 h-8 text-primary" />
+    <main className="max-w-3xl mx-auto px-4 py-12 space-y-8">
+      <h1 className="text-2xl md:text-3xl font-bold text-center mb-4 flex items-center justify-center gap-2">
+        <PartyPopper className="w-6 h-6 md:w-8 md:h-8 text-primary" />
         Create a new event
       </h1>
 
@@ -101,19 +93,17 @@ export default function CreateEventPage() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label className="mb-2 block">Event name</Label>
+              <Label>Event name</Label>
               <Input
-                className="w-full max-w-sm"
                 placeholder="Saturday plans"
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
               />
             </div>
             <div>
-              <Label className="mb-2 block">Voting deadline</Label>
+              <Label>Voting deadline</Label>
               <Input
                 type="datetime-local"
-                className="w-full max-w-sm"
                 value={votingDeadline}
                 onChange={(e) => setVotingDeadline(e.target.value)}
               />
@@ -130,9 +120,9 @@ export default function CreateEventPage() {
           {options.map((opt, i) => (
             <div
               key={i}
-              className="border p-4 rounded-lg bg-muted grid md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end"
+              className="border p-3 md:p-4 rounded-lg bg-muted grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end"
             >
-              <div className="flex-1 w-full">
+              <div>
                 <Label>Name</Label>
                 <Input
                   placeholder="Ex: Pizza night"
@@ -142,7 +132,7 @@ export default function CreateEventPage() {
                   }
                 />
               </div>
-              <div className="flex-1 w-full">
+              <div>
                 <Label>Price</Label>
                 <Input
                   placeholder="Ex: 20"
@@ -153,7 +143,7 @@ export default function CreateEventPage() {
                   }
                 />
               </div>
-              <div className="flex-1 w-full">
+              <div>
                 <Label>Date & Time</Label>
                 <Input
                   type="datetime-local"
@@ -171,7 +161,7 @@ export default function CreateEventPage() {
                     onClick={() => removeOption(i)}
                     className="self-center"
                   >
-                    <Trash className="w-4 h-4 mt-3 text-red-500" />
+                    <Trash className="w-4 h-4 text-red-500" />
                   </Button>
                 ) : (
                   <div className="w-10" />
@@ -206,11 +196,11 @@ export default function CreateEventPage() {
         </CardContent>
       </Card>
 
-      <div className="flex justify-center pt-6">
+      <div className="flex justify-center pt-4">
         <Button
           size="lg"
           onClick={handleSubmit}
-          className="w-full md:w-auto px-12 py-6 text-lg"
+          className="w-full md:w-auto px-8 md:px-12 py-5 md:py-6 text-base md:text-lg"
         >
           Next →
         </Button>
