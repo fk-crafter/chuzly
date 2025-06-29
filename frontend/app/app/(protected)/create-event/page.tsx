@@ -121,7 +121,7 @@ export default function CreateEventPage() {
           {options.map((opt, i) => (
             <div
               key={i}
-              className="border p-4 rounded-lg bg-muted flex flex-col gap-4 md:grid md:grid-cols-[1fr_1fr_1fr_auto] md:gap-3"
+              className="flex flex-col gap-4 border p-4 rounded-lg bg-muted md:grid md:grid-cols-[1fr_1fr_1fr_auto] md:gap-3"
             >
               <div>
                 <Label>Name</Label>
@@ -169,7 +169,11 @@ export default function CreateEventPage() {
               </div>
             </div>
           ))}
-          <Button variant="outline" onClick={addOption} className="w-fit">
+          <Button
+            variant="outline"
+            onClick={addOption}
+            className="w-full md:w-fit"
+          >
             <Plus className="w-4 h-4 mr-2" /> Add option
           </Button>
         </CardContent>
@@ -180,7 +184,7 @@ export default function CreateEventPage() {
           <CardTitle>Guests</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2">
+          <div className="flex flex-col gap-4">
             {guests.map((g, i) => (
               <Input
                 key={i}
@@ -190,7 +194,11 @@ export default function CreateEventPage() {
               />
             ))}
           </div>
-          <Button variant="outline" onClick={addGuest} className="w-fit">
+          <Button
+            variant="outline"
+            onClick={addGuest}
+            className="w-full md:w-fit"
+          >
             <Plus className="w-4 h-4 mr-2" /> Add guest
           </Button>
         </CardContent>
