@@ -38,7 +38,7 @@ function PasswordRule({ valid, text }: { valid: boolean; text: string }) {
   const Icon = valid ? CheckCircle : XCircle;
   return (
     <div
-      className={`flex items-center text-sm ${
+      className={`flex items-center text-xs md:text-sm ${
         valid ? "text-green-600" : "text-red-500"
       }`}
     >
@@ -65,7 +65,6 @@ export function CreateAccountModal() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -143,69 +142,65 @@ export function CreateAccountModal() {
   };
 
   return (
-    <div className="relative z-10 max-w-sm w-full bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6 pt-10 text-center space-y-4 border border-border">
+    <div className="relative z-10 w-full max-w-xs md:max-w-sm bg-white dark:bg-zinc-900 rounded-lg md:rounded-xl shadow-lg md:shadow-xl p-4 md:p-6 pt-10 text-center space-y-4 border border-border">
       <Link
         href="/"
-        className="absolute top-4 left-4 flex items-center text-sm text-muted-foreground hover:text-foreground transition"
+        className="absolute top-3 left-3 flex items-center text-xs md:text-sm text-muted-foreground hover:text-foreground transition"
       >
         <ArrowLeft className="w-4 h-4 mr-1" />
         Back
       </Link>
 
-      <div className="text-2xl font-semibold">Create your account</div>
+      <div className="text-lg md:text-2xl font-semibold">
+        Create your account
+      </div>
 
-      <div className="space-y-4">
-        <div>
-          <Link
-            href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
-            className="w-full block"
-          >
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center"
-            >
-              <FcGoogle className="text-xl" />
-              Continue with Google
-            </Button>
-          </Link>
-        </div>
-
-        <div>
-          <Link
-            href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
-            className="w-full block"
-          >
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center"
-            >
-              <FaGithub className="text-xl" />
-              Continue with GitHub
-            </Button>
-          </Link>
-        </div>
-
-        <div className="relative w-full">
+      <div className="space-y-3 md:space-y-4">
+        <Link
+          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
+          className="block"
+        >
           <Button
             variant="outline"
-            className="w-full flex items-center justify-center opacity-50 cursor-not-allowed relative"
+            className="w-full flex items-center justify-center"
+          >
+            <FcGoogle className="text-xl" />
+            Continue with Google
+          </Button>
+        </Link>
+        <Link
+          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
+          className="block"
+        >
+          <Button
+            variant="outline"
+            className="w-full flex items-center justify-center"
+          >
+            <FaGithub className="text-xl" />
+            Continue with GitHub
+          </Button>
+        </Link>
+        <div className="relative">
+          <Button
+            variant="outline"
+            className="w-full opacity-50 cursor-not-allowed"
             disabled
           >
             <FaApple className="text-xl" />
             Continue with Apple
           </Button>
-
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow z-10 pointer-events-none">
             COMING SOON
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 text-left pt-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-3 md:space-y-4 text-left pt-3 md:pt-4"
+      >
         <div>
-          <Label htmlFor="name" className="pb-2">
-            Full Name
-          </Label>
+          <Label htmlFor="name">Full Name</Label>
           <Input
             id="name"
             name="name"
@@ -215,11 +210,8 @@ export function CreateAccountModal() {
             required
           />
         </div>
-
         <div>
-          <Label htmlFor="email" className="pb-2">
-            Email
-          </Label>
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             name="email"
@@ -230,11 +222,8 @@ export function CreateAccountModal() {
             required
           />
         </div>
-
         <div className="relative">
-          <Label htmlFor="password" className="pb-2">
-            Password
-          </Label>
+          <Label htmlFor="password">Password</Label>
           <div className="relative">
             <Input
               id="password"
@@ -257,13 +246,12 @@ export function CreateAccountModal() {
               )}
             </button>
           </div>
-
-          <div className="relative group mt-2">
-            <div className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer">
+          <div className="relative group mt-1">
+            <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm cursor-pointer">
               <Info className="w-4 h-4" />
               Password rules
             </div>
-            <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-zinc-800 p-3 rounded-md shadow-md mt-2 border space-y-1 w-64">
+            <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-zinc-800 p-2 md:p-3 rounded-md shadow-md mt-1 border space-y-1 w-52 md:w-64">
               <PasswordRule
                 valid={passwordValidations.length}
                 text="Minimum 12 characters"
@@ -289,9 +277,7 @@ export function CreateAccountModal() {
         </div>
 
         <div className="relative">
-          <Label htmlFor="confirmPassword" className="pb-2">
-            Confirm Password
-          </Label>
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
           <div className="relative">
             <Input
               id="confirmPassword"
@@ -316,7 +302,7 @@ export function CreateAccountModal() {
           </div>
           {formData.confirmPassword.length > 0 && (
             <div
-              className={`flex items-center mt-1 text-sm ${
+              className={`flex items-center mt-1 text-xs md:text-sm ${
                 passwordsMatch ? "text-green-600" : "text-red-500"
               }`}
             >
@@ -337,7 +323,7 @@ export function CreateAccountModal() {
         </Button>
       </form>
 
-      <p className="text-sm text-center text-muted-foreground">
+      <p className="text-xs md:text-sm text-center text-muted-foreground">
         Already have an account?{" "}
         <Link href="/lougiin" className="text-primary hover:underline">
           Login
