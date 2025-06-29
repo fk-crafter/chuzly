@@ -68,6 +68,7 @@ export function CreateAccountModal() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showMobileRules, setShowMobileRules] = useState(false);
 
   const passwordsMatch =
     formData.password.length > 0 &&
@@ -92,7 +93,6 @@ export function CreateAccountModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation();
 
     if (!passwordsMatch) {
       alert("The passwords do not match.");
@@ -246,32 +246,68 @@ export function CreateAccountModal() {
               )}
             </button>
           </div>
-          <div className="relative group mt-1">
-            <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm cursor-pointer">
+          <div className="relative mt-1">
+            <button
+              type="button"
+              className="flex md:hidden items-center gap-2 text-muted-foreground text-xs"
+              onClick={() => setShowMobileRules((prev) => !prev)}
+            >
               <Info className="w-4 h-4" />
               Password rules
-            </div>
-            <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-zinc-800 p-2 md:p-3 rounded-md shadow-md mt-1 border space-y-1 w-52 md:w-64">
-              <PasswordRule
-                valid={passwordValidations.length}
-                text="Minimum 12 characters"
-              />
-              <PasswordRule
-                valid={passwordValidations.uppercase}
-                text="At least one uppercase letter"
-              />
-              <PasswordRule
-                valid={passwordValidations.lowercase}
-                text="At least one lowercase letter"
-              />
-              <PasswordRule
-                valid={passwordValidations.number}
-                text="At least one number"
-              />
-              <PasswordRule
-                valid={passwordValidations.special}
-                text="At least one special character"
-              />
+            </button>
+
+            {showMobileRules && (
+              <div className="bg-white dark:bg-zinc-800 p-2 rounded-md shadow-md mt-1 border space-y-1 w-52">
+                <PasswordRule
+                  valid={passwordValidations.length}
+                  text="Minimum 12 characters"
+                />
+                <PasswordRule
+                  valid={passwordValidations.uppercase}
+                  text="At least one uppercase letter"
+                />
+                <PasswordRule
+                  valid={passwordValidations.lowercase}
+                  text="At least one lowercase letter"
+                />
+                <PasswordRule
+                  valid={passwordValidations.number}
+                  text="At least one number"
+                />
+                <PasswordRule
+                  valid={passwordValidations.special}
+                  text="At least one special character"
+                />
+              </div>
+            )}
+
+            <div className="hidden md:block group relative mt-1">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm cursor-default">
+                <Info className="w-4 h-4" />
+                Password rules
+              </div>
+              <div className="absolute left-0 top-full mt-1 hidden group-hover:block bg-white dark:bg-zinc-800 p-3 rounded-md shadow-md border space-y-1 w-64 z-50">
+                <PasswordRule
+                  valid={passwordValidations.length}
+                  text="Minimum 12 characters"
+                />
+                <PasswordRule
+                  valid={passwordValidations.uppercase}
+                  text="At least one uppercase letter"
+                />
+                <PasswordRule
+                  valid={passwordValidations.lowercase}
+                  text="At least one lowercase letter"
+                />
+                <PasswordRule
+                  valid={passwordValidations.number}
+                  text="At least one number"
+                />
+                <PasswordRule
+                  valid={passwordValidations.special}
+                  text="At least one special character"
+                />
+              </div>
             </div>
           </div>
         </div>
