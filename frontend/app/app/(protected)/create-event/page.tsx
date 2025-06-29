@@ -80,7 +80,7 @@ export default function CreateEventPage() {
     return <p className="text-center mt-20">Checking authentication...</p>;
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-12 space-y-8">
+    <main className="max-w-3xl mx-auto px-4 py-12 space-y-10 md:space-y-12">
       <h1 className="text-2xl md:text-3xl font-bold text-center mb-4 flex items-center justify-center gap-2">
         <PartyPopper className="w-6 h-6 md:w-8 md:h-8 text-primary" />
         Create a new event
@@ -90,8 +90,8 @@ export default function CreateEventPage() {
         <CardHeader>
           <CardTitle>Event Details</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="space-y-6">
+          <div className="flex flex-col gap-6 md:grid md:grid-cols-2 md:gap-4">
             <div>
               <Label>Event name</Label>
               <Input
@@ -104,6 +104,7 @@ export default function CreateEventPage() {
               <Label>Voting deadline</Label>
               <Input
                 type="datetime-local"
+                className="w-full"
                 value={votingDeadline}
                 onChange={(e) => setVotingDeadline(e.target.value)}
               />
@@ -116,11 +117,11 @@ export default function CreateEventPage() {
         <CardHeader>
           <CardTitle>Options</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           {options.map((opt, i) => (
             <div
               key={i}
-              className="border p-3 md:p-4 rounded-lg bg-muted grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end"
+              className="border p-4 rounded-lg bg-muted flex flex-col gap-4 md:grid md:grid-cols-[1fr_1fr_1fr_auto] md:gap-3"
             >
               <div>
                 <Label>Name</Label>
@@ -153,13 +154,12 @@ export default function CreateEventPage() {
                   }
                 />
               </div>
-              <div className="flex items-end h-full">
+              <div className="flex justify-end md:items-end">
                 {i > 0 ? (
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => removeOption(i)}
-                    className="self-center"
                   >
                     <Trash className="w-4 h-4 text-red-500" />
                   </Button>
@@ -179,8 +179,8 @@ export default function CreateEventPage() {
         <CardHeader>
           <CardTitle>Guests</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <CardContent className="space-y-6">
+          <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2">
             {guests.map((g, i) => (
               <Input
                 key={i}
