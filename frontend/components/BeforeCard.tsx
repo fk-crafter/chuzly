@@ -13,7 +13,7 @@ export function BeforeCard() {
   ];
 
   return (
-    <Card className="w-[420px] h-auto rounded-2xl bg-background border border-border shadow-2xl px-8 py-6 space-y-4">
+    <Card className="w-[90%] sm:w-[420px] h-auto rounded-2xl bg-background border border-border shadow-2xl px-8 py-6 space-y-4">
       <p className="text-destructive text-center font-semibold text-lg tracking-tight">
         Before Chuzly
       </p>
