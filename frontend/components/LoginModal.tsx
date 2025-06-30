@@ -62,9 +62,7 @@ export function LoginModal() {
         Back
       </Link>
 
-      <div className="text-lg md:text-2xl font-semibold">
-        Welcome to Event-app
-      </div>
+      <div className="text-lg md:text-2xl font-semibold">Welcome to Chuzly</div>
 
       <div className="space-y-3 md:space-y-4">
         <Link
