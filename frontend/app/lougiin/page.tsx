@@ -5,7 +5,7 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-background">
       <LoginModal />
-      <BackgroundBeams />
+      <BackgroundBeams className="hidden md:block" />
     </div>
   );
 }
