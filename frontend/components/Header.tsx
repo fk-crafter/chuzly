@@ -18,8 +18,8 @@ export function Header() {
         <Image
           src="/logo3.png"
           alt="Chuzly Logo"
-          width={70}
-          height={60}
+          width={50}
+          height={50}
           priority
         />
       </Link>
