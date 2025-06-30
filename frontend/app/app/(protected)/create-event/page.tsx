@@ -18,8 +18,6 @@ export default function CreateEventPage() {
     { name: "", price: "", datetime: "" },
   ]);
   const [guests, setGuests] = useState([""]);
-
-  // Step for mobile
   const [step, setStep] = useState(1);
 
   useEffect(() => {
@@ -222,30 +220,35 @@ export default function CreateEventPage() {
         </div>
       </div>
 
-      <div className="md:hidden space-y-6">
+      <div className="md:hidden space-y-10">
         {step === 1 && (
-          <Card>
+          <Card className="shadow-md border border-gray-200">
             <CardHeader>
-              <CardTitle>Event Details</CardTitle>
+              <CardTitle className="text-lg">Event Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Event name</Label>
+            <CardContent className="space-y-6">
+              <div className="space-y-3">
+                <Label className="text-sm">Event name</Label>
                 <Input
                   placeholder="Saturday plans"
                   value={eventName}
                   onChange={(e) => setEventName(e.target.value)}
+                  className="rounded-md py-3"
                 />
               </div>
-              <div>
-                <Label>Voting deadline</Label>
+              <div className="space-y-3">
+                <Label className="text-sm">Voting deadline</Label>
                 <Input
                   type="datetime-local"
                   value={votingDeadline}
                   onChange={(e) => setVotingDeadline(e.target.value)}
+                  className="rounded-md py-3"
                 />
               </div>
-              <Button className="w-full mt-2" onClick={() => setStep(2)}>
+              <Button
+                className="w-full mt-6 py-4 text-base"
+                onClick={() => setStep(2)}
+              >
                 Next →
               </Button>
             </CardContent>
@@ -253,17 +256,17 @@ export default function CreateEventPage() {
         )}
 
         {step === 2 && (
-          <Card>
+          <Card className="shadow-md border border-gray-200">
             <CardHeader>
-              <CardTitle>Options</CardTitle>
+              <CardTitle className="text-lg">Options</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               {options.map((opt, i) => (
                 <div
                   key={i}
-                  className="border p-4 rounded-lg bg-muted flex flex-col gap-3"
+                  className="border p-4 rounded-lg bg-muted flex flex-col gap-4"
                 >
-                  <div>
+                  <div className="space-y-2">
                     <Label>Name</Label>
                     <Input
                       placeholder="Ex: Pizza night"
@@ -271,9 +274,10 @@ export default function CreateEventPage() {
                       onChange={(e) =>
                         handleOptionChange(i, "name", e.target.value)
                       }
+                      className="py-3"
                     />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label>Price</Label>
                     <Input
                       placeholder="Ex: 20"
@@ -282,9 +286,10 @@ export default function CreateEventPage() {
                       onChange={(e) =>
                         handleOptionChange(i, "price", e.target.value)
                       }
+                      className="py-3"
                     />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label>Date & Time</Label>
                     <Input
                       type="datetime-local"
@@ -292,10 +297,11 @@ export default function CreateEventPage() {
                       onChange={(e) =>
                         handleOptionChange(i, "datetime", e.target.value)
                       }
+                      className="py-3"
                     />
                   </div>
                   <div className="flex justify-end">
-                    {i > 0 ? (
+                    {i > 0 && (
                       <Button
                         variant="ghost"
                         size="icon"
@@ -303,16 +309,21 @@ export default function CreateEventPage() {
                       >
                         <Trash className="w-4 h-4 text-red-500" />
                       </Button>
-                    ) : (
-                      <div className="w-10" />
                     )}
                   </div>
                 </div>
               ))}
-              <Button variant="outline" onClick={addOption} className="w-fit">
+              <Button
+                variant="outline"
+                onClick={addOption}
+                className="w-full py-3 text-base"
+              >
                 <Plus className="w-4 h-4 mr-2" /> Add option
               </Button>
-              <Button className="w-full mt-2" onClick={() => setStep(3)}>
+              <Button
+                className="w-full mt-4 py-4 text-base"
+                onClick={() => setStep(3)}
+              >
                 Next →
               </Button>
             </CardContent>
@@ -320,25 +331,34 @@ export default function CreateEventPage() {
         )}
 
         {step === 3 && (
-          <Card>
+          <Card className="shadow-md border border-gray-200">
             <CardHeader>
-              <CardTitle>Guests</CardTitle>
+              <CardTitle className="text-lg">Guests</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-col gap-4">
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
                 {guests.map((g, i) => (
                   <Input
                     key={i}
                     placeholder="Nickname"
                     value={g}
                     onChange={(e) => handleGuestChange(i, e.target.value)}
+                    className="py-3"
                   />
                 ))}
               </div>
-              <Button variant="outline" onClick={addGuest} className="w-fit">
+              <Button
+                variant="outline"
+                onClick={addGuest}
+                className="w-full py-3 text-base"
+              >
                 <Plus className="w-4 h-4 mr-2" /> Add guest
               </Button>
-              <Button size="lg" onClick={handleSubmit} className="w-full mt-4">
+              <Button
+                size="lg"
+                onClick={handleSubmit}
+                className="w-full mt-4 py-4 text-base"
+              >
                 Finish →
               </Button>
             </CardContent>
