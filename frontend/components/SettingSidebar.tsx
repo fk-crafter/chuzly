@@ -30,7 +30,6 @@ export default function SettingSidebar() {
 
   return (
     <>
-      {/* Desktop sidebar */}
       <aside className="hidden md:flex w-64 bg-white dark:bg-zinc-900 border-r h-screen flex-col">
         <div className="p-6 border-b">
           <h2 className="text-lg font-semibold tracking-tight">Settings</h2>
@@ -60,7 +59,6 @@ export default function SettingSidebar() {
         <Separator />
       </aside>
 
-      {/* Mobile bottom navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t flex justify-around items-center py-2 md:hidden">
         {settingNav.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href;
