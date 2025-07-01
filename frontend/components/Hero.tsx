@@ -6,11 +6,11 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 text-center">
       <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10">
-        Plan your hangouts effortlessly
+        Plan events with friends, effortlessly
       </h1>
       <p className="text-muted-foreground max-w-md mb-6 z-10">
-        Create events with multiple options, share a single link, and let your
-        friends vote. No sign-up required for them — fast, easy, and fun.
+        Create a poll, share one link, and let your friends pick the best option
+        — no signup needed. Fast, fun, and stress-free.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 z-10">
