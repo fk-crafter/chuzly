@@ -1,12 +1,19 @@
 "use client";
 
+import Image from "next/image";
+
 export function CollaborativeSection() {
   return (
     <section className="w-full bg-background py-24 px-6">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div className="flex flex-col items-center">
-          <div className="w-full h-64 rounded-xl bg-muted flex items-center justify-center text-muted-foreground">
-            [Conversation preview]
+          <div className="relative w-full h-96">
+            <Image
+              src="/conv1.png"
+              alt="Conversation preview"
+              fill
+              className="rounded-xl object-contain"
+            />
           </div>
           <h3 className="text-xl font-semibold text-foreground mt-6 mb-2">
             No more endless group chats
@@ -18,8 +25,13 @@ export function CollaborativeSection() {
         </div>
 
         <div className="flex flex-col items-center">
-          <div className="w-full h-64 rounded-xl bg-muted flex items-center justify-center text-muted-foreground">
-            [Feature illustration]
+          <div className="relative w-full h-96">
+            <Image
+              src="/conv2.jpeg"
+              alt="Voting preview"
+              fill
+              className="rounded-xl object-contain"
+            />
           </div>
           <h3 className="text-xl font-semibold text-foreground mt-6 mb-2">
             Make decisions, not threads
