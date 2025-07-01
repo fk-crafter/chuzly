@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -30,34 +30,56 @@ const steps = [
 export function HowItWorksSection() {
   const sectionRef = useRef(null);
   const [activeStep, setActiveStep] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useGSAP(() => {
-    const section = sectionRef.current;
+    let triggerInstance: ScrollTrigger | null = null;
+    let lineInstance: ScrollTrigger | null = null;
 
-    ScrollTrigger.create({
-      trigger: section,
-      start: "top top",
-      end: () => `+=${steps.length * 100}vh`,
-      pin: true,
-      scrub: true,
-      onUpdate: (self) => {
-        const progress = self.progress;
-        const newIndex = Math.round(progress * (steps.length - 1));
-        setActiveStep(newIndex);
-      },
-    });
+    if (!isMobile && sectionRef.current) {
+      const section = sectionRef.current;
 
-    gsap.to(".progress-line", {
-      height: "100%",
-      ease: "none",
-      scrollTrigger: {
+      triggerInstance = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: () => `+=${steps.length * 100}vh`,
+        pin: true,
+        scrub: true,
+        onUpdate: (self) => {
+          const progress = self.progress;
+          const newIndex = Math.round(progress * (steps.length - 1));
+          setActiveStep(newIndex);
+        },
+      });
+
+      lineInstance = ScrollTrigger.create({
         trigger: section,
         start: "top top",
         end: () => `+=${steps.length * 100}vh`,
         scrub: true,
-      },
-    });
-  }, []);
+        onUpdate: (self) => {
+          const line = document.querySelector(".progress-line") as HTMLElement;
+          if (line) {
+            line.style.height = `${self.progress * 100}%`;
+          }
+        },
+      });
+    }
+
+    return () => {
+      triggerInstance?.kill();
+      lineInstance?.kill();
+    };
+  }, [isMobile]);
 
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
@@ -125,7 +147,7 @@ export function HowItWorksSection() {
         </div>
       </div>
 
-      <div className="flex flex-col md:hidden px-4 py-12 space-y-6">
+      <div className="flex flex-col md:hidden px-4 py-12 space-y-6 min-h-[85vh]">
         <div className="relative w-full bg-muted rounded-xl overflow-hidden border border-border">
           <Image
             src={steps[activeStep].image}
@@ -150,23 +172,25 @@ export function HowItWorksSection() {
           />
         </div>
 
-        <div className="flex justify-between w-full pt-2">
+        <div className="flex justify-between w-full pt-2 space-x-2">
           <Button
             variant="outline"
             onClick={handlePrev}
             disabled={activeStep === 0}
-            className="flex-1 mr-2"
+            className="flex-1"
           >
             Previous
           </Button>
           <Button
             onClick={handleNext}
             disabled={activeStep === steps.length - 1}
-            className="flex-1 ml-2"
+            className="flex-1"
           >
             Next
           </Button>
         </div>
+
+        <div className="pt-12" />
       </div>
     </section>
   );
