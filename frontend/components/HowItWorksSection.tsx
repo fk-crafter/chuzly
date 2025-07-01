@@ -1,11 +1,9 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -30,74 +28,49 @@ const steps = [
 export function HowItWorksSection() {
   const sectionRef = useRef(null);
   const [activeStep, setActiveStep] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   useGSAP(() => {
-    let triggerInstance: ScrollTrigger | null = null;
-    let lineInstance: ScrollTrigger | null = null;
+    if (window.innerWidth < 768) return;
 
-    if (!isMobile && sectionRef.current) {
-      const section = sectionRef.current;
+    const section = sectionRef.current;
 
-      triggerInstance = ScrollTrigger.create({
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top top",
+      end: () => `+=${steps.length * 100}vh`,
+      pin: true,
+      scrub: true,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const newIndex = Math.round(progress * (steps.length - 1));
+        setActiveStep(newIndex);
+      },
+    });
+
+    gsap.to(".progress-line", {
+      height: "100%",
+      ease: "none",
+      scrollTrigger: {
         trigger: section,
         start: "top top",
         end: () => `+=${steps.length * 100}vh`,
-        pin: true,
         scrub: true,
-        onUpdate: (self) => {
-          const progress = self.progress;
-          const newIndex = Math.round(progress * (steps.length - 1));
-          setActiveStep(newIndex);
-        },
-      });
+      },
+    });
+  }, []);
 
-      lineInstance = ScrollTrigger.create({
-        trigger: section,
-        start: "top top",
-        end: () => `+=${steps.length * 100}vh`,
-        scrub: true,
-        onUpdate: (self) => {
-          const line = document.querySelector(".progress-line") as HTMLElement;
-          if (line) {
-            line.style.height = `${self.progress * 100}%`;
-          }
-        },
-      });
-    }
-
-    return () => {
-      triggerInstance?.kill();
-      lineInstance?.kill();
-    };
-  }, [isMobile]);
-
-  const handleNext = () => {
-    if (activeStep < steps.length - 1) {
-      setActiveStep((prev) => prev + 1);
-    }
+  const nextStep = () => {
+    setActiveStep((prev) => (prev < steps.length - 1 ? prev + 1 : prev));
   };
 
-  const handlePrev = () => {
-    if (activeStep > 0) {
-      setActiveStep((prev) => prev - 1);
-    }
+  const prevStep = () => {
+    setActiveStep((prev) => (prev > 0 ? prev - 1 : prev));
   };
 
-  const progressPercent = ((activeStep + 1) / steps.length) * 100;
+  const progressPercentage = ((activeStep + 1) / steps.length) * 100;
 
   return (
     <section
-      id="how-it-works"
       ref={sectionRef}
       className="relative bg-background overflow-hidden"
     >
@@ -137,60 +110,46 @@ export function HowItWorksSection() {
         </div>
 
         <div className="w-2/3 h-[400px] bg-muted rounded-xl flex items-center justify-center p-6">
-          <Image
-            src={steps[activeStep].image}
-            alt={`Step ${activeStep + 1}`}
-            width={600}
-            height={350}
-            className="rounded-lg object-contain"
-          />
+          <div className="aspect-video w-full max-w-xl rounded-xl border border-border bg-muted flex items-center justify-center text-muted-foreground text-sm">
+            [Step {activeStep + 1} preview]
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col md:hidden px-4 py-12 space-y-6 min-h-[85vh]">
-        <div className="relative w-full bg-muted rounded-xl overflow-hidden border border-border">
-          <Image
-            src={steps[activeStep].image}
-            alt={`Step ${activeStep + 1}`}
-            width={500}
-            height={280}
-            className="w-full object-cover rounded-xl"
-          />
+      <div className="flex flex-col md:hidden px-6 py-12 gap-6 items-center">
+        <div className="w-full aspect-video rounded-xl border border-border bg-muted flex items-center justify-center text-muted-foreground text-sm">
+          [Preview step {activeStep + 1}]
         </div>
+        <h3 className="text-lg font-semibold text-center">
+          {steps[activeStep].title}
+        </h3>
+        <p className="text-sm text-muted-foreground text-center">
+          {steps[activeStep].description}
+        </p>
 
-        <div className="flex flex-col items-center text-center gap-2">
-          <h3 className="text-lg font-semibold">{steps[activeStep].title}</h3>
-          <p className="text-sm text-muted-foreground max-w-xs">
-            {steps[activeStep].description}
-          </p>
-        </div>
-
-        <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+        <div className="w-full h-2 bg-border rounded-full overflow-hidden mt-4">
           <div
-            className="bg-primary h-2 transition-all duration-300"
-            style={{ width: `${progressPercent}%` }}
+            className="h-full bg-primary transition-all duration-300"
+            style={{ width: `${progressPercentage}%` }}
           />
         </div>
 
-        <div className="flex justify-between w-full pt-2 space-x-2">
-          <Button
-            variant="outline"
-            onClick={handlePrev}
+        <div className="flex gap-4 mt-4">
+          <button
+            onClick={prevStep}
             disabled={activeStep === 0}
-            className="flex-1"
+            className="px-4 py-2 border border-border rounded-md disabled:opacity-50"
           >
             Previous
-          </Button>
-          <Button
-            onClick={handleNext}
+          </button>
+          <button
+            onClick={nextStep}
             disabled={activeStep === steps.length - 1}
-            className="flex-1"
+            className="px-4 py-2 bg-primary text-white rounded-md disabled:opacity-50"
           >
             Next
-          </Button>
+          </button>
         </div>
-
-        <div className="pt-12" />
       </div>
     </section>
   );
