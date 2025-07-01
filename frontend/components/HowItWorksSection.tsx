@@ -75,6 +75,7 @@ export function HowItWorksSection() {
 
   return (
     <section
+      id="how-it-works"
       ref={sectionRef}
       className="relative bg-background overflow-hidden"
     >

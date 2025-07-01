@@ -9,8 +9,8 @@ export function Hero() {
         Plan your hangouts effortlessly
       </h1>
       <p className="text-muted-foreground max-w-md mb-6 z-10">
-        Suggest multiple options, invite your friends, and let them vote.
-        Simple, fast, no sign-up required.(Only for the owner)
+        Create events with multiple options, share a single link, and let your
+        friends vote. No sign-up required for them — fast, easy, and fun.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 z-10">
