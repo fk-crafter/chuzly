@@ -221,169 +221,146 @@ export default function CreateEventPage() {
         </div>
       </div>
 
-      <div className="md:hidden space-y-10 flex flex-col items-center">
+      <div className="md:hidden space-y-8">
         {step === 1 && (
-          <Card className="w-full max-w-[95%] shadow-md border border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-lg">Event Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 px-4">
-              <div className="space-y-3">
-                <Label className="text-sm">Event name</Label>
-                <Input
-                  placeholder="Saturday plans"
-                  value={eventName}
-                  onChange={(e) => setEventName(e.target.value)}
-                  className="rounded-md py-3"
-                />
-              </div>
-              <div className="space-y-3">
-                <Label className="text-sm">Voting deadline</Label>
-                <Input
-                  type="datetime-local"
-                  value={votingDeadline}
-                  onChange={(e) => setVotingDeadline(e.target.value)}
-                  className="rounded-md py-3"
-                />
-              </div>
-              <Button
-                className="w-full mt-6 py-4 text-base"
-                onClick={() => setStep(2)}
-              >
-                Next →
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="w-full">
+            <Label className="text-sm mb-2 block">Event name</Label>
+            <Input
+              placeholder="Saturday plans"
+              value={eventName}
+              onChange={(e) => setEventName(e.target.value)}
+              className="py-4 text-base"
+            />
+
+            <Label className="text-sm mt-6 mb-2 block">Voting deadline</Label>
+            <Input
+              type="datetime-local"
+              value={votingDeadline}
+              onChange={(e) => setVotingDeadline(e.target.value)}
+              className="py-4 text-base"
+            />
+
+            <Button
+              className="w-full mt-8 py-4 text-base"
+              onClick={() => setStep(2)}
+            >
+              Next →
+            </Button>
+          </div>
         )}
 
         {step === 2 && (
-          <Card className="w-full max-w-[95%] shadow-md border border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-lg">Options</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 px-4">
-              {options.map((opt, i) => (
-                <div
-                  key={i}
-                  className="border p-4 rounded-lg bg-muted flex flex-col gap-4"
-                >
-                  <div className="space-y-2">
-                    <Label>Name</Label>
-                    <Input
-                      placeholder="Ex: Pizza night"
-                      value={opt.name}
-                      onChange={(e) =>
-                        handleOptionChange(i, "name", e.target.value)
-                      }
-                      className="py-3"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Price</Label>
-                    <Input
-                      placeholder="Ex: 20"
-                      type="number"
-                      value={opt.price}
-                      onChange={(e) =>
-                        handleOptionChange(i, "price", e.target.value)
-                      }
-                      className="py-3"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Date & Time</Label>
-                    <Input
-                      type="datetime-local"
-                      value={opt.datetime}
-                      onChange={(e) =>
-                        handleOptionChange(i, "datetime", e.target.value)
-                      }
-                      className="py-3"
-                    />
-                  </div>
-                  <div className="flex justify-end">
-                    {i > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeOption(i)}
-                      >
-                        <Trash className="w-4 h-4 text-red-500" />
-                      </Button>
-                    )}
-                  </div>
+          <div className="w-full space-y-6">
+            {options.map((opt, i) => (
+              <div key={i} className="border p-4 rounded-xl bg-muted space-y-4">
+                <div>
+                  <Label className="text-sm">Name</Label>
+                  <Input
+                    placeholder="Ex: Pizza night"
+                    value={opt.name}
+                    onChange={(e) =>
+                      handleOptionChange(i, "name", e.target.value)
+                    }
+                    className="py-4 text-base"
+                  />
                 </div>
-              ))}
+                <div>
+                  <Label className="text-sm">Price</Label>
+                  <Input
+                    placeholder="Ex: 20"
+                    type="number"
+                    value={opt.price}
+                    onChange={(e) =>
+                      handleOptionChange(i, "price", e.target.value)
+                    }
+                    className="py-4 text-base"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm">Date & Time</Label>
+                  <Input
+                    type="datetime-local"
+                    value={opt.datetime}
+                    onChange={(e) =>
+                      handleOptionChange(i, "datetime", e.target.value)
+                    }
+                    className="py-4 text-base"
+                  />
+                </div>
+                {i > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeOption(i)}
+                    className="self-end"
+                  >
+                    <Trash className="w-4 h-4 text-red-500" />
+                  </Button>
+                )}
+              </div>
+            ))}
+            <Button
+              variant="outline"
+              onClick={addOption}
+              className="w-full py-4 text-base"
+            >
+              <Plus className="w-4 h-4 mr-2" /> Add option
+            </Button>
+
+            <div className="flex gap-4">
               <Button
                 variant="outline"
-                onClick={addOption}
-                className="w-full py-3 text-base"
+                onClick={() => setStep(1)}
+                className="w-1/2 py-4 text-base"
               >
-                <Plus className="w-4 h-4 mr-2" /> Add option
+                ← Previous
               </Button>
-
-              <div className="flex gap-4 mt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setStep(1)}
-                  className="w-1/2 py-4 text-base"
-                >
-                  ← Previous
-                </Button>
-                <Button
-                  onClick={() => setStep(3)}
-                  className="w-1/2 py-4 text-base"
-                >
-                  Next →
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              <Button
+                onClick={() => setStep(3)}
+                className="w-1/2 py-4 text-base"
+              >
+                Next →
+              </Button>
+            </div>
+          </div>
         )}
 
         {step === 3 && (
-          <Card className="w-full max-w-[95%] shadow-md border border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-lg">Guests</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 px-4">
-              <div className="space-y-4">
-                {guests.map((g, i) => (
-                  <Input
-                    key={i}
-                    placeholder="Nickname"
-                    value={g}
-                    onChange={(e) => handleGuestChange(i, e.target.value)}
-                    className="py-3"
-                  />
-                ))}
-              </div>
+          <div className="w-full space-y-6">
+            {guests.map((g, i) => (
+              <Input
+                key={i}
+                placeholder="Nickname"
+                value={g}
+                onChange={(e) => handleGuestChange(i, e.target.value)}
+                className="py-4 text-base"
+              />
+            ))}
+            <Button
+              variant="outline"
+              onClick={addGuest}
+              className="w-full py-4 text-base"
+            >
+              <Plus className="w-4 h-4 mr-2" /> Add guest
+            </Button>
+
+            <div className="flex gap-4">
               <Button
                 variant="outline"
-                onClick={addGuest}
-                className="w-full py-3 text-base"
+                onClick={() => setStep(2)}
+                className="w-1/2 py-4 text-base"
               >
-                <Plus className="w-4 h-4 mr-2" /> Add guest
+                ← Previous
               </Button>
-
-              <div className="flex gap-4 mt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setStep(2)}
-                  className="w-1/2 py-4 text-base"
-                >
-                  ← Previous
-                </Button>
-                <Button
-                  size="lg"
-                  onClick={handleSubmit}
-                  className="w-1/2 py-4 text-base"
-                >
-                  Finish →
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              <Button
+                size="lg"
+                onClick={handleSubmit}
+                className="w-1/2 py-4 text-base"
+              >
+                Finish →
+              </Button>
+            </div>
+          </div>
         )}
       </div>
     </main>
