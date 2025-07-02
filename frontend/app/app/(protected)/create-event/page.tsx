@@ -84,9 +84,11 @@ export default function CreateEventPage() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-16 space-y-10">
-      <h1 className="text-3xl font-bold text-center mb-6 flex items-center justify-center gap-2">
-        <PartyPopper className="w-8 h-8 text-primary" />
-        Create a new event
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 flex flex-col items-center justify-center gap-2 break-keep max-w-[90%]">
+        <span className="flex items-center justify-center gap-2">
+          <PartyPopper className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+          Create a new event
+        </span>
       </h1>
 
       <div className="md:hidden w-full bg-gray-200 rounded-full h-2 mb-4 overflow-hidden">
@@ -172,7 +174,6 @@ export default function CreateEventPage() {
                       variant="ghost"
                       size="icon"
                       onClick={() => removeOption(i)}
-                      className="self-center"
                     >
                       <Trash className="w-4 h-4 mt-3 text-red-500" />
                     </Button>
@@ -220,13 +221,13 @@ export default function CreateEventPage() {
         </div>
       </div>
 
-      <div className="md:hidden space-y-10">
+      <div className="md:hidden space-y-10 flex flex-col items-center">
         {step === 1 && (
-          <Card className="shadow-md border border-gray-200">
+          <Card className="w-full max-w-[95%] shadow-md border border-gray-200">
             <CardHeader>
               <CardTitle className="text-lg">Event Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4">
               <div className="space-y-3">
                 <Label className="text-sm">Event name</Label>
                 <Input
@@ -256,11 +257,11 @@ export default function CreateEventPage() {
         )}
 
         {step === 2 && (
-          <Card className="shadow-md border border-gray-200">
+          <Card className="w-full max-w-[95%] shadow-md border border-gray-200">
             <CardHeader>
               <CardTitle className="text-lg">Options</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4">
               {options.map((opt, i) => (
                 <div
                   key={i}
@@ -320,22 +321,32 @@ export default function CreateEventPage() {
               >
                 <Plus className="w-4 h-4 mr-2" /> Add option
               </Button>
-              <Button
-                className="w-full mt-4 py-4 text-base"
-                onClick={() => setStep(3)}
-              >
-                Next →
-              </Button>
+
+              <div className="flex gap-4 mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setStep(1)}
+                  className="w-1/2 py-4 text-base"
+                >
+                  ← Previous
+                </Button>
+                <Button
+                  onClick={() => setStep(3)}
+                  className="w-1/2 py-4 text-base"
+                >
+                  Next →
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
 
         {step === 3 && (
-          <Card className="shadow-md border border-gray-200">
+          <Card className="w-full max-w-[95%] shadow-md border border-gray-200">
             <CardHeader>
               <CardTitle className="text-lg">Guests</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4">
               <div className="space-y-4">
                 {guests.map((g, i) => (
                   <Input
@@ -354,13 +365,23 @@ export default function CreateEventPage() {
               >
                 <Plus className="w-4 h-4 mr-2" /> Add guest
               </Button>
-              <Button
-                size="lg"
-                onClick={handleSubmit}
-                className="w-full mt-4 py-4 text-base"
-              >
-                Finish →
-              </Button>
+
+              <div className="flex gap-4 mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setStep(2)}
+                  className="w-1/2 py-4 text-base"
+                >
+                  ← Previous
+                </Button>
+                <Button
+                  size="lg"
+                  onClick={handleSubmit}
+                  className="w-1/2 py-4 text-base"
+                >
+                  Finish →
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
