@@ -55,7 +55,7 @@ export function CardTransition() {
       id="section-wrapper"
       className="relative min-h-[250vh] overflow-hidden"
     >
-      <div className="absolute top-0 left-0 w-full flex justify-center pt-20 md:pt-40 z-10">
+      <div className="absolute top-0 left-2 md:left-0 w-full flex justify-center pt-20 md:pt-40 z-10">
         <div
           ref={beforeCardRef}
           className="w-[90%] max-w-sm md:w-auto md:max-w-none md:ml-0 ml-6"
@@ -64,7 +64,7 @@ export function CardTransition() {
         </div>
       </div>
 
-      <div className="absolute top-[1080px] w-full flex justify-center z-0">
+      <div className="absolute top-[1050px] md:top-[1080px] left-2 md:left-0 w-full flex justify-center z-0">
         <div
           ref={withCardRef}
           className="w-[90%] max-w-sm md:w-auto md:max-w-none md:ml-0 ml-6"
