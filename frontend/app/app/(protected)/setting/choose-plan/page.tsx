@@ -2,15 +2,28 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { CheckCircle } from "lucide-react";
 
 type Profile = {
   plan: "FREE" | "TRIAL" | "PRO";
   cancelAt?: string | null;
 };
+
+const pricingPlans = [
+  {
+    title: "Starter",
+    price: "Free",
+    features: ["Create events", "Share with a link", "Basic voting"],
+    key: "FREE",
+  },
+  {
+    title: "Pro",
+    price: "$9.99/mo",
+    features: ["Unlimited events", "Access to chat"],
+    key: "PRO",
+  },
+];
 
 export default function ChoosePlanPage() {
   const router = useRouter();
@@ -33,14 +46,14 @@ export default function ChoosePlanPage() {
       .catch(() => toast.error("Unable to load current plan"));
   }, [router]);
 
-  const handleSelectPlan = async (plan: "FREE" | "PRO") => {
+  const handleSelectPlan = async (planKey: "FREE" | "PRO") => {
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("You must be logged in.");
       return;
     }
 
-    if (plan === "FREE") {
+    if (planKey === "FREE") {
       if (profile?.plan === "FREE") {
         toast.info("Free plan is already active.");
       } else if (profile?.cancelAt) {
@@ -76,7 +89,6 @@ export default function ChoosePlanPage() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
       const data = await res.json();
       if (res.ok && data.url) {
         window.location.href = data.url;
@@ -86,6 +98,28 @@ export default function ChoosePlanPage() {
     } catch (err) {
       console.error("Checkout error:", err);
       toast.error("Failed to start checkout session");
+    }
+  };
+
+  const handleCancelScheduledDowngrade = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stripe/undo-cancel`,
+        {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to cancel scheduled downgrade");
+
+      toast.success("Scheduled downgrade canceled. You remain on Pro.");
+      setProfile((p) => (p ? { ...p, cancelAt: null } : p));
+    } catch {
+      toast.error("Unable to cancel scheduled downgrade");
     }
   };
 
@@ -113,112 +147,75 @@ export default function ChoosePlanPage() {
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-12 space-y-8">
-      <h1 className="text-3xl font-bold text-center">Choose Your Plan</h1>
+    <main className="max-w-5xl mx-auto px-6 py-12">
+      <h1 className="text-3xl md:text-4xl font-bold text-center mb-10">
+        Choose Your Plan
+      </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <PlanCard
-          title="Free Plan"
-          features={[
-            "Create up to 2 events per month",
-            "Invite guests via email",
-            "Basic notifications",
-          ]}
-          price="$0 / month"
-          current={profile.plan === "FREE"}
-          disabled={!!profile.cancelAt}
-          message={
-            profile.cancelAt
-              ? `You will be switched to Free on ${new Date(
-                  profile.cancelAt!
-                ).toLocaleDateString()}`
-              : null
-          }
-          onSelect={() => handleSelectPlan("FREE")}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {pricingPlans.map((plan) => {
+          const isCurrent = profile.plan === plan.key;
+          const isFree = plan.key === "FREE";
+          const disabled = isCurrent || (isFree && !!profile.cancelAt);
 
-        <PlanCard
-          title="Pro Plan"
-          features={[
-            "Unlimited events per month",
-            "Access to group chat",
-            "Priority support",
-          ]}
-          price="$9.99 / month"
-          current={profile.plan === "PRO"}
-          onSelect={() => handleSelectPlan("PRO")}
-        >
-          {profile.plan === "PRO" && (
-            <Button
-              variant="link"
-              className="w-full mt-1 cursor-pointer text-center text-sm text-muted-foreground"
-              onClick={openPortal}
+          return (
+            <div
+              key={plan.title}
+              className={`bg-muted rounded-2xl px-6 py-10 text-left border border-border ${
+                plan.key === "PRO"
+                  ? "md:scale-105 border-primary shadow-lg"
+                  : ""
+              }`}
             >
-              Manage your subscription
-            </Button>
-          )}
-        </PlanCard>
+              <h3 className="text-xl font-semibold mb-2 text-foreground">
+                {plan.title}
+              </h3>
+              <p className="text-2xl font-bold mb-4 text-foreground">
+                {plan.price}
+              </p>
+              <ul className="mb-6 space-y-2 text-sm text-muted-foreground">
+                {plan.features.map((feature, i) => (
+                  <li key={i}>✓ {feature}</li>
+                ))}
+              </ul>
+
+              <Button
+                className="w-full"
+                variant={plan.key === "PRO" ? "default" : "outline"}
+                onClick={() => handleSelectPlan(plan.key as "FREE" | "PRO")}
+                disabled={disabled}
+              >
+                {isCurrent ? "Current plan" : "Select"}
+              </Button>
+
+              {isFree && profile.cancelAt && (
+                <>
+                  <p className="text-xs text-muted-foreground text-center mt-1">
+                    You will be switched to Free on{" "}
+                    {new Date(profile.cancelAt).toLocaleDateString()}.{" "}
+                    <button
+                      className="underline text-blue-400 hover:text-black transition"
+                      onClick={handleCancelScheduledDowngrade}
+                    >
+                      Cancel
+                    </button>
+                  </p>
+                </>
+              )}
+
+              {plan.key === "PRO" && isCurrent && (
+                <Button
+                  variant="link"
+                  className="w-full mt-1 text-center text-sm text-muted-foreground"
+                  onClick={openPortal}
+                >
+                  Manage your subscription
+                </Button>
+              )}
+            </div>
+          );
+        })}
       </div>
     </main>
-  );
-}
-
-function PlanCard({
-  title,
-  features,
-  price,
-  current,
-  onSelect,
-  disabled = false,
-  message,
-  children,
-}: {
-  title: string;
-  features: string[];
-  price: string;
-  current: boolean;
-  onSelect: () => void;
-  disabled?: boolean;
-  message?: string | null;
-  children?: React.ReactNode;
-}) {
-  return (
-    <Card className="rounded-2xl shadow-sm border">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        {features.map((f) => (
-          <Feature key={f} label={f} />
-        ))}
-        <p className="font-bold text-lg mt-4">{price}</p>
-
-        <Button
-          className="w-full mt-4"
-          variant={current ? "secondary" : "outline"}
-          onClick={onSelect}
-          disabled={current || disabled}
-        >
-          {current ? "Current plan" : "Select this plan"}
-        </Button>
-
-        {message && (
-          <p className="text-xs text-muted-foreground text-center mt-1">
-            {message}
-          </p>
-        )}
-
-        {children}
-      </CardContent>
-    </Card>
-  );
-}
-
-function Feature({ label }: { label: string }) {
-  return (
-    <p className="flex items-center gap-2 text-sm">
-      <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
-      {label}
-    </p>
   );
 }
