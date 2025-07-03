@@ -4,7 +4,7 @@ import { BackgroundBeams } from "@/components/ui/background-beams";
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 text-center">
+    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 text-center -mt-20 md:-mt-14">
       <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10">
         Plan events with friends, effortlessly
       </h1>
@@ -26,7 +26,7 @@ export function Hero() {
         </Link>
       </div>
 
-      <BackgroundBeams />
+      <BackgroundBeams className="hidden md:block" />
     </section>
   );
 }

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { PartyPopper, Trash, Plus } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -84,7 +85,7 @@ export default function CreateEventPage() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-16 space-y-10">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 flex flex-col items-center justify-center gap-2 break-keep max-w-[90%]">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 flex items-center justify-center gap-2">
         <span className="flex items-center justify-center gap-2">
           <PartyPopper className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
           Create a new event
@@ -211,157 +212,191 @@ export default function CreateEventPage() {
         </Card>
 
         <div className="flex justify-center pt-6">
-          <Button
-            size="lg"
-            onClick={handleSubmit}
-            className="w-full md:w-auto px-12 py-6 text-lg"
-          >
-            Next →
-          </Button>
-        </div>
-      </div>
-
-      <div className="md:hidden space-y-8">
-        {step === 1 && (
-          <div className="w-full">
-            <Label className="text-sm mb-2 block">Event name</Label>
-            <Input
-              placeholder="Saturday plans"
-              value={eventName}
-              onChange={(e) => setEventName(e.target.value)}
-              className="py-4 text-base"
-            />
-
-            <Label className="text-sm mt-6 mb-2 block">Voting deadline</Label>
-            <Input
-              type="datetime-local"
-              value={votingDeadline}
-              onChange={(e) => setVotingDeadline(e.target.value)}
-              className="py-4 text-base"
-            />
-
+          <motion.div whileTap={{ scale: 0.95 }}>
             <Button
-              className="w-full mt-8 py-4 text-base"
-              onClick={() => setStep(2)}
+              size="lg"
+              onClick={handleSubmit}
+              className="w-full md:w-auto px-12 py-6 text-lg"
             >
               Next →
             </Button>
-          </div>
-        )}
+          </motion.div>
+        </div>
+      </div>
 
-        {step === 2 && (
-          <div className="w-full space-y-6">
-            {options.map((opt, i) => (
-              <div key={i} className="border p-4 rounded-xl bg-muted space-y-4">
-                <div>
-                  <Label className="text-sm">Name</Label>
-                  <Input
-                    placeholder="Ex: Pizza night"
-                    value={opt.name}
-                    onChange={(e) =>
-                      handleOptionChange(i, "name", e.target.value)
-                    }
-                    className="py-4 text-base"
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm">Price</Label>
-                  <Input
-                    placeholder="Ex: 20"
-                    type="number"
-                    value={opt.price}
-                    onChange={(e) =>
-                      handleOptionChange(i, "price", e.target.value)
-                    }
-                    className="py-4 text-base"
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm">Date & Time</Label>
-                  <Input
-                    type="datetime-local"
-                    value={opt.datetime}
-                    onChange={(e) =>
-                      handleOptionChange(i, "datetime", e.target.value)
-                    }
-                    className="py-4 text-base"
-                  />
-                </div>
-                {i > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeOption(i)}
-                    className="self-end"
-                  >
-                    <Trash className="w-4 h-4 text-red-500" />
-                  </Button>
-                )}
+      <div className="md:hidden space-y-8 relative min-h-[400px]">
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ x: 100, opacity: 0, scale: 0.95 }}
+              animate={{ x: 0, opacity: 1, scale: 1 }}
+              exit={{ x: -100, opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
+              className="absolute w-full"
+            >
+              <div className="w-full">
+                <Label className="text-sm mb-2 block">Event name</Label>
+                <Input
+                  placeholder="Saturday plans"
+                  value={eventName}
+                  onChange={(e) => setEventName(e.target.value)}
+                  className="py-4 text-base"
+                />
+                <Label className="text-sm mt-6 mb-2 block">
+                  Voting deadline
+                </Label>
+                <Input
+                  type="datetime-local"
+                  value={votingDeadline}
+                  onChange={(e) => setVotingDeadline(e.target.value)}
+                  className="py-4 text-base"
+                />
+                <Button
+                  className="w-full mt-8 py-4 text-base"
+                  onClick={() => setStep(2)}
+                >
+                  Next →
+                </Button>
               </div>
-            ))}
-            <Button
-              variant="outline"
-              onClick={addOption}
-              className="w-full py-4 text-base"
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ x: 100, opacity: 0, scale: 0.95 }}
+              animate={{ x: 0, opacity: 1, scale: 1 }}
+              exit={{ x: -100, opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
+              className="absolute w-full"
             >
-              <Plus className="w-4 h-4 mr-2" /> Add option
-            </Button>
+              <div className="w-full space-y-6">
+                {options.map((opt, i) => (
+                  <div
+                    key={i}
+                    className="border p-4 rounded-xl bg-muted space-y-4"
+                  >
+                    <div>
+                      <Label className="text-sm">Name</Label>
+                      <Input
+                        placeholder="Ex: Pizza night"
+                        value={opt.name}
+                        onChange={(e) =>
+                          handleOptionChange(i, "name", e.target.value)
+                        }
+                        className="py-4 text-base"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm">Price</Label>
+                      <Input
+                        placeholder="Ex: 20"
+                        type="number"
+                        value={opt.price}
+                        onChange={(e) =>
+                          handleOptionChange(i, "price", e.target.value)
+                        }
+                        className="py-4 text-base"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm">Date & Time</Label>
+                      <Input
+                        type="datetime-local"
+                        value={opt.datetime}
+                        onChange={(e) =>
+                          handleOptionChange(i, "datetime", e.target.value)
+                        }
+                        className="py-4 text-base"
+                      />
+                    </div>
+                    {i > 0 && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeOption(i)}
+                        className="self-end"
+                      >
+                        <Trash className="w-4 h-4 text-red-500" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                <Button
+                  variant="outline"
+                  onClick={addOption}
+                  className="w-full py-4 text-base"
+                >
+                  <Plus className="w-4 h-4 mr-2" /> Add option
+                </Button>
 
-            <div className="flex gap-4">
-              <Button
-                variant="outline"
-                onClick={() => setStep(1)}
-                className="w-1/2 py-4 text-base"
-              >
-                ← Previous
-              </Button>
-              <Button
-                onClick={() => setStep(3)}
-                className="w-1/2 py-4 text-base"
-              >
-                Next →
-              </Button>
-            </div>
-          </div>
-        )}
+                <div className="flex gap-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setStep(1)}
+                    className="w-1/2 py-4 text-base"
+                  >
+                    ← Previous
+                  </Button>
+                  <Button
+                    onClick={() => setStep(3)}
+                    className="w-1/2 py-4 text-base"
+                  >
+                    Next →
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
-        {step === 3 && (
-          <div className="w-full space-y-6">
-            {guests.map((g, i) => (
-              <Input
-                key={i}
-                placeholder="Nickname"
-                value={g}
-                onChange={(e) => handleGuestChange(i, e.target.value)}
-                className="py-4 text-base"
-              />
-            ))}
-            <Button
-              variant="outline"
-              onClick={addGuest}
-              className="w-full py-4 text-base"
+          {step === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ x: 100, opacity: 0, scale: 0.95 }}
+              animate={{ x: 0, opacity: 1, scale: 1 }}
+              exit={{ x: -100, opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
+              className="absolute w-full"
             >
-              <Plus className="w-4 h-4 mr-2" /> Add guest
-            </Button>
+              <div className="w-full space-y-6">
+                {guests.map((g, i) => (
+                  <Input
+                    key={i}
+                    placeholder="Nickname"
+                    value={g}
+                    onChange={(e) => handleGuestChange(i, e.target.value)}
+                    className="py-4 text-base"
+                  />
+                ))}
+                <Button
+                  variant="outline"
+                  onClick={addGuest}
+                  className="w-full py-4 text-base"
+                >
+                  <Plus className="w-4 h-4 mr-2" /> Add guest
+                </Button>
 
-            <div className="flex gap-4">
-              <Button
-                variant="outline"
-                onClick={() => setStep(2)}
-                className="w-1/2 py-4 text-base"
-              >
-                ← Previous
-              </Button>
-              <Button
-                size="lg"
-                onClick={handleSubmit}
-                className="w-1/2 py-4 text-base"
-              >
-                Finish →
-              </Button>
-            </div>
-          </div>
-        )}
+                <div className="flex gap-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setStep(2)}
+                    className="w-1/2 py-4 text-base"
+                  >
+                    ← Previous
+                  </Button>
+                  <Button
+                    size="lg"
+                    onClick={handleSubmit}
+                    className="w-1/2 py-4 text-base"
+                  >
+                    Finish →
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </main>
   );
