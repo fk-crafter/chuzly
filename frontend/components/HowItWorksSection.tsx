@@ -11,17 +11,17 @@ const steps = [
   {
     title: "Create your event",
     description: "Pick options like cinema, bowling, or paintball in seconds.",
-    image: "/step1.png",
+    video: "/step1.mp4",
   },
   {
     title: "Share the link",
     description: "Send it to your friends.",
-    image: "/step2.png",
+    video: "/step2.mp4",
   },
   {
     title: "Vote & decide",
     description: "Friends vote. Chuzly picks the best plan automatically.",
-    image: "/step3.png",
+    video: "/step3.mp4",
   },
 ];
 
@@ -110,16 +110,28 @@ export function HowItWorksSection() {
         </div>
 
         <div className="w-2/3 h-[400px] bg-muted rounded-xl flex items-center justify-center p-6">
-          <div className="aspect-video w-full max-w-xl rounded-xl border border-border bg-muted flex items-center justify-center text-muted-foreground text-sm">
-            [Step {activeStep + 1} preview]
-          </div>
+          <video
+            key={steps[activeStep].video}
+            src={steps[activeStep].video}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="aspect-video w-full max-w-xl rounded-xl border border-border object-cover"
+          />
         </div>
       </div>
 
       <div className="flex flex-col md:hidden px-6 py-12 gap-6 items-center">
-        <div className="w-full aspect-video rounded-xl border border-border bg-muted flex items-center justify-center text-muted-foreground text-sm">
-          [Preview step {activeStep + 1}]
-        </div>
+        <video
+          key={steps[activeStep].video}
+          src={steps[activeStep].video}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full aspect-video rounded-xl border border-border object-cover"
+        />
         <h3 className="text-lg font-semibold text-center">
           {steps[activeStep].title}
         </h3>
