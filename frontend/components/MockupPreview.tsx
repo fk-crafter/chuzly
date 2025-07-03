@@ -13,7 +13,7 @@ export function MockupPreview() {
   };
 
   return (
-    <section className="w-full flex justify-center px-4 -mt-28">
+    <section className="w-full flex justify-center px-4 -mt-36">
       <div className="aspect-video w-full max-w-4xl relative rounded-xl overflow-hidden border border-border bg-muted">
         {!isPlaying && (
           <button

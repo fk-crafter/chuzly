@@ -4,8 +4,8 @@ import { BackgroundBeams } from "@/components/ui/background-beams";
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 text-center -mt-20 md:-mt-14">
-      <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10">
+    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 text-center ">
+      <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10 -mt-27 md:-mt-30">
         Plan events with friends, effortlessly
       </h1>
       <p className="text-muted-foreground max-w-md mb-6 z-10">
