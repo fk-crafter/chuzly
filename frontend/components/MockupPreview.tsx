@@ -13,7 +13,7 @@ export function MockupPreview() {
   };
 
   return (
-    <section className="w-full flex justify-center px-4 mt-16">
+    <section className="w-full flex justify-center px-4 -mt-28">
       <div className="aspect-video w-full max-w-4xl relative rounded-xl overflow-hidden border border-border bg-muted">
         {!isPlaying && (
           <button
@@ -27,7 +27,7 @@ export function MockupPreview() {
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
-          src="/chuzly-pres.mp4"
+          src="/chuzly-pres2.mp4"
           controls={isPlaying}
         />
       </div>
