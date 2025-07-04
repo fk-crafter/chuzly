@@ -6,16 +6,16 @@ import {
   FaFacebookMessenger,
   FaDiscord,
   FaInstagram,
-  FaTwitter,
   FaSnapchat,
 } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 const platforms = [
   { icon: <FaWhatsapp size={28} />, name: "WhatsApp" },
   { icon: <FaFacebookMessenger size={28} />, name: "Messenger" },
   { icon: <FaDiscord size={28} />, name: "Discord" },
   { icon: <FaInstagram size={28} />, name: "Instagram" },
-  { icon: <FaTwitter size={28} />, name: "Twitter" },
+  { icon: <FaXTwitter size={28} />, name: "X" },
   { icon: <FaSnapchat size={28} />, name: "Snapchat" },
 ];
 
