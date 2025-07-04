@@ -20,7 +20,7 @@ export default function CreateEventPage() {
   ]);
   const [guests, setGuests] = useState([""]);
   const [step, setStep] = useState(1);
-  const [direction, setDirection] = useState(1); // Pour contrôler la direction
+  const [direction, setDirection] = useState(1);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -100,7 +100,6 @@ export default function CreateEventPage() {
         />
       </div>
 
-      {/* 💻 Desktop */}
       <div className="hidden md:block">
         <Card>
           <CardHeader>
@@ -226,7 +225,6 @@ export default function CreateEventPage() {
         </div>
       </div>
 
-      {/* 📱 Mobile steps */}
       <div className="md:hidden space-y-8 relative min-h-[400px]">
         <AnimatePresence mode="wait">
           {step === 1 && (
