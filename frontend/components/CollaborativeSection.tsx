@@ -1,12 +1,19 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "motion/react";
 
 export function CollaborativeSection() {
   return (
     <section className="w-full bg-background py-24 px-6">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-        <div className="flex flex-col items-center">
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex flex-col items-center"
+        >
           <div className="relative w-full h-96">
             <Image
               src="/conv1.png"
@@ -22,9 +29,15 @@ export function CollaborativeSection() {
             Chuzly replaces scattered messages with a single link that gets
             everyone aligned instantly.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col items-center">
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex flex-col items-center"
+        >
           <div className="relative w-full h-96">
             <Image
               src="/conv2.jpeg"
@@ -40,7 +53,7 @@ export function CollaborativeSection() {
             Share plans, vote together, and agree on the best option — without
             back-and-forth chaos.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
