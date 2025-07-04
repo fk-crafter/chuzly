@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BackgroundBeams } from "@/components/ui/background-beams";
+import { motion } from "motion/react";
 
 export function Hero() {
   const [email, setEmail] = useState("");
@@ -35,22 +36,41 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 text-center">
-      <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10 -mt-20 md:-mt-30">
+      <motion.h1
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10 -mt-20 md:-mt-30"
+      >
         Plan events with friends, effortlessly
-      </h1>
-      <p className="text-muted-foreground max-w-md mb-6 z-10">
+      </motion.h1>
+
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="text-muted-foreground max-w-md mb-6 z-10"
+      >
         Create a poll, share one link, and let your friends pick the best option
         — no signup needed. Fast, fun, and stress-free.
-      </p>
+      </motion.p>
 
       {joined ? (
-        <p className="text-green-600 font-medium z-10">
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="text-green-600 font-medium z-10"
+        >
           Thank you for joining the waitlist! We’ll keep you updated very soon.
-        </p>
+        </motion.p>
       ) : (
-        <form
+        <motion.form
           onSubmit={handleSubmit}
           className="flex flex-row gap-3 w-full max-w-md z-10"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
         >
           <Input
             type="email"
@@ -67,7 +87,7 @@ export function Hero() {
           >
             {loading ? "Joining..." : "Join waitlist"}
           </Button>
-        </form>
+        </motion.form>
       )}
 
       {/* 
