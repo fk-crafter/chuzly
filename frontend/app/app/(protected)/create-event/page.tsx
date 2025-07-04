@@ -20,6 +20,7 @@ export default function CreateEventPage() {
   ]);
   const [guests, setGuests] = useState([""]);
   const [step, setStep] = useState(1);
+  const [direction, setDirection] = useState(1); // Pour contrôler la direction
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -99,6 +100,7 @@ export default function CreateEventPage() {
         />
       </div>
 
+      {/* 💻 Desktop */}
       <div className="hidden md:block">
         <Card>
           <CardHeader>
@@ -224,14 +226,23 @@ export default function CreateEventPage() {
         </div>
       </div>
 
+      {/* 📱 Mobile steps */}
       <div className="md:hidden space-y-8 relative min-h-[400px]">
         <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div
               key="step1"
-              initial={{ x: 100, opacity: 0, scale: 0.95 }}
+              initial={{
+                x: direction === 1 ? 100 : -100,
+                opacity: 0,
+                scale: 0.95,
+              }}
               animate={{ x: 0, opacity: 1, scale: 1 }}
-              exit={{ x: -100, opacity: 0, scale: 0.95 }}
+              exit={{
+                x: direction === 1 ? -100 : 100,
+                opacity: 0,
+                scale: 0.95,
+              }}
               transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
               className="absolute w-full"
             >
@@ -254,7 +265,10 @@ export default function CreateEventPage() {
                 />
                 <Button
                   className="w-full mt-8 py-4 text-base"
-                  onClick={() => setStep(2)}
+                  onClick={() => {
+                    setDirection(1);
+                    setStep(2);
+                  }}
                 >
                   Next →
                 </Button>
@@ -265,9 +279,17 @@ export default function CreateEventPage() {
           {step === 2 && (
             <motion.div
               key="step2"
-              initial={{ x: 100, opacity: 0, scale: 0.95 }}
+              initial={{
+                x: direction === 1 ? 100 : -100,
+                opacity: 0,
+                scale: 0.95,
+              }}
               animate={{ x: 0, opacity: 1, scale: 1 }}
-              exit={{ x: -100, opacity: 0, scale: 0.95 }}
+              exit={{
+                x: direction === 1 ? -100 : 100,
+                opacity: 0,
+                scale: 0.95,
+              }}
               transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
               className="absolute w-full"
             >
@@ -291,8 +313,8 @@ export default function CreateEventPage() {
                     <div>
                       <Label className="text-sm">Price</Label>
                       <Input
-                        placeholder="Ex: 20"
                         type="number"
+                        placeholder="Ex: 20"
                         value={opt.price}
                         onChange={(e) =>
                           handleOptionChange(i, "price", e.target.value)
@@ -334,13 +356,19 @@ export default function CreateEventPage() {
                 <div className="flex gap-4">
                   <Button
                     variant="outline"
-                    onClick={() => setStep(1)}
+                    onClick={() => {
+                      setDirection(-1);
+                      setStep(1);
+                    }}
                     className="w-1/2 py-4 text-base"
                   >
                     ← Previous
                   </Button>
                   <Button
-                    onClick={() => setStep(3)}
+                    onClick={() => {
+                      setDirection(1);
+                      setStep(3);
+                    }}
                     className="w-1/2 py-4 text-base"
                   >
                     Next →
@@ -353,9 +381,17 @@ export default function CreateEventPage() {
           {step === 3 && (
             <motion.div
               key="step3"
-              initial={{ x: 100, opacity: 0, scale: 0.95 }}
+              initial={{
+                x: direction === 1 ? 100 : -100,
+                opacity: 0,
+                scale: 0.95,
+              }}
               animate={{ x: 0, opacity: 1, scale: 1 }}
-              exit={{ x: -100, opacity: 0, scale: 0.95 }}
+              exit={{
+                x: direction === 1 ? -100 : 100,
+                opacity: 0,
+                scale: 0.95,
+              }}
               transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
               className="absolute w-full"
             >
@@ -380,7 +416,10 @@ export default function CreateEventPage() {
                 <div className="flex gap-4">
                   <Button
                     variant="outline"
-                    onClick={() => setStep(2)}
+                    onClick={() => {
+                      setDirection(-1);
+                      setStep(2);
+                    }}
                     className="w-1/2 py-4 text-base"
                   >
                     ← Previous
