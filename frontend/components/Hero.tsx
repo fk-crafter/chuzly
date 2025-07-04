@@ -50,7 +50,7 @@ export function Hero() {
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col md:flex-row gap-3 w-full max-w-md z-10"
+          className="flex flex-row gap-3 w-full max-w-md z-10"
         >
           <Input
             type="email"
@@ -63,7 +63,7 @@ export function Hero() {
           <Button
             type="submit"
             disabled={loading || !isValidEmail}
-            className="w-auto flex-shrink-0 self-center"
+            className="w-auto flex-shrink-0"
           >
             {loading ? "Joining..." : "Join waitlist"}
           </Button>
