@@ -13,9 +13,9 @@ export function Hero() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (joined) return;
     setLoading(true);
     try {
-      // Ici tu remplaces par ton endpoint réel
       await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -44,12 +44,12 @@ export function Hero() {
 
       {joined ? (
         <p className="text-green-600 font-medium z-10">
-          🎉 You're on the waitlist! We'll keep you posted.
+          Thank you for joining the waitlist! We’ll keep you updated very soon.
         </p>
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col sm:flex-row gap-3 w-full max-w-md z-10"
+          className="flex flex-col md:flex-row gap-3 w-full max-w-md z-10"
         >
           <Input
             type="email"
@@ -59,7 +59,11 @@ export function Hero() {
             required
             className="flex-1 bg-white"
           />
-          <Button type="submit" disabled={loading}>
+          <Button
+            type="submit"
+            disabled={loading || email.length === 0}
+            className="w-auto flex-shrink-0 self-center"
+          >
             {loading ? "Joining..." : "Join waitlist"}
           </Button>
         </form>
