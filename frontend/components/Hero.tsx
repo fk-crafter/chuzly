@@ -4,16 +4,17 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BackgroundBeams } from "@/components/ui/background-beams";
-import Link from "next/link";
 
 export function Hero() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [joined, setJoined] = useState(false);
 
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (joined) return;
+    if (joined || !isValidEmail) return;
     setLoading(true);
     try {
       await fetch("/api/waitlist", {
@@ -61,7 +62,7 @@ export function Hero() {
           />
           <Button
             type="submit"
-            disabled={loading || email.length === 0}
+            disabled={loading || !isValidEmail}
             className="w-auto flex-shrink-0 self-center"
           >
             {loading ? "Joining..." : "Join waitlist"}
