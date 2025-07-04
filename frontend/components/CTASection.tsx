@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { motion } from "motion/react";
 
 export function CTASection() {
   const [email, setEmail] = useState("");
@@ -39,7 +40,13 @@ export function CTASection() {
     >
       <div className="absolute inset-0 z-0 opacity-30 blur-xl pointer-events-none" />
 
-      <div className="relative z-10 max-w-xl w-full bg-background/70 backdrop-blur-md border border-border rounded-2xl p-10 text-center shadow-xl">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="relative z-10 max-w-xl w-full bg-background/70 backdrop-blur-md border border-border rounded-2xl p-10 text-center shadow-xl"
+      >
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
           Stay in the loop
         </h2>
@@ -74,7 +81,7 @@ export function CTASection() {
             </Button>
           </form>
         )}
-      </div>
+      </motion.div>
     </section>
   );
 }
