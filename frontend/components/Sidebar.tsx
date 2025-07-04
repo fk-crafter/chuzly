@@ -66,7 +66,7 @@ export default function Sidebar() {
         </nav>
       </aside>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t flex justify-between items-center px-6 py-2 md:hidden">
+      <div className="fixed z-50 bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t flex justify-between items-center px-6 py-2 md:hidden">
         <Link
           href="/app/overview"
           className={cn(
