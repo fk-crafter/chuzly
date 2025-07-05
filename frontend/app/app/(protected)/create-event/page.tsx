@@ -265,7 +265,7 @@ export default function CreateEventPage() {
                   className="w-full mt-8 py-4 text-base"
                   onClick={() => {
                     setDirection(1);
-                    setStep(2);
+                    setTimeout(() => setStep(2), 0);
                   }}
                 >
                   Next →
@@ -356,7 +356,7 @@ export default function CreateEventPage() {
                     variant="outline"
                     onClick={() => {
                       setDirection(-1);
-                      setStep(1);
+                      setTimeout(() => setStep(1), 0);
                     }}
                     className="w-1/2 py-4 text-base"
                   >
@@ -365,7 +365,7 @@ export default function CreateEventPage() {
                   <Button
                     onClick={() => {
                       setDirection(1);
-                      setStep(3);
+                      setTimeout(() => setStep(3), 0);
                     }}
                     className="w-1/2 py-4 text-base"
                   >
@@ -416,7 +416,7 @@ export default function CreateEventPage() {
                     variant="outline"
                     onClick={() => {
                       setDirection(-1);
-                      setStep(2);
+                      setTimeout(() => setStep(2), 0);
                     }}
                     className="w-1/2 py-4 text-base"
                   >
