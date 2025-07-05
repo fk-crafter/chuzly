@@ -6,10 +6,11 @@ import { cn } from "@/lib/utils";
 import { LayoutDashboard, Calendar, Plus } from "lucide-react";
 import SettingSidebar from "./SettingSidebar";
 import SidebarAdmin from "./SidebarAdmin";
+import { useScrollDirection } from "@/hook/useScrollDirection";
 
 export default function Sidebar() {
   const pathname = usePathname();
-
+  const scrollDirection = useScrollDirection();
   const isAdminPage = pathname.startsWith("/app/admin");
   const isSettingPage = pathname.startsWith("/app/setting");
 
@@ -66,7 +67,12 @@ export default function Sidebar() {
         </nav>
       </aside>
 
-      <div className="fixed z-50 bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t flex justify-between items-center px-6 py-2 md:hidden">
+      <div
+        className={cn(
+          "fixed z-50 bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t flex justify-between items-center px-6 py-2 md:hidden",
+          scrollDirection === "down" && "translate-y-full"
+        )}
+      >
         <Link
           href="/app/overview"
           className={cn(
