@@ -51,8 +51,8 @@ export function Hero() {
         transition={{ duration: 0.8, delay: 0.2 }}
         className="text-muted-foreground max-w-md mb-6 z-10"
       >
-        Create a poll, share one link, and let your friends pick the best option
-        — no signup needed. Fast, fun, and stress-free.
+        Create a poll, share one link, and let your friends pick the best
+        option. No signup needed. Fast, fun, and stress-free.
       </motion.p>
 
       {joined ? (
