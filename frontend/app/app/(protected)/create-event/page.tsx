@@ -50,7 +50,9 @@ export default function CreateEventPage() {
     setOptions((prev) => prev.filter((_, i) => i !== index));
 
   const handleSubmit = async () => {
-    const body = { eventName, votingDeadline, options, guests };
+    const utcDeadline = new Date(votingDeadline).toISOString();
+    const body = { eventName, votingDeadline: utcDeadline, options, guests };
+
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
         method: "POST",
