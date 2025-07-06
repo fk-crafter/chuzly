@@ -353,7 +353,7 @@ export default function CreateEventPage() {
                   <Plus className="w-4 h-4 mr-2" /> Add option
                 </Button>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 pb-20 ">
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -413,7 +413,7 @@ export default function CreateEventPage() {
                   <Plus className="w-4 h-4 mr-2" /> Add guest
                 </Button>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 ">
                   <Button
                     variant="outline"
                     onClick={() => {
