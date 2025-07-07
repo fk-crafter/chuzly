@@ -227,6 +227,7 @@ export default function CreateEventPage() {
         </div>
       </div>
 
+      {/* mobile */}
       <div className="md:hidden space-y-8 relative min-h-[400px]">
         <AnimatePresence mode="wait">
           {step === 1 && (
@@ -257,12 +258,35 @@ export default function CreateEventPage() {
                 <Label className="text-sm mt-6 mb-2 block">
                   Voting deadline
                 </Label>
-                <Input
-                  type="datetime-local"
-                  value={votingDeadline}
-                  onChange={(e) => setVotingDeadline(e.target.value)}
-                  className="py-4 text-base"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    type="date"
+                    value={votingDeadline ? votingDeadline.split("T")[0] : ""}
+                    onChange={(e) => {
+                      const date = e.target.value;
+                      const time =
+                        votingDeadline.split("T")[1]?.slice(0, 5) || "00:00";
+                      setVotingDeadline(`${date}T${time}`);
+                    }}
+                    className="flex-1"
+                  />
+                  <Input
+                    type="time"
+                    value={
+                      votingDeadline
+                        ? votingDeadline.split("T")[1]?.slice(0, 5)
+                        : ""
+                    }
+                    onChange={(e) => {
+                      const time = e.target.value;
+                      const date =
+                        votingDeadline.split("T")[0] ||
+                        new Date().toISOString().split("T")[0];
+                      setVotingDeadline(`${date}T${time}`);
+                    }}
+                    className="w-24"
+                  />
+                </div>
                 <Button
                   className="w-full mt-8 py-4 text-base"
                   onClick={() => {
@@ -324,14 +348,44 @@ export default function CreateEventPage() {
                     </div>
                     <div>
                       <Label className="text-sm">Date & Time</Label>
-                      <Input
-                        type="datetime-local"
-                        value={opt.datetime}
-                        onChange={(e) =>
-                          handleOptionChange(i, "datetime", e.target.value)
-                        }
-                        className="py-4 text-base"
-                      />
+                      <div className="flex gap-2">
+                        <Input
+                          type="date"
+                          value={opt.datetime ? opt.datetime.split("T")[0] : ""}
+                          onChange={(e) => {
+                            const date = e.target.value;
+                            const time =
+                              opt.datetime.split("T")[1]?.slice(0, 5) ||
+                              "00:00";
+                            handleOptionChange(
+                              i,
+                              "datetime",
+                              `${date}T${time}`
+                            );
+                          }}
+                          className="flex-1"
+                        />
+                        <Input
+                          type="time"
+                          value={
+                            opt.datetime
+                              ? opt.datetime.split("T")[1]?.slice(0, 5)
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const time = e.target.value;
+                            const date =
+                              opt.datetime.split("T")[0] ||
+                              new Date().toISOString().split("T")[0];
+                            handleOptionChange(
+                              i,
+                              "datetime",
+                              `${date}T${time}`
+                            );
+                          }}
+                          className="w-24"
+                        />
+                      </div>
                     </div>
                     {i > 0 && (
                       <Button
@@ -353,7 +407,7 @@ export default function CreateEventPage() {
                   <Plus className="w-4 h-4 mr-2" /> Add option
                 </Button>
 
-                <div className="flex gap-4 pb-20 ">
+                <div className="flex gap-4 pb-20">
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -413,7 +467,7 @@ export default function CreateEventPage() {
                   <Plus className="w-4 h-4 mr-2" /> Add guest
                 </Button>
 
-                <div className="flex gap-4 ">
+                <div className="flex gap-4">
                   <Button
                     variant="outline"
                     onClick={() => {
