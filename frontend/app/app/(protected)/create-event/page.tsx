@@ -102,7 +102,7 @@ export default function CreateEventPage() {
         />
       </div>
 
-      <div className="hidden md:block">
+      <div className="hidden md:block space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Event Details</CardTitle>
