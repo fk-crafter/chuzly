@@ -228,7 +228,6 @@ export default function CreateEventPage() {
       </div>
 
       {/* mobile */}
-      {/* mobile */}
       <div className="md:hidden space-y-8 relative min-h-[400px]">
         <AnimatePresence mode="wait">
           {step === 1 && (
@@ -260,33 +259,53 @@ export default function CreateEventPage() {
                   Voting deadline
                 </Label>
                 <div className="flex gap-2">
-                  <Input
-                    type="date"
-                    value={votingDeadline ? votingDeadline.split("T")[0] : ""}
-                    onChange={(e) => {
-                      const date = e.target.value;
-                      const time =
-                        votingDeadline.split("T")[1]?.slice(0, 5) || "00:00";
-                      setVotingDeadline(`${date}T${time}`);
-                    }}
-                    className="flex-1"
-                  />
-                  <Input
-                    type="time"
-                    value={
-                      votingDeadline
-                        ? votingDeadline.split("T")[1]?.slice(0, 5)
-                        : ""
-                    }
-                    onChange={(e) => {
-                      const time = e.target.value;
-                      const date =
-                        votingDeadline.split("T")[0] ||
-                        new Date().toISOString().split("T")[0];
-                      setVotingDeadline(`${date}T${time}`);
-                    }}
-                    className="w-24"
-                  />
+                  <div
+                    className="relative flex-1 min-w-0"
+                    style={{ flex: "1 1 auto" }}
+                  >
+                    {!votingDeadline && (
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                        dd/mm/yyyy
+                      </span>
+                    )}
+                    <Input
+                      type="date"
+                      value={votingDeadline ? votingDeadline.split("T")[0] : ""}
+                      onChange={(e) => {
+                        const date = e.target.value;
+                        const time =
+                          votingDeadline.split("T")[1]?.slice(0, 5) || "00:00";
+                        setVotingDeadline(`${date}T${time}`);
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                  <div
+                    className="relative"
+                    style={{ width: "90px", flexShrink: 0 }}
+                  >
+                    {!votingDeadline && (
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                        --:--
+                      </span>
+                    )}
+                    <Input
+                      type="time"
+                      value={
+                        votingDeadline
+                          ? votingDeadline.split("T")[1]?.slice(0, 5)
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const time = e.target.value;
+                        const date =
+                          votingDeadline.split("T")[0] ||
+                          new Date().toISOString().split("T")[0];
+                        setVotingDeadline(`${date}T${time}`);
+                      }}
+                      className="w-full"
+                    />
+                  </div>
                 </div>
                 <Button
                   className="w-full mt-8 py-4 text-base"
@@ -350,42 +369,64 @@ export default function CreateEventPage() {
                     <div>
                       <Label className="text-sm">Date & Time</Label>
                       <div className="flex gap-2">
-                        <Input
-                          type="date"
-                          value={opt.datetime ? opt.datetime.split("T")[0] : ""}
-                          onChange={(e) => {
-                            const date = e.target.value;
-                            const time =
-                              opt.datetime.split("T")[1]?.slice(0, 5) ||
-                              "00:00";
-                            handleOptionChange(
-                              i,
-                              "datetime",
-                              `${date}T${time}`
-                            );
-                          }}
-                          className="flex-1"
-                        />
-                        <Input
-                          type="time"
-                          value={
-                            opt.datetime
-                              ? opt.datetime.split("T")[1]?.slice(0, 5)
-                              : ""
-                          }
-                          onChange={(e) => {
-                            const time = e.target.value;
-                            const date =
-                              opt.datetime.split("T")[0] ||
-                              new Date().toISOString().split("T")[0];
-                            handleOptionChange(
-                              i,
-                              "datetime",
-                              `${date}T${time}`
-                            );
-                          }}
-                          className="w-24"
-                        />
+                        <div
+                          className="relative flex-1 min-w-0"
+                          style={{ flex: "1 1 auto" }}
+                        >
+                          {!opt.datetime && (
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                              dd/mm/yyyy
+                            </span>
+                          )}
+                          <Input
+                            type="date"
+                            value={
+                              opt.datetime ? opt.datetime.split("T")[0] : ""
+                            }
+                            onChange={(e) => {
+                              const date = e.target.value;
+                              const time =
+                                opt.datetime.split("T")[1]?.slice(0, 5) ||
+                                "00:00";
+                              handleOptionChange(
+                                i,
+                                "datetime",
+                                `${date}T${time}`
+                              );
+                            }}
+                            className="w-full"
+                          />
+                        </div>
+                        <div
+                          className="relative"
+                          style={{ width: "90px", flexShrink: 0 }}
+                        >
+                          {!opt.datetime && (
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                              --:--
+                            </span>
+                          )}
+                          <Input
+                            type="time"
+                            value={
+                              opt.datetime
+                                ? opt.datetime.split("T")[1]?.slice(0, 5)
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const time = e.target.value;
+                              const date =
+                                opt.datetime.split("T")[0] ||
+                                new Date().toISOString().split("T")[0];
+                              handleOptionChange(
+                                i,
+                                "datetime",
+                                `${date}T${time}`
+                              );
+                            }}
+                            className="w-full"
+                          />
+                        </div>
                       </div>
                     </div>
                     {i > 0 && (
