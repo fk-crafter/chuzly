@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function EventListPage() {
   const [events, setEvents] = useState<
@@ -48,12 +49,7 @@ export default function EventListPage() {
     fetchMyEvents();
   }, []);
 
-  const handleDelete = async (eventId: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this event?"
-    );
-    if (!confirmDelete) return;
-
+  const confirmDelete = async (eventId: string) => {
     const token = localStorage.getItem("token");
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}`, {
@@ -64,9 +60,34 @@ export default function EventListPage() {
       });
 
       setEvents((prev) => prev.filter((e) => e.id !== eventId));
+      toast.success("Event deleted successfully");
     } catch (err) {
       console.error("Failed to delete event", err);
+      toast.error("Failed to delete event");
     }
+  };
+
+  const handleDelete = (eventId: string) => {
+    toast.custom((t) => (
+      <div className="space-y-2">
+        <p>Are you sure you want to delete this event?</p>
+        <div className="flex gap-2">
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => {
+              confirmDelete(eventId);
+              toast.dismiss(t);
+            }}
+          >
+            Yes, delete
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => toast.dismiss(t)}>
+            Cancel
+          </Button>
+        </div>
+      </div>
+    ));
   };
 
   if (loading) {
