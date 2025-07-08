@@ -54,7 +54,13 @@ export default function CreateEventPage() {
     setOptions((prev) => prev.filter((_, i) => i !== index));
 
   const handleSubmit = async () => {
-    const utcDeadline = new Date(votingDeadline).toISOString();
+    const utcDeadline = votingDeadline
+      ? new Date(votingDeadline).toISOString()
+      : null;
+    if (!utcDeadline) {
+      toast.error("Please select a valid deadline date");
+      return;
+    }
     const body = { eventName, votingDeadline: utcDeadline, options, guests };
 
     try {
