@@ -246,4 +246,36 @@ export class EventService {
       };
     });
   }
+
+  async deleteEvent(eventId: string, userId: string) {
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+    });
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    if (event.creatorId !== userId) {
+      throw new Error('Unauthorized');
+    }
+
+    await this.prisma.message.deleteMany({
+      where: { eventId },
+    });
+
+    await this.prisma.guest.deleteMany({
+      where: { eventId },
+    });
+
+    await this.prisma.option.deleteMany({
+      where: { eventId },
+    });
+
+    await this.prisma.event.delete({
+      where: { id: eventId },
+    });
+
+    return { success: true };
+  }
 }
