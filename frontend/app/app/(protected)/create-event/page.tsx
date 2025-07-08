@@ -22,6 +22,10 @@ export default function CreateEventPage() {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
 
+  const [openDetails, setOpenDetails] = useState(true);
+  const [openOptions, setOpenOptions] = useState(false);
+  const [openGuests, setOpenGuests] = useState(false);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -87,61 +91,76 @@ export default function CreateEventPage() {
   const progressPercent = step === 1 ? 33 : step === 2 ? 66 : 100;
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-16 space-y-10">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 flex items-center justify-center gap-2">
+    <main className="max-w-3xl mx-auto px-4 py-16 space-y-8">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 flex items-center justify-center gap-2">
         <span className="flex items-center justify-center gap-2">
           <PartyPopper className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
           Create a new event
         </span>
       </h1>
 
-      <div className="md:hidden w-full bg-gray-200 rounded-full h-2 mb-4 overflow-hidden">
-        <div
-          className="bg-primary h-2 transition-all duration-300"
-          style={{ width: `${progressPercent}%` }}
-        />
-      </div>
-
       <div className="hidden md:block space-y-6">
-        <Card>
-          <CardHeader>
+        <Card
+          className={`shadow-xl rounded-2xl overflow-hidden transition-all duration-500 ${
+            openDetails
+              ? "max-h-[600px] opacity-100"
+              : "max-h-[64px] opacity-60 overflow-hidden"
+          }`}
+        >
+          <CardHeader
+            onClick={() => setOpenDetails(!openDetails)}
+            className="cursor-pointer"
+          >
             <CardTitle>Event Details</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="mb-2 block">Event name</Label>
+                <Label>Event name</Label>
                 <Input
-                  className="w-full max-w-sm"
                   placeholder="Saturday plans"
                   value={eventName}
                   onChange={(e) => setEventName(e.target.value)}
                 />
               </div>
               <div>
-                <Label className="mb-2 block">Voting deadline</Label>
+                <Label>Voting deadline</Label>
                 <Input
                   type="datetime-local"
-                  className="w-full max-w-sm"
                   value={votingDeadline}
                   onChange={(e) => setVotingDeadline(e.target.value)}
                 />
               </div>
             </div>
+            <Button
+              onClick={() => setOpenOptions(true)}
+              className="mt-4 w-full md:w-auto cursor-pointer"
+            >
+              Next →
+            </Button>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card
+          className={`shadow-xl rounded-2xl overflow-hidden transition-all duration-500 ${
+            openOptions
+              ? "max-h-[1200px] opacity-100"
+              : "max-h-[64px] opacity-60 overflow-hidden"
+          }`}
+        >
+          <CardHeader
+            onClick={() => setOpenOptions(!openOptions)}
+            className="cursor-pointer"
+          >
             <CardTitle>Options</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {options.map((opt, i) => (
               <div
                 key={i}
-                className="border p-4 rounded-lg bg-muted grid md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end"
+                className="border p-4 rounded-xl bg-muted grid md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end"
               >
-                <div className="flex-1 w-full">
+                <div>
                   <Label>Name</Label>
                   <Input
                     placeholder="Ex: Pizza night"
@@ -151,18 +170,18 @@ export default function CreateEventPage() {
                     }
                   />
                 </div>
-                <div className="flex-1 w-full">
+                <div>
                   <Label>Price</Label>
                   <Input
-                    placeholder="Ex: 20"
                     type="number"
+                    placeholder="Ex: 20"
                     value={opt.price}
                     onChange={(e) =>
                       handleOptionChange(i, "price", e.target.value)
                     }
                   />
                 </div>
-                <div className="flex-1 w-full">
+                <div>
                   <Label>Date & Time</Label>
                   <Input
                     type="datetime-local"
@@ -172,14 +191,14 @@ export default function CreateEventPage() {
                     }
                   />
                 </div>
-                <div className="flex items-end h-full">
+                <div className="flex items-end">
                   {i > 0 ? (
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => removeOption(i)}
                     >
-                      <Trash className="w-4 h-4 mt-3 text-red-500" />
+                      <Trash className="w-4 h-4 text-red-500" />
                     </Button>
                   ) : (
                     <div className="w-10" />
@@ -187,46 +206,83 @@ export default function CreateEventPage() {
                 </div>
               </div>
             ))}
-            <Button variant="outline" onClick={addOption} className="w-fit">
-              <Plus className="w-4 h-4 mr-2" /> Add option
-            </Button>
+            <div className="flex flex-col md:flex-row gap-4">
+              <Button
+                variant="outline"
+                onClick={addOption}
+                className="w-full md:w-fit cursor-pointer"
+              >
+                <Plus className="w-4 h-4 mr-2" /> Add option
+              </Button>
+
+              <Button
+                onClick={() => setOpenGuests(true)}
+                className="w-full md:w-auto cursor-pointer"
+              >
+                Next →
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card
+          className={`shadow-xl rounded-2xl overflow-hidden transition-all duration-500 ${
+            openGuests
+              ? "max-h-[600px] opacity-100"
+              : "max-h-[64px] opacity-60 overflow-hidden"
+          }`}
+        >
+          <CardHeader
+            onClick={() => setOpenGuests(!openGuests)}
+            className="cursor-pointer"
+          >
             <CardTitle>Guests</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {guests.map((g, i) => (
-                <Input
-                  key={i}
-                  placeholder="Nickname"
-                  value={g}
-                  onChange={(e) => handleGuestChange(i, e.target.value)}
-                />
+                <div key={i} className="relative">
+                  <Input
+                    placeholder="Nickname"
+                    value={g}
+                    onChange={(e) => handleGuestChange(i, e.target.value)}
+                    className="pr-10"
+                  />
+                  {guests.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setGuests(guests.filter((_, idx) => idx !== i))
+                      }
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-700"
+                    >
+                      <Trash className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
-            <Button variant="outline" onClick={addGuest} className="w-fit">
-              <Plus className="w-4 h-4 mr-2" /> Add guest
-            </Button>
+            <div className="flex flex-col md:flex-row gap-4">
+              <Button
+                variant="outline"
+                onClick={addGuest}
+                className="w-full md:w-fit cursor-pointer"
+              >
+                <Plus className="w-4 h-4 mr-2" /> Add guest
+              </Button>
+
+              <Button
+                onClick={handleSubmit}
+                className="w-full md:w-auto cursor-pointer"
+              >
+                Finish →
+              </Button>
+            </div>
           </CardContent>
         </Card>
-
-        <div className="flex justify-center pt-6">
-          <motion.div whileTap={{ scale: 0.95 }}>
-            <Button
-              size="lg"
-              onClick={handleSubmit}
-              className="w-full md:w-auto px-12 py-6 text-lg"
-            >
-              Next →
-            </Button>
-          </motion.div>
-        </div>
       </div>
 
+      {/* mobile */}
       <div className="md:hidden space-y-8 relative min-h-[400px]">
         <AnimatePresence mode="wait">
           {step === 1 && (
