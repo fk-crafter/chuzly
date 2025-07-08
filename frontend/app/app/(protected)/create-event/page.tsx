@@ -290,6 +290,12 @@ export default function CreateEventPage() {
 
       {/* mobile */}
       <div className="md:hidden space-y-8 relative min-h-[400px]">
+        <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+          <div
+            className="bg-primary h-full transition-all duration-500"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
         <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div
