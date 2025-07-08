@@ -34,6 +34,12 @@ export class EventController {
     return this.eventService.getEventsByCreator(user.userId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('overview')
+  async getOverview(@User() user: { userId: string }) {
+    return this.eventService.getOverviewStats(user.userId);
+  }
+
   @Get()
   findAll() {
     return this.eventService.findAll();

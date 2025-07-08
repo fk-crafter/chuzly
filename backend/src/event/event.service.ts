@@ -278,4 +278,33 @@ export class EventService {
 
     return { success: true };
   }
+
+  async getOverviewStats(userId: string) {
+    const totalEvents = await this.prisma.event.count({
+      where: { creatorId: userId },
+    });
+
+    const allGuests = await this.prisma.guest.findMany({
+      where: { event: { creatorId: userId } },
+    });
+
+    const totalGuests = allGuests.length;
+    const totalVotes = allGuests.filter((g) => g.voteId !== null).length;
+
+    const upcomingEvents = await this.prisma.event.count({
+      where: {
+        creatorId: userId,
+        votingDeadline: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    return {
+      totalEvents,
+      totalVotes,
+      totalGuests,
+      upcomingEvents,
+    };
+  }
 }
