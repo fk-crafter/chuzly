@@ -8,8 +8,9 @@ import { motion } from "motion/react";
 
 export function Header() {
   const handleUnavailable = () => {
-    toast("Not available yet", {
-      description: "Sign up and login will be available at launch.",
+    toast("We're launching soon!", {
+      description:
+        "Leave your email to join the waitlist and be the first to know when we open.",
     });
   };
 
