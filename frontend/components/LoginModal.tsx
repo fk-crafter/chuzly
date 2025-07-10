@@ -43,7 +43,7 @@ export function LoginModal() {
       localStorage.setItem("userName", data.name);
       localStorage.setItem("userPlan", data.plan);
 
-      window.location.href = "/app/create-event";
+      window.location.href = "/app/dashboard";
     } catch (err) {
       console.error(err);
       alert("Login failed. Check your credentials.");
