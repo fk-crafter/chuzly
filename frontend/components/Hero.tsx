@@ -42,7 +42,7 @@ export function Hero() {
         transition={{ duration: 0.6 }}
         className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10 -mt-20 md:-mt-30"
       >
-        Plan events with friends, effortlessly
+        No more endless group chats.
       </motion.h1>
 
       <motion.p
@@ -51,8 +51,8 @@ export function Hero() {
         transition={{ duration: 0.8, delay: 0.2 }}
         className="text-muted-foreground max-w-md mb-6 z-10"
       >
-        Create a poll, share one link, and let your friends pick the best
-        option. No signup needed. Fast, fun, and stress-free.
+        Suggest options, let your friends vote, and just go. No sign-ups, no
+        drama.
       </motion.p>
 
       {joined ? (
@@ -62,7 +62,8 @@ export function Hero() {
           transition={{ duration: 0.6 }}
           className="text-green-600 font-medium z-10"
         >
-          Thank you for joining the waitlist! We’ll keep you updated very soon.
+          Thank you for joining! You’re on the list. We’ll let you know very
+          soon.
         </motion.p>
       ) : (
         <motion.form
@@ -74,7 +75,7 @@ export function Hero() {
         >
           <Input
             type="email"
-            placeholder="Enter your email"
+            placeholder="Your best email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -89,21 +90,6 @@ export function Hero() {
           </Button>
         </motion.form>
       )}
-
-      {/* 
-      <div className="flex flex-col sm:flex-row gap-3 z-10 mt-4">
-        <Link href="#beta">
-          <Button size="lg" className="cursor-pointer">
-            Create an event
-          </Button>
-        </Link>
-        <Link href="#how-it-works">
-          <Button variant="outline" size="lg" className="cursor-pointer">
-            How it works
-          </Button>
-        </Link>
-      </div>
-      */}
 
       <BackgroundBeams className="hidden md:block" />
     </section>
