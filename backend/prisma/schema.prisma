@@ -58,6 +58,7 @@ model User {
   avatarColor      String?
 
   plan             Plan     @default(TRIAL)
+  hasOnboarded     Boolean  @default(false)
   trialEndsAt      DateTime?
   freeStartedAt    DateTime? 
 

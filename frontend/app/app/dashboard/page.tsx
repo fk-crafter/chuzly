@@ -24,6 +24,19 @@ export default function DashboardPage() {
       }
 
       try {
+        const userRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const user = await userRes.json();
+
+        if (!user.hasOnboarded) {
+          router.push("/app/onboarding");
+          return;
+        }
+
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/events/overview`,
           {
