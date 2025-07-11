@@ -14,10 +14,34 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chuzly",
-  description: "Chuzly - Event Management",
+  title: "Chuzly — Plan with your friends. Fast.",
+  description:
+    "Suggest options, let your friends vote, and just go. No endless group chats.",
   icons: {
     icon: "/logo.png",
+  },
+  openGraph: {
+    title: "Chuzly — Plan with your friends. Fast.",
+    description:
+      "Suggest options, let your friends vote, and just go. No endless group chats.",
+    url: "https://chuzly.com",
+    siteName: "Chuzly",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Chuzly App Preview",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Chuzly — Plan with your friends. Fast.",
+    description:
+      "Suggest options, let your friends vote, and just go. No endless group chats.",
+    images: ["/logo.png"],
   },
 };
 
@@ -30,7 +54,6 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/logo.png" type="image/png" />
-        <title>Chuzly</title>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
