@@ -24,11 +24,11 @@ export const metadata: Metadata = {
     title: "Chuzly — Plan with your friends. Fast.",
     description:
       "Suggest options, let your friends vote, and just go. No endless group chats.",
-    url: "https://chuzly.com",
+    url: "https://chuzly.app",
     siteName: "Chuzly",
     images: [
       {
-        url: "/logo.png",
+        url: "https://chuzly.app/logo.png",
         width: 1200,
         height: 630,
         alt: "Chuzly App Preview",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title: "Chuzly — Plan with your friends. Fast.",
     description:
       "Suggest options, let your friends vote, and just go. No endless group chats.",
-    images: ["/logo.png"],
+    images: ["https://chuzly.app/logo.png"],
   },
 };
 
