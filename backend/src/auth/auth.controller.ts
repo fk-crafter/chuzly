@@ -17,6 +17,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from '../prisma/prisma.service';
 import { RequestWithUser } from './types/request-user';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { User } from './user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -55,6 +56,7 @@ export class AuthController {
         cancelAt: true,
         createdAt: true,
         avatarColor: true,
+        hasOnboarded: true,
       },
     });
 
@@ -129,6 +131,17 @@ export class AuthController {
     }
 
     await this.authService.updateName(req.user.userId, name.trim());
+    return { success: true };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('complete-onboarding')
+  async completeOnboarding(@User() user: { userId: string }) {
+    await this.prisma.user.update({
+      where: { id: user.userId },
+      data: { hasOnboarded: true },
+    });
+
     return { success: true };
   }
 }
