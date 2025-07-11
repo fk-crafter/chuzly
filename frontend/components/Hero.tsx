@@ -42,7 +42,8 @@ export function Hero() {
         transition={{ duration: 0.6 }}
         className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10 -mt-20 md:-mt-30"
       >
-        No more endless group chats.
+        Tired of messy group chats <br className="hidden md:block" /> when
+        planning?
       </motion.h1>
 
       <motion.p
@@ -51,8 +52,7 @@ export function Hero() {
         transition={{ duration: 0.8, delay: 0.2 }}
         className="text-muted-foreground max-w-md mb-6 z-10"
       >
-        Suggest options, let your friends vote, and just go. No sign-ups, no
-        drama.
+        Create one link, let everyone vote, and decide instantly.
       </motion.p>
 
       {joined ? (
@@ -86,7 +86,7 @@ export function Hero() {
             disabled={loading || !isValidEmail}
             className="w-auto flex-shrink-0"
           >
-            {loading ? "Joining..." : "Join waitlist"}
+            {loading ? "Joining..." : "Get early access"}
           </Button>
         </motion.form>
       )}
