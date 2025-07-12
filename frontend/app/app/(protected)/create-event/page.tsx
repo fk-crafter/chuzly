@@ -58,7 +58,9 @@ export default function CreateEventPage() {
       ? new Date(votingDeadline).toISOString()
       : null;
     if (!utcDeadline) {
-      toast.error("Please select a valid deadline date");
+      toast.error("Please select a valid deadline date", {
+        className: "bg-red-600 text-white",
+      });
       return;
     }
     const body = { eventName, votingDeadline: utcDeadline, options, guests };

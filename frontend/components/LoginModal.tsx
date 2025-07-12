@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub, FaApple } from "react-icons/fa";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { ShineBorder } from "@/components/magicui/shine-border";
 
 export function LoginModal() {
   const [formData, setFormData] = useState({
@@ -54,6 +55,8 @@ export function LoginModal() {
 
   return (
     <div className="relative z-10 w-full max-w-xs md:max-w-sm bg-white dark:bg-zinc-900 rounded-lg md:rounded-xl shadow-lg md:shadow-xl p-5 md:p-6 pt-10 text-center space-y-6 border border-border mx-auto">
+      <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
+
       <Link
         href="/"
         className="absolute top-3 left-3 flex items-center text-xs md:text-sm text-muted-foreground hover:text-foreground transition"
