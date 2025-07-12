@@ -32,6 +32,9 @@ importers:
       '@heroui/theme':
         specifier: ^2.4.17
         version: 2.4.17(tailwindcss@4.1.5)
+      '@heroui/toast':
+        specifier: ^2.0.12
+        version: 2.0.12(@heroui/system@2.4.18(@heroui/theme@2.4.17(tailwindcss@4.1.5))(framer-motion@12.23.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@heroui/theme@2.4.17(tailwindcss@4.1.5))(framer-motion@12.23.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@hookform/resolvers':
         specifier: ^5.0.1
         version: 5.0.1(react-hook-form@7.56.2(react@19.1.0))

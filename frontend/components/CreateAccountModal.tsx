@@ -25,6 +25,7 @@ import {
   AlertDialogFooter,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { ShineBorder } from "@/components/magicui/shine-border";
 
 const passwordSchema = z
   .string()
@@ -143,6 +144,7 @@ export function CreateAccountModal() {
 
   return (
     <div className="relative z-10 w-full max-w-xs md:max-w-sm bg-white dark:bg-zinc-900 rounded-lg md:rounded-xl shadow-lg md:shadow-xl p-4 md:p-6 pt-10 text-center space-y-4 border border-border">
+      <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
       <Link
         href="/"
         className="absolute top-3 left-3 flex items-center text-xs md:text-sm text-muted-foreground hover:text-foreground transition"
