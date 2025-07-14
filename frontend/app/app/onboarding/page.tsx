@@ -8,12 +8,12 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 const COLORS = [
-  "#A07CFE",
-  "#FE8FB5",
-  "#FFBE7B",
-  "#6EE7B7",
-  "#60A5FA",
-  "#F87171",
+  "bg-muted",
+  "bg-[var(--color-pastel-green)]",
+  "bg-[var(--color-pastel-blue)]",
+  "bg-[var(--color-pastel-yellow)]",
+  "bg-[var(--color-pastel-pink)]",
+  "bg-[var(--color-pastel-lavender)]",
 ];
 
 export default function OnboardingPage() {
@@ -51,6 +51,9 @@ export default function OnboardingPage() {
       body: JSON.stringify({ color }),
     });
 
+    // ✅ Met à jour dans localStorage pour que le header la récupère
+    localStorage.setItem("avatarColor", color);
+
     setStep(2);
   };
 
@@ -59,7 +62,9 @@ export default function OnboardingPage() {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
     });
-    router.push("/app/dashboard");
+
+    // ✅ Recharge pour forcer la synchro (nom + couleur) dans le header
+    window.location.href = "/app/dashboard";
   };
 
   return (
@@ -108,17 +113,19 @@ export default function OnboardingPage() {
                     key={c}
                     className={cn(
                       "w-8 h-8 rounded-full border-2",
-                      color === c ? "border-black" : "border-transparent"
+                      color === c ? "border-black" : "border-transparent",
+                      c
                     )}
-                    style={{ backgroundColor: c }}
                     onClick={() => setColor(c)}
                     type="button"
                   />
                 ))}
               </div>
               <div
-                className="w-16 h-16 rounded-full border mt-4 shadow-lg"
-                style={{ backgroundColor: color }}
+                className={cn(
+                  "w-16 h-16 rounded-full border mt-4 shadow-lg",
+                  color
+                )}
               />
               <Button
                 onClick={handleNameSubmit}
