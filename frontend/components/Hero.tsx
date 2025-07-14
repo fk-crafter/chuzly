@@ -38,7 +38,7 @@ export function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 text-center">
+    <section className="relative min-h-[100vh] flex flex-col items-center justify-center px-4 text-center pb-30">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
