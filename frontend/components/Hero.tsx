@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { motion } from "motion/react";
+import { cn } from "@/lib/utils";
+import { ArrowRightIcon } from "lucide-react";
+import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 
 export function Hero() {
   const [email, setEmail] = useState("");
@@ -36,13 +39,32 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="z-10 mb-4"
+      >
+        <div
+          className={cn(
+            "group rounded-full border border-black/5 bg-neutral-100 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-200 dark:border-white/5 dark:bg-neutral-900 dark:hover:bg-neutral-800"
+          )}
+        >
+          <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
+            <span>✨ Join the future of event planning</span>
+            <ArrowRightIcon className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
+          </AnimatedShinyText>
+        </div>
+      </motion.div>
+
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10 -mt-20 md:-mt-30"
+        className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10"
       >
-        Plan events with friends, effortlessly
+        Tired of messy group chats <br className="hidden md:block" /> when
+        planning?
       </motion.h1>
 
       <motion.p
@@ -51,8 +73,7 @@ export function Hero() {
         transition={{ duration: 0.8, delay: 0.2 }}
         className="text-muted-foreground max-w-md mb-6 z-10"
       >
-        Create a poll, share one link, and let your friends pick the best
-        option. No signup needed. Fast, fun, and stress-free.
+        Create one link, let everyone vote, and decide instantly.
       </motion.p>
 
       {joined ? (
@@ -62,7 +83,8 @@ export function Hero() {
           transition={{ duration: 0.6 }}
           className="text-green-600 font-medium z-10"
         >
-          Thank you for joining the waitlist! We’ll keep you updated very soon.
+          Thank you for joining! You’re on the list. We’ll let you know very
+          soon.
         </motion.p>
       ) : (
         <motion.form
@@ -74,7 +96,7 @@ export function Hero() {
         >
           <Input
             type="email"
-            placeholder="Enter your email"
+            placeholder="Your best email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -85,25 +107,10 @@ export function Hero() {
             disabled={loading || !isValidEmail}
             className="w-auto flex-shrink-0"
           >
-            {loading ? "Joining..." : "Join waitlist"}
+            {loading ? "Joining..." : "Get early access"}
           </Button>
         </motion.form>
       )}
-
-      {/* 
-      <div className="flex flex-col sm:flex-row gap-3 z-10 mt-4">
-        <Link href="#beta">
-          <Button size="lg" className="cursor-pointer">
-            Create an event
-          </Button>
-        </Link>
-        <Link href="#how-it-works">
-          <Button variant="outline" size="lg" className="cursor-pointer">
-            How it works
-          </Button>
-        </Link>
-      </div>
-      */}
 
       <BackgroundBeams className="hidden md:block" />
     </section>
