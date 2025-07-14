@@ -50,7 +50,7 @@ export default function AppHeader() {
         localStorage.setItem("userName", data.name);
         localStorage.setItem("userPlan", data.plan);
         localStorage.setItem("isAdmin", data.isAdmin ? "true" : "false");
-        localStorage.setItem("avatarColor", data.avatarColor || "bg-muted");
+        localStorage.setItem("avatarColor", data.avatarColor);
       })
       .catch(() => {
         router.push("/lougiin");
