@@ -132,6 +132,7 @@ export function CreateAccountModal() {
         const err = await res.text();
         throw new Error(err || "Registration failed.");
       }
+      localStorage.setItem("newUserName", formData.name);
 
       setShowSuccessModal(true);
     } catch (err) {
