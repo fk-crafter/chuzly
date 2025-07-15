@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
               Check your inbox and follow the instructions to update your
               password.
             </p>
-            <Link href="/lougiin" className="w-full">
+            <Link href="/login" className="w-full">
               <Button variant="outline" className="w-full">
                 Back to Login
               </Button>

@@ -20,7 +20,7 @@ export default function OverviewPage() {
     const fetchStats = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        router.push("/lougiin"); // redirect si pas loggué
+        router.push("/login"); // redirect si pas loggué
         return;
       }
 

@@ -39,7 +39,7 @@ export default function ProfileSettingsPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/lougiin");
+      router.push("/login");
       return;
     }
 
@@ -112,7 +112,7 @@ export default function ProfileSettingsPage() {
       });
 
       localStorage.clear();
-      router.push("/lougiin");
+      router.push("/login");
     } catch {
       console.error("Account deletion failed");
     }

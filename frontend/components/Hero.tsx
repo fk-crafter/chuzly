@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { motion } from "motion/react";
@@ -8,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import Link from "next/link";
+import Image from "next/image";
 
 export function Hero() {
   return (
@@ -58,9 +58,9 @@ export function Hero() {
         transition={{ duration: 0.8, delay: 0.4 }}
         className="flex flex-col sm:flex-row gap-4 z-10"
       >
-        <Link href="/crrreate-account" passHref>
+        <Link href="/create-account" passHref>
           <Button className="w-full sm:w-auto">Get started</Button>
-        </Link>{" "}
+        </Link>
         <Link href="#features">
           <Button variant="outline" className="w-full sm:w-auto">
             Learn more
@@ -69,6 +69,26 @@ export function Hero() {
       </motion.div>
 
       <BackgroundBeams className="hidden md:block" />
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+        className="mt-6 z-10"
+      >
+        <Link
+          href="https://www.producthunt.com/products/chuzly?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-chuzly"
+          target="_blank"
+          className="fixed bottom-4 right-4 z-50"
+        >
+          <Image
+            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=991501&theme=dark&t=1752612095391"
+            alt="Chuzly on Product Hunt"
+            width={140}
+            height={32}
+            priority
+          />
+        </Link>
+      </motion.div>
     </section>
   );
 }

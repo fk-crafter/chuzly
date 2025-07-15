@@ -15,7 +15,7 @@ export default function AuthCallbackContent() {
 
       router.push("/app/create-event");
     } else {
-      router.push("/lougiin");
+      router.push("/login");
     }
   }, [router, searchParams]);
 

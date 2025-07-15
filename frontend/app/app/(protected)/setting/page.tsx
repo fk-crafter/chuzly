@@ -16,7 +16,7 @@ export default function SettingsPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/lougiin");
+      router.push("/login");
       return;
     }
 

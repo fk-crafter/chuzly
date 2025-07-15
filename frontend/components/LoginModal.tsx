@@ -171,7 +171,7 @@ export function LoginModal() {
 
       <p className="text-xs md:text-sm text-center text-muted-foreground">
         Don’t have an account?{" "}
-        <Link href="/crrreate-account" className="text-primary hover:underline">
+        <Link href="/create-account" className="text-primary hover:underline">
           Sign up
         </Link>
       </p>
