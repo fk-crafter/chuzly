@@ -3,17 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { motion } from "motion/react";
 
 export function Header() {
-  const handleUnavailable = () => {
-    toast("We're launching soon!", {
-      description:
-        "Leave your email to join the waitlist and be the first to know when we open.",
-    });
-  };
-
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
@@ -37,12 +29,14 @@ export function Header() {
         transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
         className="flex items-center gap-3"
       >
-        <button onClick={handleUnavailable} className="text-sm hover:underline">
+        <Link href="/login" className="text-sm hover:underline">
           Login
-        </button>
-        <Button size="sm" onClick={handleUnavailable}>
-          Sign up
-        </Button>
+        </Link>
+        <Link href="/create-account">
+          <Button size="sm" className="cursor-pointer">
+            Sign up
+          </Button>
+        </Link>
       </motion.div>
     </motion.header>
   );
