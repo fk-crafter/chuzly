@@ -19,7 +19,7 @@ const pricingPlans = [
   },
   {
     title: "Pro",
-    price: "$9.99/mo",
+    price: "$10.99/mo",
     features: ["Unlimited events", "Access to chat"],
     key: "PRO",
   },
