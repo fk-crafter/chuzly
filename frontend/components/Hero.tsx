@@ -13,6 +13,26 @@ export function Hero() {
   return (
     <section className="relative min-h-[100vh] flex flex-col items-center justify-center px-4 text-center pb-30">
       <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1 }}
+        className="absolute top-4 right-4 z-20"
+      >
+        <Link
+          href="https://www.producthunt.com/products/chuzly?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-chuzly"
+          target="_blank"
+        >
+          <Image
+            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=991501&theme=dark&t=1752612095391"
+            alt="Chuzly on Product Hunt"
+            width={130}
+            height={30}
+            priority
+          />
+        </Link>
+      </motion.div>
+
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -69,26 +89,6 @@ export function Hero() {
       </motion.div>
 
       <BackgroundBeams className="hidden md:block" />
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
-        className="mt-6 z-10"
-      >
-        <Link
-          href="https://www.producthunt.com/products/chuzly?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-chuzly"
-          target="_blank"
-          className="fixed bottom-4 right-4 z-50"
-        >
-          <Image
-            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=991501&theme=dark&t=1752612095391"
-            alt="Chuzly on Product Hunt"
-            width={140}
-            height={32}
-            priority
-          />
-        </Link>
-      </motion.div>
     </section>
   );
 }
