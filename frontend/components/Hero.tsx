@@ -1,42 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
+import Link from "next/link";
 
 export function Hero() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [joined, setJoined] = useState(false);
-
-  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (joined || !isValidEmail) return;
-    setLoading(true);
-    try {
-      await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      setJoined(true);
-      setEmail("");
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <section className="relative min-h-[100vh] flex flex-col items-center justify-center px-4 text-center pb-30">
       <motion.div
@@ -79,41 +52,22 @@ export function Hero() {
         Create one link, let everyone vote, and decide instantly.
       </motion.p>
 
-      {joined ? (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="text-green-600 font-medium z-10"
-        >
-          Thank you for joining! You’re on the list. We’ll let you know very
-          soon.
-        </motion.p>
-      ) : (
-        <motion.form
-          onSubmit={handleSubmit}
-          className="flex flex-row gap-3 w-full max-w-md z-10"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <Input
-            type="email"
-            placeholder="Your best email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="flex-1 bg-white"
-          />
-          <Button
-            type="submit"
-            disabled={loading || !isValidEmail}
-            className="w-auto flex-shrink-0"
-          >
-            {loading ? "Joining..." : "Get early access"}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+        className="flex flex-col sm:flex-row gap-4 z-10"
+      >
+        <Link href="/crrreate-account" passHref>
+          <Button className="w-full sm:w-auto">Get started</Button>
+        </Link>{" "}
+        <Link href="#features">
+          <Button variant="outline" className="w-full sm:w-auto">
+            Learn more
           </Button>
-        </motion.form>
-      )}
+        </Link>
+      </motion.div>
+
       <BackgroundBeams className="hidden md:block" />
     </section>
   );
