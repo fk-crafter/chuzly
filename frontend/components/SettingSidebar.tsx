@@ -5,9 +5,14 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { CreditCard, ListOrdered, UserCog } from "lucide-react";
+import { CreditCard, ListOrdered, User, UserCog } from "lucide-react";
 
 const settingNav = [
+  {
+    href: "/app/setting",
+    label: "Account overview",
+    icon: User,
+  },
   {
     href: "/app/setting/subscription",
     label: "Subscription",

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { User, CreditCard } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -32,50 +33,80 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="max-w-5xl mx-auto px-6 py-12 space-y-10">
-      <h1 className="text-3xl font-bold text-center">Account settings</h1>
+    <main className="max-w-4xl mx-auto px-6 py-12">
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="space-y-6"
+      >
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Account overview</h1>
+          <p className="text-muted-foreground">
+            Welcome back, <span className="font-medium">{profile.name}</span>.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Link href="/app/setting/profile" className="block">
-          <CardItem
-            icon={<User />}
-            title="Profile"
-            desc={`Welcome back, ${profile.name}`}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card
+            href="/app/setting/profile"
+            icon={<User className="w-5 h-5" />}
+            title="Profile settings"
+            description="Update your personal information, name & avatar."
           />
-        </Link>
 
-        <Link href="/app/setting/subscription" className="block">
-          <CardItem
-            icon={<CreditCard />}
+          <Card
+            href="/app/setting/subscription"
+            icon={<CreditCard className="w-5 h-5" />}
             title="Subscription"
-            desc={
+            description={
               profile.plan === "TRIAL" && profile.trialEndsAt
-                ? `Plan: ${profile.plan} (trial ends ${new Date(
+                ? `Trial until ${new Date(
                     profile.trialEndsAt
-                  ).toLocaleDateString()})`
-                : `Plan: ${profile.plan}`
+                  ).toLocaleDateString()}`
+                : `Current plan: ${profile.plan}`
             }
           />
-        </Link>
-      </div>
+        </div>
+
+        <div className="border rounded-xl p-6 bg-muted/50">
+          <h3 className="font-semibold text-lg mb-2">Plan details</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            You are currently on the{" "}
+            <span className="font-medium">{profile.plan}</span> plan.
+          </p>
+          <Link href="/app/setting/subscription">
+            <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition">
+              Manage subscription
+            </button>
+          </Link>
+        </div>
+      </motion.div>
     </main>
   );
 }
 
-function CardItem({
+function Card({
+  href,
   icon,
   title,
-  desc,
+  description,
 }: {
+  href: string;
   icon: React.ReactNode;
   title: string;
-  desc: string;
+  description: string;
 }) {
   return (
-    <div className="border rounded-xl p-5 hover:shadow-md transition bg-muted cursor-pointer">
-      <div className="flex items-center gap-3 mb-3 text-primary">{icon}</div>
-      <h3 className="font-semibold">{title}</h3>
-      <p className="text-sm text-muted-foreground">{desc}</p>
-    </div>
+    <Link
+      href={href}
+      className="group block border rounded-xl p-5 bg-background hover:shadow-lg hover:border-primary transition"
+    >
+      <div className="flex items-center gap-3 text-primary mb-3">{icon}</div>
+      <h3 className="font-medium text-lg group-hover:text-primary transition">
+        {title}
+      </h3>
+      <p className="text-sm text-muted-foreground">{description}</p>
+    </Link>
   );
 }
