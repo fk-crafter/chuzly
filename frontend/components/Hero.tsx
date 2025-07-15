@@ -111,7 +111,6 @@ export function Hero() {
           </Button>
         </motion.form>
       )}
-
       <BackgroundBeams className="hidden md:block" />
     </section>
   );
