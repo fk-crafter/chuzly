@@ -35,7 +35,6 @@ export default function ProfileSettingsPage() {
   const [selectedColor, setSelectedColor] = useState("bg-muted");
   const [hoveringAvatar, setHoveringAvatar] = useState(false);
   const [showSaveColor, setShowSaveColor] = useState(false);
-  const [showMobileColors, setShowMobileColors] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -60,22 +59,6 @@ export default function ProfileSettingsPage() {
         setLoading(false);
       });
   }, [router]);
-
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setShowMobileColors(false);
-    };
-
-    if (showMobileColors) {
-      document.addEventListener("click", handleClickOutside);
-    } else {
-      document.removeEventListener("click", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [showMobileColors]);
 
   const saveName = async () => {
     const token = localStorage.getItem("token");
@@ -112,7 +95,6 @@ export default function ProfileSettingsPage() {
         body: JSON.stringify({ color: selectedColor }),
       });
       setShowSaveColor(false);
-      setShowMobileColors(false);
     } catch {
       console.error("Failed to save color");
     }
@@ -161,35 +143,31 @@ export default function ProfileSettingsPage() {
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-12 space-y-10">
-      <h1 className="text-3xl font-bold">Public profile</h1>
+      <h1 className="text-3xl font-bold text-center md:text-left">
+        Public profile
+      </h1>
 
-      <Card>
+      <Card className="hidden md:block">
         <CardHeader>
           <CardTitle>Basic information</CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-8">
-          {/* Avatar block */}
+        <CardContent className="flex flex-col items-center md:items-start space-y-8">
           <div
-            className="flex items-center gap-6 relative"
+            className="relative flex flex-col items-center md:flex-row md:items-center gap-4 w-full"
             onMouseEnter={() => setHoveringAvatar(true)}
             onMouseLeave={() => setHoveringAvatar(false)}
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowMobileColors(true);
-            }}
           >
             <div
-              className={`w-24 h-24 rounded-full flex items-center justify-center text-xl font-semibold text-primary uppercase transition-all ${selectedColor}`}
+              className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-xl font-semibold text-primary uppercase transition-all ${selectedColor}`}
             >
               {initials}
             </div>
 
-            {/* Desktop colors on hover */}
             <AnimatePresence>
               {hoveringAvatar && (
                 <motion.div
-                  className="gap-2 hidden md:flex absolute left-32"
+                  className="gap-2 hidden md:flex absolute md:static left-32"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
@@ -214,76 +192,65 @@ export default function ProfileSettingsPage() {
             </AnimatePresence>
           </div>
 
-          {/* Mobile colors below avatar when clicked */}
-          {showMobileColors && (
-            <div className="flex gap-2 flex-wrap md:hidden">
-              {colors.map((color) => (
-                <button
-                  key={color}
-                  className={`w-10 h-10 rounded-full border-2 ${
-                    selectedColor === color
-                      ? "border-black"
-                      : "border-transparent"
-                  } ${color}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedColor(color);
-                    setShowSaveColor(true);
-                  }}
-                />
-              ))}
-            </div>
-          )}
-
           {showSaveColor && (
-            <Button onClick={saveColor}>Save avatar color</Button>
+            <Button onClick={saveColor} className="w-full max-w-[300px]">
+              Save avatar color
+            </Button>
           )}
 
-          {/* Name and fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="relative group space-y-1">
-              <label className="text-sm font-medium text-muted-foreground">
+          <div className="w-full flex flex-col items-center md:grid md:grid-cols-2 gap-6">
+            <div className="space-y-1 w-full max-w-[300px]">
+              <label className="text-sm font-medium text-muted-foreground text-left w-full">
                 Full name
               </label>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full">
                 <Input
                   value={nameInput}
                   disabled={!editingName}
                   onChange={(e) => setNameInput(e.target.value)}
+                  className="w-full"
                 />
                 <Pencil
-                  className="w-4 h-4 opacity-60 group-hover:opacity-100 cursor-pointer transition"
+                  className="w-4 h-4 opacity-60 hover:opacity-100 cursor-pointer transition"
                   onClick={() => setEditingName(true)}
                 />
               </div>
               {editingName && (
-                <Button onClick={saveName} size="sm" className="mt-1">
+                <Button onClick={saveName} size="sm" className="w-full mt-1">
                   Save name
                 </Button>
               )}
             </div>
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-muted-foreground">
+            <div className="space-y-1 w-full max-w-[300px]">
+              <label className="text-sm font-medium text-muted-foreground text-left w-full">
                 Email
               </label>
-              <Input value={profile!.email} disabled />
+              <Input
+                value={profile!.email}
+                disabled
+                className="w-full truncate"
+              />
             </div>
 
-            <div className="space-y-1 md:col-span-2">
-              <label className="text-sm font-medium text-muted-foreground">
+            <div className="space-y-1 w-full max-w-[300px] md:col-span-2">
+              <label className="text-sm font-medium text-muted-foreground text-left w-full">
                 Plan
               </label>
-              <Input value={profile!.plan} disabled />
+              <Input value={profile!.plan} disabled className="w-full" />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Delete account dialog */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="destructive">Delete my account</Button>
+          <Button
+            variant="destructive"
+            className="hidden md:block w-full max-w-[300px] mx-auto"
+          >
+            Delete my account
+          </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -310,6 +277,107 @@ export default function ProfileSettingsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <div className="flex md:hidden flex-col items-center">
+        <div
+          className={`w-20 h-20 rounded-full flex items-center justify-center text-xl font-semibold text-primary uppercase ${selectedColor}`}
+        >
+          {initials}
+        </div>
+
+        <div className="flex gap-2 flex-wrap justify-center mt-4">
+          {colors.map((color) => (
+            <button
+              key={color}
+              className={`w-10 h-10 rounded-full border-2 ${
+                selectedColor === color ? "border-black" : "border-transparent"
+              } ${color}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedColor(color);
+                setShowSaveColor(true);
+              }}
+            />
+          ))}
+        </div>
+
+        {showSaveColor && (
+          <Button onClick={saveColor} className="w-full max-w-[300px] mt-2">
+            Save avatar color
+          </Button>
+        )}
+
+        <div className="w-full space-y-6 mt-8">
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-muted-foreground">
+              Name
+            </label>
+            <div className="flex items-center gap-2">
+              <Input
+                value={nameInput}
+                disabled={!editingName}
+                onChange={(e) => setNameInput(e.target.value)}
+                className="w-full"
+              />
+              <Pencil
+                className="w-4 h-4 opacity-60 hover:opacity-100 cursor-pointer transition"
+                onClick={() => setEditingName(true)}
+              />
+            </div>
+            {editingName && (
+              <Button onClick={saveName} size="sm" className="w-full mt-1">
+                Save name
+              </Button>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-muted-foreground">
+              Email
+            </label>
+            <Input value={profile!.email} disabled className="w-full" />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-muted-foreground">
+              Plan
+            </label>
+            <Input value={profile!.plan} disabled className="w-full" />
+          </div>
+        </div>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" className="w-full mt-8">
+              Delete my account
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete account</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. Type <strong>DELETE</strong> to
+                confirm.
+              </AlertDialogDescription>
+              <Input
+                placeholder="Type DELETE"
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
+              />
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button
+                variant="destructive"
+                disabled={confirmText !== "DELETE"}
+                onClick={deleteAccount}
+              >
+                Confirm
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </main>
   );
 }
