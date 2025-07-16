@@ -56,11 +56,11 @@ export function Hero() {
         transition={{ duration: 0.6 }}
         className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10"
       >
-        Plan events{" "}
+        Turn group chats into <br className="hidden md:block" />
         <span className="px-2 py-1 rounded bg-primary text-white mb-1 inline-block">
-          effortlessly
-        </span>
-        <br className="hidden md:block" /> with your friends.
+          quick decisions
+        </span>{" "}
+        in seconds.
       </motion.h1>
 
       <motion.p
