@@ -64,7 +64,7 @@ export default function SettingSidebar() {
         <Separator />
       </aside>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t flex justify-around items-center py-2 md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t flex justify-around items-center z-50 py-2 md:hidden">
         {settingNav.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href;
           return (
