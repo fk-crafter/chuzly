@@ -33,8 +33,9 @@ export default function ProfileSettingsPage() {
   const [nameInput, setNameInput] = useState("");
   const [editingName, setEditingName] = useState(false);
   const [selectedColor, setSelectedColor] = useState("bg-muted");
-  const [showSaveColor, setShowSaveColor] = useState(false);
   const [hoveringAvatar, setHoveringAvatar] = useState(false);
+  const [showSaveColor, setShowSaveColor] = useState(false);
+  const [showMobileColors, setShowMobileColors] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -59,6 +60,22 @@ export default function ProfileSettingsPage() {
         setLoading(false);
       });
   }, [router]);
+
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowMobileColors(false);
+    };
+
+    if (showMobileColors) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [showMobileColors]);
 
   const saveName = async () => {
     const token = localStorage.getItem("token");
@@ -94,8 +111,8 @@ export default function ProfileSettingsPage() {
         },
         body: JSON.stringify({ color: selectedColor }),
       });
-
       setShowSaveColor(false);
+      setShowMobileColors(false);
     } catch {
       console.error("Failed to save color");
     }
@@ -152,10 +169,15 @@ export default function ProfileSettingsPage() {
         </CardHeader>
 
         <CardContent className="space-y-8">
+          {/* Avatar block */}
           <div
             className="flex items-center gap-6 relative"
             onMouseEnter={() => setHoveringAvatar(true)}
             onMouseLeave={() => setHoveringAvatar(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowMobileColors(true);
+            }}
           >
             <div
               className={`w-24 h-24 rounded-full flex items-center justify-center text-xl font-semibold text-primary uppercase transition-all ${selectedColor}`}
@@ -163,10 +185,11 @@ export default function ProfileSettingsPage() {
               {initials}
             </div>
 
+            {/* Desktop colors on hover */}
             <AnimatePresence>
               {hoveringAvatar && (
                 <motion.div
-                  className="flex gap-2 absolute left-32"
+                  className="gap-2 hidden md:flex absolute left-32"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
@@ -179,7 +202,8 @@ export default function ProfileSettingsPage() {
                           ? "border-black"
                           : "border-transparent"
                       } ${color}`}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setSelectedColor(color);
                         setShowSaveColor(true);
                       }}
@@ -190,15 +214,34 @@ export default function ProfileSettingsPage() {
             </AnimatePresence>
           </div>
 
+          {/* Mobile colors below avatar when clicked */}
+          {showMobileColors && (
+            <div className="flex gap-2 flex-wrap md:hidden">
+              {colors.map((color) => (
+                <button
+                  key={color}
+                  className={`w-10 h-10 rounded-full border-2 ${
+                    selectedColor === color
+                      ? "border-black"
+                      : "border-transparent"
+                  } ${color}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedColor(color);
+                    setShowSaveColor(true);
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
           {showSaveColor && (
             <Button onClick={saveColor}>Save avatar color</Button>
           )}
 
+          {/* Name and fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div
-              className="relative group space-y-1"
-              onMouseEnter={() => setEditingName(false)}
-            >
+            <div className="relative group space-y-1">
               <label className="text-sm font-medium text-muted-foreground">
                 Full name
               </label>
@@ -214,7 +257,7 @@ export default function ProfileSettingsPage() {
                 />
               </div>
               {editingName && (
-                <Button onClick={saveName} size="sm">
+                <Button onClick={saveName} size="sm" className="mt-1">
                   Save name
                 </Button>
               )}
@@ -237,6 +280,7 @@ export default function ProfileSettingsPage() {
         </CardContent>
       </Card>
 
+      {/* Delete account dialog */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant="destructive">Delete my account</Button>
