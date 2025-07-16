@@ -12,14 +12,20 @@ export function BoldStatementSection() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true, amount: 1 }}
       >
-        <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
+        {/* Mobile title */}
+        <h2 className="text-3xl font-bold leading-tight mb-6 md:hidden">
+          Your group plans fall apart 90% of the time
+        </h2>
+        {/* Desktop title */}
+        <h2 className="hidden md:block text-4xl md:text-5xl font-bold leading-tight mb-6">
           Your group plans fall apart <br className="hidden md:inline" /> like
           90% of the time
         </h2>
-        <p className="text-lg mb-2 text-zinc-400">
+
+        <p className="text-base md:text-lg mb-2 text-zinc-400">
           Stop relying on chaotic group chats and vague polls.
         </p>
-        <p className="text-lg text-zinc-400">
+        <p className="text-base md:text-lg text-zinc-400">
           Chuzly helps you actually make decisions — fast and simple.
         </p>
       </motion.div>
