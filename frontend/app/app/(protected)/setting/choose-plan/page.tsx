@@ -152,7 +152,7 @@ export default function ChoosePlanPage() {
         Choose Your Plan
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="hidden md:grid grid-cols-1 md:grid-cols-2 gap-8">
         {pricingPlans.map((plan) => {
           const isCurrent = profile.plan === plan.key;
           const isFree = plan.key === "FREE";
@@ -189,18 +189,16 @@ export default function ChoosePlanPage() {
               </Button>
 
               {isFree && profile.cancelAt && (
-                <>
-                  <p className="text-xs text-muted-foreground text-center mt-1">
-                    You will be switched to Free on{" "}
-                    {new Date(profile.cancelAt).toLocaleDateString()}.{" "}
-                    <button
-                      className="underline text-blue-400 hover:text-black transition"
-                      onClick={handleCancelScheduledDowngrade}
-                    >
-                      Cancel
-                    </button>
-                  </p>
-                </>
+                <p className="text-xs text-muted-foreground text-center mt-1">
+                  You will be switched to Free on{" "}
+                  {new Date(profile.cancelAt).toLocaleDateString()}.{" "}
+                  <button
+                    className="underline text-blue-400 hover:text-black transition"
+                    onClick={handleCancelScheduledDowngrade}
+                  >
+                    Cancel
+                  </button>
+                </p>
               )}
 
               {plan.key === "PRO" && isCurrent && (
@@ -215,6 +213,43 @@ export default function ChoosePlanPage() {
             </div>
           );
         })}
+      </div>
+
+      <div className="block md:hidden space-y-4">
+        <div
+          className={`border rounded-lg px-4 py-6 ${
+            profile.plan === "PRO" ? "border-black bg-black text-white" : ""
+          }`}
+        >
+          <h3 className="text-lg font-semibold mb-1">Pro</h3>
+          <p className="text-xl font-bold mb-1">$10.99 per month</p>
+          <p className="text-sm mb-4">Advanced features</p>
+          <Button
+            className="w-full"
+            variant="default"
+            onClick={() => handleSelectPlan("PRO")}
+            disabled={profile.plan === "PRO"}
+          >
+            {profile.plan === "PRO" ? "Current plan" : "Upgrade"}
+          </Button>
+        </div>
+
+        <div
+          className={`border rounded-lg px-4 py-6 ${
+            profile.plan === "FREE" ? "border-black bg-gray-50" : ""
+          }`}
+        >
+          <h3 className="text-lg font-semibold mb-1">Free</h3>
+          <p className="text-sm mb-4">Basic features</p>
+          <Button
+            className="w-full"
+            variant="outline"
+            onClick={() => handleSelectPlan("FREE")}
+            disabled={profile.plan === "FREE"}
+          >
+            {profile.plan === "FREE" ? "Current plan" : "Downgrade"}
+          </Button>
+        </div>
       </div>
     </main>
   );
