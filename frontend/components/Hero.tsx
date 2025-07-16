@@ -8,6 +8,7 @@ import { ArrowRightIcon } from "lucide-react";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import Link from "next/link";
 import Image from "next/image";
+import { DotPattern } from "@/components/magicui/dot-pattern";
 
 export function Hero() {
   return (
@@ -90,7 +91,11 @@ export function Hero() {
         </Link>
       </motion.div>
 
-      <BackgroundBeams className="hidden md:block" />
+      <DotPattern
+        className={cn(
+          "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]"
+        )}
+      />
     </section>
   );
 }
