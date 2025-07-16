@@ -54,13 +54,15 @@ export function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-4xl md:text-5xl font-bold tracking-tight mb-4 z-10"
+        className="text-4xl md:text-5xl font-bold tracking-tight mb-6 z-10"
       >
-        Turn group chats into <br className="hidden md:block" />
-        <span className="px-2 py-1 rounded bg-primary text-white mb-1 inline-block">
-          quick decisions
-        </span>{" "}
-        in seconds.
+        <div>Turn group chats into</div>
+        <div className="mt-2">
+          <span className="px-2 py-1 rounded bg-primary text-white mb-1 inline-block">
+            quick decisions
+          </span>{" "}
+          in seconds.
+        </div>
       </motion.h1>
 
       <motion.p
