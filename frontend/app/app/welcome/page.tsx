@@ -10,7 +10,6 @@ export default function WelcomeScreen() {
 
   return (
     <main className="fixed inset-0 bg-black text-white flex flex-col justify-between items-center px-6 py-10 text-center overflow-hidden">
-      {/* Logo */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -20,7 +19,6 @@ export default function WelcomeScreen() {
         <Image src="/logo.png" alt="Chuzly logo" width={60} height={60} />
       </motion.div>
 
-      {/* Headline */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -36,7 +34,6 @@ export default function WelcomeScreen() {
         </p>
       </motion.div>
 
-      {/* Buttons */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -26,6 +26,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { ShineBorder } from "@/components/magicui/shine-border";
+import Image from "next/image";
 
 const passwordSchema = z
   .string()
@@ -144,147 +145,109 @@ export function CreateAccountModal() {
   };
 
   return (
-    <div className="relative z-10 w-full max-w-xs md:max-w-sm bg-white dark:bg-zinc-900 rounded-lg md:rounded-xl shadow-lg md:shadow-xl p-4 md:p-6 pt-10 text-center space-y-4 border border-border">
-      <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
-      <Link
-        href="/"
-        className="absolute top-3 left-3 flex items-center text-xs md:text-sm text-muted-foreground hover:text-foreground transition"
-      >
-        <ArrowLeft className="w-4 h-4 mr-1" />
-        Back
-      </Link>
-
-      <div className="text-lg md:text-2xl font-semibold">
-        Create your account
-      </div>
-
-      <div className="space-y-3 md:space-y-4">
+    <div className="w-full max-w-xs md:max-w-sm mx-auto">
+      {/* Desktop Version */}
+      <div className="hidden md:block relative z-10 bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6 pt-10 text-center space-y-4 border border-border">
+        <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
         <Link
-          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
-          className="block"
+          href="/"
+          className="absolute top-3 left-3 flex items-center text-sm text-muted-foreground hover:text-foreground transition"
         >
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-center"
-          >
-            <FcGoogle className="text-xl" />
-            Continue with Google
-          </Button>
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Back
         </Link>
-        <Link
-          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
-          className="block"
-        >
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-center"
+
+        <div className="text-2xl font-semibold">Create your account</div>
+
+        <div className="space-y-4">
+          <Link
+            href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
+            className="block"
           >
-            <FaGithub className="text-xl" />
-            Continue with GitHub
-          </Button>
-        </Link>
-        <div className="relative">
-          <Button
-            variant="outline"
-            className="w-full opacity-50 cursor-not-allowed"
-            disabled
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center"
+            >
+              <FcGoogle className="text-xl" />
+              Continue with Google
+            </Button>
+          </Link>
+          <Link
+            href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}
+            className="block"
           >
-            <FaApple className="text-xl" />
-            Continue with Apple
-          </Button>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow z-10 pointer-events-none">
-            COMING SOON
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center"
+            >
+              <FaGithub className="text-xl" />
+              Continue with GitHub
+            </Button>
+          </Link>
+          <div className="relative">
+            <Button
+              variant="outline"
+              className="w-full opacity-50 cursor-not-allowed"
+              disabled
+            >
+              <FaApple className="text-xl" />
+              Continue with Apple
+            </Button>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow z-10 pointer-events-none">
+              COMING SOON
+            </div>
           </div>
         </div>
-      </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-3 md:space-y-4 text-left pt-3 md:pt-4"
-      >
-        <div>
-          <Label htmlFor="name">Full Name</Label>
-          <Input
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="John Doe"
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="you@example.com"
-            required
-          />
-        </div>
-        <div className="relative">
-          <Label htmlFor="password">Password</Label>
-          <div className="relative">
+        <form onSubmit={handleSubmit} className="space-y-4 text-left pt-4">
+          <div>
+            <Label htmlFor="name">Full Name</Label>
             <Input
-              id="password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              value={formData.password}
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
+              placeholder="John Doe"
               required
             />
-            <button
-              type="button"
-              className="absolute right-2 top-2"
-              onClick={() => setShowPassword((prev) => !prev)}
-              tabIndex={-1}
-            >
-              {showPassword ? (
-                <EyeOff className="w-5 h-5" />
-              ) : (
-                <Eye className="w-5 h-5" />
-              )}
-            </button>
           </div>
-          <div className="relative mt-1">
-            <button
-              type="button"
-              className="flex md:hidden items-center gap-2 text-muted-foreground text-xs"
-              onClick={() => setShowMobileRules((prev) => !prev)}
-            >
-              <Info className="w-4 h-4" />
-              Password rules
-            </button>
-
-            {showMobileRules && (
-              <div className="bg-white dark:bg-zinc-800 p-2 rounded-md shadow-md mt-1 border space-y-1 w-52">
-                <PasswordRule
-                  valid={passwordValidations.length}
-                  text="Minimum 12 characters"
-                />
-                <PasswordRule
-                  valid={passwordValidations.uppercase}
-                  text="At least one uppercase letter"
-                />
-                <PasswordRule
-                  valid={passwordValidations.lowercase}
-                  text="At least one lowercase letter"
-                />
-                <PasswordRule
-                  valid={passwordValidations.number}
-                  text="At least one number"
-                />
-                <PasswordRule
-                  valid={passwordValidations.special}
-                  text="At least one special character"
-                />
-              </div>
-            )}
-
-            <div className="hidden md:block group relative mt-1">
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+          <div className="relative">
+            <Label htmlFor="password">Password</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-2"
+                onClick={() => setShowPassword((prev) => !prev)}
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+            <div className="group relative mt-1">
               <div className="flex items-center gap-2 text-muted-foreground text-sm cursor-default">
                 <Info className="w-4 h-4" />
                 Password rules
@@ -313,79 +276,299 @@ export function CreateAccountModal() {
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="relative">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
           <div className="relative">
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-            <button
-              type="button"
-              className="absolute right-2 top-2"
-              onClick={() => setShowConfirmPassword((prev) => !prev)}
-              tabIndex={-1}
-            >
-              {showConfirmPassword ? (
-                <EyeOff className="w-5 h-5" />
-              ) : (
-                <Eye className="w-5 h-5" />
-              )}
-            </button>
-          </div>
-          {formData.confirmPassword.length > 0 && (
-            <div
-              className={`flex items-center mt-1 text-xs md:text-sm ${
-                passwordsMatch ? "text-green-600" : "text-red-500"
-              }`}
-            >
-              {passwordsMatch ? (
-                <CheckCircle className="w-4 h-4 mr-1" />
-              ) : (
-                <XCircle className="w-4 h-4 mr-1" />
-              )}
-              {passwordsMatch
-                ? "Password confirmed"
-                : "The passwords do not match"}
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-2"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                tabIndex={-1}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
             </div>
-          )}
+            {formData.confirmPassword.length > 0 && (
+              <div
+                className={`flex items-center mt-1 text-sm ${
+                  passwordsMatch ? "text-green-600" : "text-red-500"
+                }`}
+              >
+                {passwordsMatch ? (
+                  <CheckCircle className="w-4 h-4 mr-1" />
+                ) : (
+                  <XCircle className="w-4 h-4 mr-1" />
+                )}
+                {passwordsMatch
+                  ? "Password confirmed"
+                  : "The passwords do not match"}
+              </div>
+            )}
+          </div>
+
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Creating account..." : "Create Account"}
+          </Button>
+        </form>
+
+        <p className="text-sm text-center text-muted-foreground">
+          Already have an account?{" "}
+          <Link href="/lougiin" className="text-primary hover:underline">
+            Login
+          </Link>
+        </p>
+
+        <AlertDialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Account created 🎉</AlertDialogTitle>
+              <AlertDialogDescription>
+                Please check your email to verify your address before logging
+                in.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction asChild>
+                <Link href="/lougiin" className="w-full">
+                  Continue to Login
+                </Link>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+
+      {/* Mobile Version */}
+      <div className="block md:hidden min-h-screen px-4 pt-16 pb-8 bg-white dark:bg-zinc-900">
+        <div className="max-w-md mx-auto space-y-6">
+          <Link
+            href="/"
+            className="absolute top-4 left-4 flex items-center text-xs text-muted-foreground hover:text-foreground transition"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back
+          </Link>
+
+          <div className="flex flex-col items-center space-y-2">
+            <div className="w-10 h-10 rounded-full bg-muted-foreground/20 flex items-center justify-center text-muted-foreground font-bold text-xl">
+              <Image src="/logo.png" alt="Logo" width={40} height={40} />
+            </div>
+            <h1 className="text-lg font-semibold">Create your account</h1>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="John Doe"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-2"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+
+              <button
+                type="button"
+                className="flex items-center gap-2 text-muted-foreground text-xs mt-1"
+                onClick={() => setShowMobileRules((prev) => !prev)}
+              >
+                <Info className="w-4 h-4" />
+                Password rules
+              </button>
+
+              {showMobileRules && (
+                <div className="bg-white dark:bg-zinc-800 p-2 rounded-md shadow-md mt-2 border space-y-1 w-full">
+                  <PasswordRule
+                    valid={passwordValidations.length}
+                    text="Minimum 12 characters"
+                  />
+                  <PasswordRule
+                    valid={passwordValidations.uppercase}
+                    text="At least one uppercase letter"
+                  />
+                  <PasswordRule
+                    valid={passwordValidations.lowercase}
+                    text="At least one lowercase letter"
+                  />
+                  <PasswordRule
+                    valid={passwordValidations.number}
+                    text="At least one number"
+                  />
+                  <PasswordRule
+                    valid={passwordValidations.special}
+                    text="At least one special character"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-2"
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  tabIndex={-1}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+
+              {formData.confirmPassword.length > 0 && (
+                <div
+                  className={`flex items-center mt-1 text-xs ${
+                    passwordsMatch ? "text-green-600" : "text-red-500"
+                  }`}
+                >
+                  {passwordsMatch ? (
+                    <CheckCircle className="w-4 h-4 mr-1" />
+                  ) : (
+                    <XCircle className="w-4 h-4 mr-1" />
+                  )}
+                  {passwordsMatch
+                    ? "Password confirmed"
+                    : "The passwords do not match"}
+                </div>
+              )}
+            </div>
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Creating account..." : "Create Account"}
+            </Button>
+          </form>
+
+          <div className="flex items-center space-x-2 justify-center text-xs text-muted-foreground pt-2">
+            <span>or</span>
+          </div>
+
+          <div className="space-y-2">
+            <Link href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}>
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center"
+              >
+                <FcGoogle className="text-xl" />
+                Continue with Google
+              </Button>
+            </Link>
+            <Link href={`${process.env.NEXT_PUBLIC_API_URL}/auth/github`}>
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center"
+              >
+                <FaGithub className="text-xl" />
+                Continue with GitHub
+              </Button>
+            </Link>
+            <div className="relative">
+              <Button
+                variant="outline"
+                className="w-full opacity-50 cursor-not-allowed"
+                disabled
+              >
+                <FaApple className="text-xl" />
+                Continue with Apple
+              </Button>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow z-10 pointer-events-none">
+                COMING SOON
+              </div>
+            </div>
+          </div>
+
+          <p className="text-xs text-center text-muted-foreground">
+            Already have an account?{" "}
+            <Link href="/lougiin" className="text-primary hover:underline">
+              Login
+            </Link>
+          </p>
+
+          <AlertDialog
+            open={showSuccessModal}
+            onOpenChange={setShowSuccessModal}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Account created 🎉</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Please check your email to verify your address before logging
+                  in.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction asChild>
+                  <Link href="/lougiin" className="w-full">
+                    Continue to Login
+                  </Link>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
-
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Creating account..." : "Create Account"}
-        </Button>
-      </form>
-
-      <p className="text-xs md:text-sm text-center text-muted-foreground">
-        Already have an account?{" "}
-        <Link href="/lougiin" className="text-primary hover:underline">
-          Login
-        </Link>
-      </p>
-
-      <AlertDialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Account created 🎉</AlertDialogTitle>
-            <AlertDialogDescription>
-              Please check your email to verify your address before logging in.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction asChild>
-              <Link href="/lougiin" className="w-full">
-                Continue to Login
-              </Link>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      </div>
     </div>
   );
 }
