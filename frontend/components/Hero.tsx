@@ -1,41 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { motion } from "motion/react";
 
-// Déclaration manuelle du type
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{
-    outcome: "accepted" | "dismissed";
-    platform: string;
-  }>;
-}
-
 export function Hero() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [joined, setJoined] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
-  const [showInstallButton, setShowInstallButton] = useState(false);
 
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const evt = e as BeforeInstallPromptEvent;
-      e.preventDefault();
-      setDeferredPrompt(evt);
-      setShowInstallButton(true);
-    };
-
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,20 +32,6 @@ export function Hero() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    await deferredPrompt.prompt();
-    const choiceResult = await deferredPrompt.userChoice;
-
-    if (choiceResult.outcome === "accepted") {
-      console.log("User accepted the install prompt");
-    } else {
-      console.log("User dismissed the install prompt");
-    }
-
-    setShowInstallButton(false);
   };
 
   return (
@@ -127,16 +89,6 @@ export function Hero() {
             {loading ? "Joining..." : "Get early access"}
           </Button>
         </motion.form>
-      )}
-
-      {showInstallButton && (
-        <Button
-          onClick={handleInstallClick}
-          className="mt-6 z-10"
-          variant="secondary"
-        >
-          Install the app
-        </Button>
       )}
 
       <BackgroundBeams className="hidden md:block" />
