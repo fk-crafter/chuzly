@@ -2,7 +2,7 @@
   "name": "Chuzly",
   "short_name": "Chuzly",
   "description": "Chuzly is a platform for creating and attending events",
-  "start_url": "/",
+  "start_url": "/lougiin",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
