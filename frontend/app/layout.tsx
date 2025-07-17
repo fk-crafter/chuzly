@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import RegisterServiceWorker from "@/components/RegisterServiceWorker";
+import ClientWrapper from "@/components/ClientWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,21 +54,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/logo.png" type="image/png" />
-
         <meta name="theme-color" content="#000000" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Chuzly" />
-        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="manifest" href="/manifest.json" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ClientWrapper />
         {children}
         <Toaster theme="light" />
-        <RegisterServiceWorker />
       </body>
     </html>
   );
