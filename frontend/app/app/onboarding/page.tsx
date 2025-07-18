@@ -103,119 +103,187 @@ export default function OnboardingPage() {
 
   return (
     <main className="max-w-xl mx-auto py-20 px-4 text-center">
-      <AnimatePresence>
-        {/* 🖥 Desktop */}
-        <div className="hidden md:block">
+      <div className="hidden md:block max-w-3xl mx-auto px-6 py-16 text-center">
+        {/* Stepper line (optional) */}
+        <div className="flex justify-center gap-2 mb-10">
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "h-2 w-8 rounded-full transition-all duration-300",
+                step === i ? "bg-black" : "bg-muted"
+              )}
+            />
+          ))}
+        </div>
+
+        <AnimatePresence mode="wait">
           {step === 0 && (
-            <motion.div
-              key="welcome-desktop"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h1 className="text-3xl font-bold mb-4">Welcome to Chuzly 🎉</h1>
-              <p className="mb-8 text-muted-foreground">
-                Plan with your friends faster than ever. Let's get you started!
+            <motion.div key="desktop-0" {...motionProps}>
+              <Sparkles className="mx-auto mb-4 h-8 w-8" />
+              <h1 className="text-3xl font-bold mb-4">Welcome to Chuzly</h1>
+              <p className="mb-6 text-muted-foreground text-lg">
+                Plan events faster. Suggest options, vote, and share with
+                friends.
               </p>
-              <Button onClick={() => setStep(1)}>Start setup</Button>
+              <Button onClick={() => setStep(1)}>Get Started</Button>
             </motion.div>
           )}
 
           {step === 1 && (
-            <motion.div
-              key="profile-desktop"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h1 className="text-2xl font-bold mb-4">
-                Personalize your profile ✨
-              </h1>
-              <p className="mb-6 text-muted-foreground">
-                Pick a display name and avatar color.
+            <motion.div key="desktop-1" {...motionProps}>
+              <Info className="mx-auto mb-4 h-8 w-8" />
+              <h1 className="text-2xl font-bold mb-3">How it works</h1>
+              <p className="mb-6 text-muted-foreground text-base">
+                Watch how to use Chuzly in 3 steps.
               </p>
-              <div className="flex flex-col items-center space-y-4">
-                <Input
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="max-w-xs"
+
+              {/* Video carousel */}
+              <div className="flex flex-col items-center gap-4">
+                <video
+                  key={videoIndex}
+                  ref={videoRef}
+                  src={`/step${videoIndex + 1}.mp4`}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full max-w-2xl aspect-video rounded-xl border border-border object-cover cursor-pointer"
+                  onClick={() => {
+                    const video = videoRef.current;
+                    if (video) {
+                      if (video.requestFullscreen) video.requestFullscreen();
+                      else if ((video as any).webkitEnterFullscreen)
+                        (video as any).webkitEnterFullscreen();
+                    }
+                  }}
                 />
-                <div className="flex gap-2 flex-wrap justify-center">
-                  {COLORS.map((c) => (
-                    <button
-                      key={c}
-                      className={cn(
-                        "w-8 h-8 rounded-full border-2",
-                        color === c ? "border-black" : "border-transparent",
-                        c
-                      )}
-                      onClick={() => setColor(c)}
-                      type="button"
-                    />
-                  ))}
+                <h3 className="text-lg font-semibold">
+                  {videoSteps[videoIndex].title}
+                </h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  {videoSteps[videoIndex].description}
+                </p>
+
+                <div className="w-full h-2 bg-border rounded-full overflow-hidden max-w-lg">
+                  <div
+                    className="h-full bg-primary transition-all duration-300"
+                    style={{
+                      width: `${((videoIndex + 1) / videoSteps.length) * 100}%`,
+                    }}
+                  />
                 </div>
-                <div
-                  className={cn(
-                    "w-16 h-16 rounded-full border mt-4 shadow-lg",
-                    color
+
+                <div className="flex gap-4 mt-2">
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      setVideoIndex((prev) => Math.max(prev - 1, 0))
+                    }
+                    disabled={videoIndex === 0}
+                  >
+                    ← Back
+                  </Button>
+                  {videoIndex < videoSteps.length - 1 ? (
+                    <Button onClick={() => setVideoIndex((prev) => prev + 1)}>
+                      Next →
+                    </Button>
+                  ) : (
+                    <Button onClick={() => setStep(2)}>Continue</Button>
                   )}
-                />
-                <Button
-                  onClick={handleNameSubmit}
-                  disabled={!name.trim()}
-                  className="mt-4"
-                >
-                  Continue
-                </Button>
+                </div>
               </div>
             </motion.div>
           )}
 
           {step === 2 && (
-            <motion.div
-              key="event-desktop"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h1 className="text-2xl font-bold mb-4">
-                Create your first event? 🎈
-              </h1>
-              <p className="mb-8 text-muted-foreground">
-                You can start planning right now or skip and do it later.
+            <motion.div key="desktop-2" {...motionProps}>
+              <User className="mx-auto mb-4 h-8 w-8" />
+              <h1 className="text-2xl font-bold mb-3">Your name</h1>
+              <p className="mb-6 text-muted-foreground">
+                How you’ll appear to others in events.
               </p>
-              <div className="flex justify-center gap-4">
-                <Button onClick={() => router.push("/app/create-event")}>
-                  Yes, let's go!
-                </Button>
-                <Button variant="outline" onClick={() => setStep(3)}>
-                  Skip for now
-                </Button>
-              </div>
+              <Input
+                placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="max-w-sm mx-auto"
+              />
+              <Button
+                className="mt-5"
+                onClick={() => setStep(3)}
+                disabled={!name.trim()}
+              >
+                Continue
+              </Button>
             </motion.div>
           )}
 
           {step === 3 && (
-            <motion.div
-              key="done-desktop"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h1 className="text-2xl font-bold mb-4">You're all set! 🎉</h1>
-              <p className="mb-8 text-muted-foreground">
-                Enjoy creating and sharing your events!
+            <motion.div key="desktop-3" {...motionProps}>
+              <Palette className="mx-auto mb-4 h-8 w-8" />
+              <h1 className="text-2xl font-bold mb-3">Pick a color</h1>
+              <p className="mb-5 text-muted-foreground">
+                Choose your avatar color for voting and messages.
               </p>
-              <Button onClick={finishOnboarding}>Go to Dashboard</Button>
+              <div className="flex gap-2 flex-wrap justify-center">
+                {COLORS.map((c) => (
+                  <button
+                    key={c}
+                    className={cn(
+                      "w-8 h-8 rounded-full border-2",
+                      color === c ? "border-black" : "border-transparent",
+                      c
+                    )}
+                    onClick={() => setColor(c)}
+                    type="button"
+                  />
+                ))}
+              </div>
+              <Button className="mt-5" onClick={() => setStep(4)}>
+                Preview
+              </Button>
             </motion.div>
           )}
-        </div>
-      </AnimatePresence>
+
+          {step === 4 && (
+            <motion.div key="desktop-4" {...motionProps}>
+              <BadgeCheck className="mx-auto mb-4 h-8 w-8" />
+              <h1 className="text-2xl font-bold mb-3">Here’s your profile</h1>
+              <p className="mb-5 text-muted-foreground">
+                You can change this later from settings.
+              </p>
+              <div className="flex flex-col items-center space-y-3">
+                <div
+                  className={cn("w-16 h-16 rounded-full shadow border", color)}
+                />
+                <span className="text-lg font-medium">{name}</span>
+              </div>
+              <Button className="mt-6" onClick={handleNameSubmit}>
+                Confirm
+              </Button>
+            </motion.div>
+          )}
+
+          {step === 5 && (
+            <motion.div key="desktop-5" {...motionProps}>
+              <PartyPopper className="mx-auto mb-4 h-8 w-8" />
+              <h1 className="text-2xl font-bold mb-3">You’re ready!</h1>
+              <p className="mb-6 text-muted-foreground">
+                Time to create your first event or explore the dashboard.
+              </p>
+              <div className="flex justify-center gap-4">
+                <Button onClick={() => router.push("/app/create-event")}>
+                  Create Event
+                </Button>
+                <Button variant="outline" onClick={finishOnboarding}>
+                  Go to Dashboard
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* 📱 Mobile */}
       <div className="block md:hidden">
