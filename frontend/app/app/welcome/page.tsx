@@ -4,9 +4,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { motion } from "motion/react";
+import { useEffect } from "react";
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <main className="h-[100dvh] w-full bg-black text-white flex flex-col justify-between items-center px-6 py-10 text-center overflow-hidden">
