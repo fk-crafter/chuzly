@@ -52,16 +52,16 @@ export default function WelcomeScreen() {
         className="flex flex-col w-full max-w-sm gap-4"
       >
         <Button
-          onClick={() => router.push("/crrreate-account")}
+          onClick={() => router.push("/lougiin")}
           className="w-full py-5 text-base rounded-full bg-white text-black hover:bg-gray-200"
         >
-          Create an account
+          Log in
         </Button>
         <Button
-          onClick={() => router.push("/lougiin")}
-          className="w-full py-5 text-base rounded-full bg-[#111] text-white border border-[#333] hover:bg-[#1a1a1a] transition"
+          onClick={() => router.push("/crrreate-account")}
+          className=" w-full py-5 text-base rounded-full bg-[#111] text-white border border-[#333] hover:bg-[#1a1a1a] transition"
         >
-          Log in
+          Create an account
         </Button>
       </motion.div>
     </main>
