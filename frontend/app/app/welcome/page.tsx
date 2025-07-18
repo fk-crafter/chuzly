@@ -9,7 +9,7 @@ export default function WelcomeScreen() {
   const router = useRouter();
 
   return (
-    <main className="fixed inset-0 bg-black text-white md:hidden flex flex-col justify-between items-center px-6 py-10 text-center overflow-hidden">
+    <main className="fixed inset-0 z-50 bg-black text-white flex flex-col justify-between items-center px-6 py-10 text-center overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -22,7 +22,7 @@ export default function WelcomeScreen() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="flex flex-col items-center space-y-4 mt-20"
+        className="flex flex-col items-center space-y-4 pt-10"
       >
         <h1 className="text-3xl font-bold leading-snug">
           Plan with your <br />
@@ -36,7 +36,7 @@ export default function WelcomeScreen() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
-        className="flex flex-col w-full max-w-sm gap-4 mt-16"
+        className="flex flex-col w-full max-w-sm gap-4 mb-10"
       >
         <Button
           onClick={() => router.push("/crrreate-account")}
