@@ -1,7 +1,7 @@
 {
   "name": "Chuzly",
   "short_name": "Chuzly",
-  "start_url": "/app/welcome",
+  "start_url": "/welcome",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
