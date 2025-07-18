@@ -81,6 +81,70 @@ body {
       background-position: 200%;
     }
   }
+  --animate-fade-in-up: fade-in-up 0.5s ease-out forwards;
+  --animate-fade-in: fade-in 0.5s ease-out forwards;
+  --animate-scale-in: scale-in 0.5s ease-out forwards;
+  --color-brand-foreground: var(----brand-foreground);
+  --color-brand: var(----brand);
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scale-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes scale-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 }
 
 :root {
@@ -121,6 +185,8 @@ body {
   --color-3: hsl(210 100% 63%);
   --color-4: hsl(195 100% 63%);
   --color-5: hsl(90 100% 63%);
+  --brand: hsl(27 96% 61%);
+  --brand-foreground: hsl(31 97% 72%);
 }
 
 .dark {
@@ -155,6 +221,7 @@ body {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --brand: hsl(31 97% 72%);
 }
 
 @layer base {
