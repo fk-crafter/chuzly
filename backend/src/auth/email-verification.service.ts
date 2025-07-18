@@ -24,11 +24,34 @@ export class EmailVerificationService {
       to: email,
       subject: 'Verify your email address',
       html: `
-        <p>Hey 👋</p>
-        <p>Click the link below to verify your account:</p>
-        <a href="${verifyUrl}">${verifyUrl}</a>
-        <p>This link expires in 24 hours.</p>
-      `,
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 24px; border-radius: 8px; border: 1px solid #e5e7eb;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="https://chuzly.app/logo.png" alt="Chuzly Logo" style="width: 100px; height: auto;" />
+        </div>
+        <h2 style="color: #111827; text-align: center;">Verify your email</h2>
+        <p style="font-size: 16px; color: #374151;">
+          Hey 👋, thanks for signing up to Chuzly!
+        </p>
+        <p style="font-size: 16px; color: #374151;">
+          To complete your registration, please verify your email address by clicking the button below:
+        </p>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${verifyUrl}" style="background-color: #111827; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            Verify Email
+          </a>
+        </div>
+        <p style="font-size: 14px; color: #6b7280;">
+          Or copy and paste this link into your browser:<br/>
+          <a href="${verifyUrl}" style="color: #3b82f6;">${verifyUrl}</a>
+        </p>
+        <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">
+          This link expires in 24 hours.
+        </p>
+        <p style="font-size: 14px; color: #6b7280;">
+          — The Chuzly Team
+        </p>
+      </div>
+    `,
     });
   }
 
