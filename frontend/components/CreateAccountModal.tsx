@@ -354,7 +354,7 @@ export function CreateAccountModal() {
       <div className="block md:hidden min-h-screen px-4 pt-16 pb-8 bg-white dark:bg-zinc-900">
         <div className="max-w-md mx-auto space-y-6">
           <Link
-            href="/app/welcome"
+            href="/welcome"
             className="absolute top-4 left-4 flex items-center text-xs text-muted-foreground hover:text-foreground transition"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
