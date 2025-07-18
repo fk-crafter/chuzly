@@ -48,7 +48,7 @@ export class EmailVerificationService {
           This link expires in 24 hours.
         </p>
         <p style="font-size: 14px; color: #6b7280;">
-          — The Chuzly Team
+          — Chuzly
         </p>
       </div>
     `,

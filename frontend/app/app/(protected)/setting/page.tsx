@@ -34,54 +34,111 @@ export default function SettingsPage() {
 
   return (
     <main className="max-w-4xl mx-auto px-6 py-12">
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="space-y-6"
-      >
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold">Account overview</h1>
-          <p className="text-muted-foreground">
-            Welcome back, <span className="font-medium">{profile.name}</span>.
-          </p>
-        </div>
+      {/* Desktop Version */}
+      <div className="hidden md:block">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="space-y-6"
+        >
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold">Account overview</h1>
+            <p className="text-muted-foreground">
+              Welcome back, <span className="font-medium">{profile.name}</span>.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card
-            href="/app/setting/profile"
-            icon={<User className="w-5 h-5" />}
-            title="Profile settings"
-            description="Update your personal information, name & avatar."
-          />
+          <div className="grid grid-cols-2 gap-6">
+            <Card
+              href="/app/setting/profile"
+              icon={<User className="w-5 h-5" />}
+              title="Profile settings"
+              description="Update your personal information, name & avatar."
+            />
 
-          <Card
-            href="/app/setting/subscription"
-            icon={<CreditCard className="w-5 h-5" />}
-            title="Subscription"
-            description={
-              profile.plan === "TRIAL" && profile.trialEndsAt
-                ? `Trial until ${new Date(
-                    profile.trialEndsAt
-                  ).toLocaleDateString()}`
-                : `Current plan: ${profile.plan}`
-            }
-          />
-        </div>
+            <Card
+              href="/app/setting/subscription"
+              icon={<CreditCard className="w-5 h-5" />}
+              title="Subscription"
+              description={
+                profile.plan === "TRIAL" && profile.trialEndsAt
+                  ? `Trial until ${new Date(
+                      profile.trialEndsAt
+                    ).toLocaleDateString()}`
+                  : `Current plan: ${profile.plan}`
+              }
+            />
+          </div>
 
-        <div className="border rounded-xl p-6 bg-muted/50">
-          <h3 className="font-semibold text-lg mb-2">Plan details</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            You are currently on the{" "}
-            <span className="font-medium">{profile.plan}</span> plan.
-          </p>
-          <Link href="/app/setting/subscription">
-            <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition">
-              Manage subscription
-            </button>
-          </Link>
-        </div>
-      </motion.div>
+          <div className="border rounded-xl p-6 bg-muted/50">
+            <h3 className="font-semibold text-lg mb-2">Plan details</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              You are currently on the{" "}
+              <span className="font-medium">{profile.plan}</span> plan.
+            </p>
+            <Link href="/app/setting/subscription">
+              <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition">
+                Manage subscription
+              </button>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Mobile Version */}
+      {/* Mobile Version */}
+      <div className="block md:hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="space-y-6"
+        >
+          <div className="flex flex-col items-center text-center">
+            <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center text-3xl font-semibold text-white">
+              {profile.name.charAt(0).toUpperCase()}
+            </div>
+            <h1 className="text-xl font-bold mt-4">{profile.name}</h1>
+            <p className="text-sm text-muted-foreground">Welcome 👋</p>
+          </div>
+
+          <div className="space-y-4">
+            <Card
+              href="/app/setting/profile"
+              icon={<User className="w-5 h-5" />}
+              title="Profile Settings"
+              description="Update your name, avatar, and personal info."
+            />
+
+            <Card
+              href="/app/setting/subscription"
+              icon={<CreditCard className="w-5 h-5" />}
+              title="Subscription"
+              description={
+                profile.plan === "TRIAL" && profile.trialEndsAt
+                  ? `Trial until ${new Date(
+                      profile.trialEndsAt
+                    ).toLocaleDateString()}`
+                  : `Current plan: ${profile.plan}`
+              }
+            />
+          </div>
+
+          <div className="border rounded-lg p-4 bg-muted/50">
+            <h3 className="font-semibold text-base mb-2">Plan Details</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              You are currently on the{" "}
+              <span className="font-medium">{profile.plan}</span> plan.
+            </p>
+            <Link href="/app/setting/subscription">
+              <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition text-sm w-full">
+                Manage Subscription
+              </button>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
     </main>
   );
 }
