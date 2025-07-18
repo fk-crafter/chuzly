@@ -146,7 +146,6 @@ export function CreateAccountModal() {
 
   return (
     <div className="w-full max-w-xs md:max-w-sm mx-auto">
-      {/* Desktop Version */}
       <div className="hidden md:block relative z-10 bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6 pt-10 text-center space-y-4 border border-border">
         <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
         <Link
@@ -355,7 +354,7 @@ export function CreateAccountModal() {
       <div className="block md:hidden min-h-screen px-4 pt-16 pb-8 bg-white dark:bg-zinc-900">
         <div className="max-w-md mx-auto space-y-6">
           <Link
-            href="/"
+            href="/app/welcome"
             className="absolute top-4 left-4 flex items-center text-xs text-muted-foreground hover:text-foreground transition"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
