@@ -19,7 +19,7 @@ export default function SubscriptionPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/lougiin");
+      router.push("/login");
       return;
     }
 

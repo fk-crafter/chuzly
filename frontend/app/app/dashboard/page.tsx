@@ -19,7 +19,7 @@ export default function DashboardPage() {
     const fetchStats = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        router.push("/lougiin");
+        router.push("/login");
         return;
       }
 

@@ -325,7 +325,7 @@ export function CreateAccountModal() {
 
         <p className="text-sm text-center text-muted-foreground">
           Already have an account?{" "}
-          <Link href="/lougiin" className="text-primary hover:underline">
+          <Link href="/login" className="text-primary hover:underline">
             Login
           </Link>
         </p>
@@ -341,7 +341,7 @@ export function CreateAccountModal() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogAction asChild>
-                <Link href="/lougiin" className="w-full">
+                <Link href="/login" className="w-full">
                   Continue to Login
                 </Link>
               </AlertDialogAction>
@@ -540,7 +540,7 @@ export function CreateAccountModal() {
 
           <p className="text-xs text-center text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/lougiin" className="text-primary hover:underline">
+            <Link href="/login" className="text-primary hover:underline">
               Login
             </Link>
           </p>
@@ -559,7 +559,7 @@ export function CreateAccountModal() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogAction asChild>
-                  <Link href="/lougiin" className="w-full">
+                  <Link href="/login" className="w-full">
                     Continue to Login
                   </Link>
                 </AlertDialogAction>

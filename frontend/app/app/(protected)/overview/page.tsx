@@ -21,7 +21,7 @@ export default function OverviewPage() {
     const fetchStats = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        router.push("/lougiin");
+        router.push("/login");
         return;
       }
 

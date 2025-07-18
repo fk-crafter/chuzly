@@ -32,7 +32,7 @@ export default function ChoosePlanPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/lougiin");
+      router.push("/login");
       return;
     }
 
