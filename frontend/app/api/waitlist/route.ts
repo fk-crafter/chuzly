@@ -54,7 +54,7 @@ export async function POST(req: Request) {
             We’ll keep you updated as we get closer to launch. Stay tuned!
           </p>
           <p style="font-size: 16px; color: #333;">
-            — The Chuzly team 😁
+            — Chuzly
           </p>
           <div style="text-align: center; margin-top: 30px;">
             <a href="https://chuzly.app" style="display: inline-block; padding: 10px 20px; background-color: #111827; color: white; text-decoration: none; border-radius: 5px;">

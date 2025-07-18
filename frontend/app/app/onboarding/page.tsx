@@ -51,7 +51,6 @@ export default function OnboardingPage() {
       body: JSON.stringify({ color }),
     });
 
-    // ✅ Met à jour dans localStorage pour que le header la récupère
     localStorage.setItem("avatarColor", color);
 
     setStep(2);
@@ -63,7 +62,6 @@ export default function OnboardingPage() {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    // ✅ Recharge pour forcer la synchro (nom + couleur) dans le header
     window.location.href = "/app/dashboard";
   };
 
@@ -171,7 +169,7 @@ export default function OnboardingPage() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-2xl font-bold mb-4">You're all set 🚀</h1>
+            <h1 className="text-2xl font-bold mb-4">You're all set! 🎉</h1>
             <p className="mb-8 text-muted-foreground">
               Enjoy creating and sharing your events!
             </p>
