@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { PartyPopper, Trash, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { subscribeToPush } from "@/lib/push";
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -317,15 +316,7 @@ export default function CreateEventPage() {
               transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
               className="absolute w-full"
             >
-              <div className="flex justify-center pt-8">
-                <Button
-                  variant="secondary"
-                  onClick={subscribeToPush}
-                  className="text-sm px-4 py-2"
-                >
-                  🔔 Activer les notifications
-                </Button>
-              </div>
+              <div className="flex justify-center pt-8"></div>
               <div className="w-full">
                 <Label className="text-sm mb-2 block">Event name</Label>
                 <Input
