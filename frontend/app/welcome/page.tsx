@@ -8,12 +8,19 @@ import { useEffect } from "react";
 
 export default function WelcomeScreen() {
   const router = useRouter();
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    document.documentElement.style.backgroundColor = "#000";
+    document.body.style.backgroundColor = "#000";
+    return () => {
+      document.documentElement.style.backgroundColor = "";
+      document.body.style.backgroundColor = "";
+    };
   }, []);
 
   return (
-    <main className="h-[100dvh] w-full bg-black text-white flex flex-col justify-between items-center px-6 py-10 text-center overflow-hidden">
+    <main className="h-[100dvh] w-full bg-black text-white flex flex-col justify-between items-center px-6 py-10 text-center overflow-hidden overscroll-none">
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
