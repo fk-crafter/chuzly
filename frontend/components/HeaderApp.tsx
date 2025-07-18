@@ -29,7 +29,7 @@ export default function AppHeader() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      router.push("/lougiin");
+      router.push("/login");
       return;
     }
 
@@ -53,7 +53,7 @@ export default function AppHeader() {
         localStorage.setItem("avatarColor", data.avatarColor);
       })
       .catch(() => {
-        router.push("/lougiin");
+        router.push("/login");
       });
   }, [router]);
 
@@ -67,7 +67,7 @@ export default function AppHeader() {
     }
 
     localStorage.clear();
-    router.push("/lougiin");
+    router.push("/login");
   };
 
   const handleGoToSetting = () => {

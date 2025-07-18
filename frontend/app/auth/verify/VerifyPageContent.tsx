@@ -24,7 +24,7 @@ export default function VerifyPageContent() {
       .then((data) => {
         if (data.success) {
           setStatus("success");
-          setTimeout(() => router.push("/lougiin"), 3000);
+          setTimeout(() => router.push("/login"), 3000);
         } else {
           setStatus("error");
         }
@@ -62,7 +62,7 @@ export default function VerifyPageContent() {
             <p className="text-lg font-semibold text-red-600">
               Invalid or expired link.
             </p>
-            <Button variant="outline" onClick={() => router.push("/lougiin")}>
+            <Button variant="outline" onClick={() => router.push("/login")}>
               Go to login
             </Button>
           </div>

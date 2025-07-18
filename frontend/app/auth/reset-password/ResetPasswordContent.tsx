@@ -91,7 +91,7 @@ export default function ResetPasswordContent() {
       const data = await res.json();
       if (data.success) {
         setSuccess(true);
-        setTimeout(() => router.push("/lougiin"), 3000);
+        setTimeout(() => router.push("/login"), 3000);
       } else {
         setError(data.message || "Something went wrong");
       }

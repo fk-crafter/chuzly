@@ -27,7 +27,15 @@ export default function WelcomeScreen() {
         transition={{ duration: 0.4 }}
         className="w-full flex justify-center"
       >
-        <Image src="/logo.png" alt="Chuzly logo" width={60} height={60} />
+        <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center">
+          <Image
+            src="/logo.png"
+            alt="Chuzly logo"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        </div>{" "}
       </motion.div>
 
       <motion.div
@@ -52,13 +60,13 @@ export default function WelcomeScreen() {
         className="flex flex-col w-full max-w-sm gap-4"
       >
         <Button
-          onClick={() => router.push("/lougiin")}
+          onClick={() => router.push("/login")}
           className="w-full py-5 text-base rounded-full bg-white text-black hover:bg-gray-200"
         >
           Log in
         </Button>
         <Button
-          onClick={() => router.push("/crrreate-account")}
+          onClick={() => router.push("/create-account")}
           className=" w-full py-5 text-base rounded-full bg-[#111] text-white border border-[#333] hover:bg-[#1a1a1a] transition"
         >
           Create an account
