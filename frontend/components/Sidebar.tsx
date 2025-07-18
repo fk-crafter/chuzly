@@ -29,7 +29,7 @@ export default function Sidebar() {
       <aside className="hidden md:flex w-64 bg-white dark:bg-zinc-900 border-r flex-col">
         <div className="p-4 h-16 flex items-center justify-between border-b">
           <div>
-            <h1 className="text-xl font-bold tracking-tight">Chuzly</h1>
+            <h1 className="text-xl font-bold tracking-tight">Chuzly.</h1>
             <p className="text-xs text-muted-foreground">Plan. Vote. Share.</p>
           </div>
           <Link href="/app/create-event">
