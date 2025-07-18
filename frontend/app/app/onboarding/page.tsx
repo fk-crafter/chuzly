@@ -14,6 +14,7 @@ import {
   BadgeCheck,
   PartyPopper,
 } from "lucide-react";
+import { useRef } from "react";
 
 const COLORS = [
   "bg-muted",
@@ -42,19 +43,23 @@ export default function OnboardingPage() {
   const [color, setColor] = useState(COLORS[0]);
   const router = useRouter();
   const [videoIndex, setVideoIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const videoSteps = [
     {
-      title: "Create an Event",
-      description: "Start by setting up your event in seconds.",
+      title: "Fill in the Event Details",
+      description:
+        "Add everything you need: name, guests, price, location, and date options.",
     },
     {
-      title: "Add Options",
-      description: "Suggest dates, locations, or activities.",
+      title: "Share Your Event",
+      description:
+        "Copy the invite link and send it to your friends. They’ll see the full event overview.",
     },
     {
-      title: "Invite & Vote",
-      description: "Send it to friends so they can vote easily.",
+      title: "Friends Vote",
+      description:
+        "Each guest picks their favorite option. Simple and fast voting experience.",
     },
   ];
 
@@ -252,12 +257,27 @@ export default function OnboardingPage() {
               <div className="flex flex-col items-center px-4 py-6 gap-4">
                 <video
                   key={videoIndex}
+                  ref={videoRef}
                   src={`/step${videoIndex + 1}.mp4`}
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full aspect-video rounded-xl border border-border object-cover"
+                  className="w-full aspect-video rounded-xl border border-border object-cover cursor-pointer"
+                  onClick={() => {
+                    const video = videoRef.current;
+                    if (video) {
+                      if (video.requestFullscreen) {
+                        video.requestFullscreen();
+                      } else if ((video as any).webkitEnterFullscreen) {
+                        (video as any).webkitEnterFullscreen();
+                      } else if ((video as any).mozRequestFullScreen) {
+                        (video as any).mozRequestFullScreen();
+                      } else if ((video as any).msRequestFullscreen) {
+                        (video as any).msRequestFullscreen();
+                      }
+                    }
+                  }}
                 />
 
                 <h3 className="text-lg font-semibold text-center">
