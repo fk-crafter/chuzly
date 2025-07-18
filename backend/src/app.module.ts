@@ -6,6 +6,7 @@ import { AdminModule } from './admin/admin.module';
 import { StripeModule } from './stripe/stripe.module';
 import { ChatModule } from './chat/chat.module';
 import { WaitlistModule } from './waitlist/waitlist.module';
+import { PushModule } from './push/push.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { WaitlistModule } from './waitlist/waitlist.module';
     StripeModule,
     ChatModule,
     WaitlistModule,
+    PushModule,
   ],
 })
 export class AppModule {}
