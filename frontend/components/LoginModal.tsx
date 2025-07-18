@@ -189,7 +189,7 @@ export function LoginModal() {
         <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
 
         <Link
-          href="/app/welcome"
+          href="/welcome"
           className="absolute top-3 left-3 flex items-center text-xs text-muted-foreground hover:text-foreground transition"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
