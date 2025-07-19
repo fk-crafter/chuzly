@@ -293,7 +293,8 @@ export default function VotePageClientContent() {
           ) : (
             <div className="border p-4 text-center text-muted-foreground rounded-md">
               <Lock className="w-5 h-5 mx-auto mb-2" />
-              Chat is only available for Pro users or invited guests.
+              Chat is only available for Pro users and invited guests lied to
+              Pro users.
             </div>
           )}
         </div>
