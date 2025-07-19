@@ -64,7 +64,8 @@ export default function SettingSidebar() {
         <Separator />
       </aside>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t flex justify-around items-center z-50 py-2 md:hidden">
+      {/* 📱 Mobile */}
+      <div className="md:hidden fixed bottom-4 left-4 right-4 bg-white dark:bg-zinc-900 border shadow-xl rounded-t-2xl flex justify-around items-center z-50 py-3 px-2">
         {settingNav.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href;
           return (
@@ -72,7 +73,7 @@ export default function SettingSidebar() {
               key={href}
               href={href}
               className={cn(
-                "flex flex-col items-center text-xs font-medium",
+                "flex flex-col items-center text-xs font-medium transition-colors",
                 isActive ? "text-primary" : "text-muted-foreground"
               )}
             >
