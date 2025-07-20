@@ -93,18 +93,32 @@ export default function OnboardingPage() {
   };
 
   const finishOnboarding = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/complete-onboarding`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    if (!token) {
+      console.error("Token not found in localStorage");
+      return;
+    }
 
-    window.location.href = "/app/dashboard";
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/complete-onboarding`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) {
+        const error = await res.text();
+        console.error("Failed to complete onboarding:", error);
+      }
+    } catch (err) {
+      console.error("Error completing onboarding:", err);
+    }
   };
 
   return (
     <main className="max-w-xl mx-auto py-20 px-4 text-center">
       <div className="hidden md:block max-w-3xl mx-auto px-6 py-16 text-center">
-        {/* Stepper line (optional) */}
         <div className="flex justify-center gap-2 mb-10">
           {[...Array(6)].map((_, i) => (
             <div
@@ -138,7 +152,6 @@ export default function OnboardingPage() {
                 Watch how to use Chuzly in 3 steps.
               </p>
 
-              {/* Video carousel */}
               <div className="flex flex-col items-center gap-4">
                 <video
                   key={videoIndex}
@@ -273,10 +286,21 @@ export default function OnboardingPage() {
                 Time to create your first event or explore the dashboard.
               </p>
               <div className="flex justify-center gap-4">
-                <Button onClick={() => router.push("/app/create-event")}>
+                <Button
+                  onClick={async () => {
+                    await finishOnboarding();
+                    router.push("/app/create-event");
+                  }}
+                >
                   Create Event
                 </Button>
-                <Button variant="outline" onClick={finishOnboarding}>
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    await finishOnboarding();
+                    router.push("/app/dashboard");
+                  }}
+                >
                   Go to Dashboard
                 </Button>
               </div>
@@ -287,7 +311,6 @@ export default function OnboardingPage() {
 
       {/* 📱 Mobile */}
       <div className="block md:hidden">
-        {/* Stepper */}
         <div className="flex justify-center mb-6 gap-1">
           {[...Array(6)].map((_, i) => (
             <div
@@ -477,10 +500,21 @@ export default function OnboardingPage() {
                 Let’s create your first event or skip for later.
               </p>
               <div className="flex flex-col gap-3">
-                <Button onClick={() => router.push("/app/create-event")}>
+                <Button
+                  onClick={async () => {
+                    await finishOnboarding();
+                    router.push("/app/create-event");
+                  }}
+                >
                   Create Event
                 </Button>
-                <Button variant="outline" onClick={finishOnboarding}>
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    await finishOnboarding();
+                    router.push("/app/dashboard");
+                  }}
+                >
                   Go to Dashboard
                 </Button>
               </div>
