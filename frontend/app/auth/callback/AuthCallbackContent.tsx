@@ -10,13 +10,35 @@ export default function AuthCallbackContent() {
   useEffect(() => {
     const token = searchParams.get("token");
 
-    if (token) {
+    const fetchUser = async () => {
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
       localStorage.setItem("token", token);
 
-      router.push("/app/create-event");
-    } else {
-      router.push("/login");
-    }
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (data?.hasOnboarded) {
+          router.push("/app/create-event");
+        } else {
+          router.push("/app/onboarding");
+        }
+      } catch (err) {
+        console.error("Auth callback error:", err);
+        router.push("/login");
+      }
+    };
+
+    fetchUser();
   }, [router, searchParams]);
 
   return null;

@@ -47,6 +47,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
           name,
           plan: 'TRIAL',
           trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          hasOnboarded: false,
         },
       });
     }
