@@ -22,7 +22,7 @@ export default function WelcomeScreen() {
   return (
     <main className="h-[100dvh] w-full bg-black text-white flex flex-col justify-between items-center px-6 py-10 text-center overflow-hidden overscroll-none">
       <Image
-        src="/bg-glow.png"
+        src="/tst.png"
         alt="background glow"
         fill
         className="object-cover z-0 pointer-events-none select-none opacity-15"
