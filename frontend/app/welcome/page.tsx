@@ -21,13 +21,20 @@ export default function WelcomeScreen() {
 
   return (
     <main className="h-[100dvh] w-full bg-black text-white flex flex-col justify-between items-center px-6 py-10 text-center overflow-hidden overscroll-none">
-      <Image
-        src="/tst.png"
-        alt="background glow"
-        fill
-        className="object-cover z-0 pointer-events-none select-none opacity-15"
-        priority
-      />
+      <motion.div
+        initial={{ opacity: 0, scale: 1.05 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+        className="absolute inset-0 z-0 pointer-events-none select-none"
+      >
+        <Image
+          src="/tst.png"
+          alt="background glow"
+          fill
+          className="object-cover opacity-15"
+          priority
+        />
+      </motion.div>
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
