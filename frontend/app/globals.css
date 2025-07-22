@@ -16,6 +16,9 @@ body {
   --color-pastel-yellow: #fff1a8;
   --color-pastel-pink: #fdcfe8;
   --color-pastel-lavender: #cdb4db;
+
+  --color-selection-black: #000;
+  --color-selection-white: #fff;
 }
 
 @custom-variant dark (&:is(.dark *));

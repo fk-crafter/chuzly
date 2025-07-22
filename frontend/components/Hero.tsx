@@ -34,9 +34,9 @@ export function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-4xl md:text-5xl font-bold tracking-tight mb-6 z-10"
+        className="text-4xl selection:bg-selection-black selection:text-selection-white md:text-5xl font-bold tracking-tight mb-6 z-10"
       >
-        <div>Turn group chats into</div>
+        <div>Turn group chaos into</div>
         <div className="mt-2">
           <span className="px-2 py-1 rounded bg-primary text-white mb-1 inline-block">
             quick decisions
