@@ -15,35 +15,46 @@ export default function AuthProvider({
     const token = localStorage.getItem("token");
 
     if (!token) {
-      if (!pathname.startsWith("/login") && !pathname.startsWith("/auth")) {
+      if (
+        !pathname.startsWith("/login") &&
+        !pathname.startsWith("/auth") &&
+        !pathname.startsWith("/app/onboarding")
+      ) {
         router.replace("/login");
       }
       return;
     }
 
+    // Si déjà dans auth ou onboarding, on ne fait rien
     if (
-      !pathname.startsWith("/app/create-event") &&
-      !pathname.startsWith("/app/onboarding") &&
-      !pathname.startsWith("/login")
+      pathname.startsWith("/auth") ||
+      pathname.startsWith("/app/onboarding")
     ) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((user) => {
-          if (user?.hasOnboarded) {
-            router.replace("/app/create-event");
-          } else {
-            router.replace("/app/onboarding");
-          }
-        })
-        .catch(() => {
-          localStorage.removeItem("token");
-          router.replace("/login");
-        });
+      return;
     }
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Invalid token");
+        }
+        return res.json();
+      })
+      .then((user) => {
+        if (user?.hasOnboarded) {
+          router.replace("/app/create-event");
+        } else {
+          router.replace("/app/onboarding");
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        router.replace("/login");
+      });
   }, [pathname, router]);
 
   return <>{children}</>;
