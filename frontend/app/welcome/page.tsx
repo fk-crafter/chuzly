@@ -19,6 +19,20 @@ export default function WelcomeScreen() {
     };
   }, []);
 
+  useEffect(() => {
+    const isStandalone =
+      typeof window !== "undefined" &&
+      (window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true);
+
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    if (isStandalone && token) {
+      router.replace("/app/create-event");
+    }
+  }, [router]);
+
   return (
     <main className="h-[100dvh] w-full bg-black text-white flex flex-col justify-between items-center px-6 py-10 text-center overflow-hidden overscroll-none">
       <Image
