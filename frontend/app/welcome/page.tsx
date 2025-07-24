@@ -23,7 +23,7 @@ export default function WelcomeScreen() {
     const isStandalone =
       typeof window !== "undefined" &&
       (window.matchMedia("(display-mode: standalone)").matches ||
-        window.navigator.standalone === true);
+        (window.navigator as any).standalone === true);
 
     const token =
       typeof window !== "undefined" ? localStorage.getItem("token") : null;
