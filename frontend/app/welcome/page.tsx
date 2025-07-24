@@ -29,7 +29,7 @@ export default function WelcomeScreen() {
       typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     if (isStandalone && token) {
-      router.replace("/app/create-event");
+      router.replace("/app/dashboard");
     }
   }, [router]);
 
