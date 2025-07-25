@@ -141,7 +141,8 @@ export default function AdminDashboardPage() {
     <main className="max-w-7xl mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
-      <div className="overflow-x-auto border rounded-lg">
+      {/* Desktop Table */}
+      <div className="hidden md:block overflow-x-auto border rounded-lg">
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 dark:bg-zinc-800">
             <tr>
@@ -248,6 +249,114 @@ export default function AdminDashboardPage() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile List View */}
+      <div className="block md:hidden space-y-4">
+        {users.map((user) => (
+          <details
+            key={user.id}
+            className="border rounded-xl p-4 shadow-sm bg-white dark:bg-zinc-900"
+          >
+            <summary className="cursor-pointer font-medium text-sm">
+              {user.name}{" "}
+              <span className="text-muted-foreground">({user.email})</span>
+            </summary>
+            <div className="mt-3 space-y-2 text-sm">
+              <p>
+                <strong>Plan:</strong>{" "}
+                <Badge variant="outline">{user.plan}</Badge>
+              </p>
+              <p>
+                <strong>Trial Ends:</strong>{" "}
+                {user.trialEndsAt
+                  ? new Date(user.trialEndsAt).toLocaleDateString()
+                  : "-"}
+              </p>
+              <p>
+                <strong>Admin:</strong> {user.isAdmin ? "Yes" : "No"}
+              </p>
+              <p>
+                <strong>Created:</strong>{" "}
+                {new Date(user.createdAt).toLocaleDateString()}
+              </p>
+
+              <div className="flex flex-col gap-2 pt-2">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => handleDelete(user.id)}
+                  disabled={user.isAdmin}
+                >
+                  Delete
+                </Button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      Change Role
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {!user.isAdmin ? (
+                      <DropdownMenuItem
+                        onClick={() =>
+                          setDialog({
+                            type: "role",
+                            userId: user.id,
+                            currentValue: "User",
+                            newValue: "Admin",
+                          })
+                        }
+                      >
+                        Make Admin
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem
+                        onClick={() =>
+                          setDialog({
+                            type: "role",
+                            userId: user.id,
+                            currentValue: "Admin",
+                            newValue: "User",
+                          })
+                        }
+                      >
+                        Make User
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      Change Plan
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {["TRIAL", "FREE", "PRO"].map((plan) => (
+                      <DropdownMenuItem
+                        key={plan}
+                        onClick={() =>
+                          setDialog({
+                            type: "plan",
+                            userId: user.id,
+                            currentValue: user.plan,
+                            newValue: plan,
+                          })
+                        }
+                        disabled={user.plan === plan}
+                      >
+                        {plan}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </details>
+        ))}
       </div>
 
       <AlertDialog
