@@ -20,17 +20,39 @@ export default function WelcomeScreen() {
   }, []);
 
   useEffect(() => {
-    const isStandalone =
-      typeof window !== "undefined" &&
-      (window.matchMedia("(display-mode: standalone)").matches ||
-        (window.navigator as any).standalone === true);
+    const checkAuthAndRedirect = async () => {
+      const isStandalone =
+        typeof window !== "undefined" &&
+        (window.matchMedia("(display-mode: standalone)").matches ||
+          (window.navigator as any).standalone === true);
 
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const token =
+        typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-    if (isStandalone && token) {
-      router.replace("/app/dashboard");
-    }
+      if (isStandalone && token) {
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (res.ok) {
+            router.replace("/app/dashboard");
+          } else {
+            localStorage.removeItem("token");
+          }
+        } catch (err) {
+          console.error("Error verifying token:", err);
+          localStorage.removeItem("token");
+        }
+      }
+    };
+
+    checkAuthAndRedirect();
   }, [router]);
 
   return (
@@ -88,7 +110,7 @@ export default function WelcomeScreen() {
         </Button>
         <Button
           onClick={() => router.push("/create-account")}
-          className=" w-full py-5 text-base rounded-full bg-[#111] text-white border border-[#333] hover:bg-[#1a1a1a] transition"
+          className="w-full py-5 text-base rounded-full bg-[#111] text-white border border-[#333] hover:bg-[#1a1a1a] transition"
         >
           Create an account
         </Button>
