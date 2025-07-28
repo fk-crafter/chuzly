@@ -26,6 +26,8 @@ export default function CreateEventPage() {
   const [openOptions, setOpenOptions] = useState(false);
   const [openGuests, setOpenGuests] = useState(false);
 
+  const [currentStep, setCurrentStep] = useState(1);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -107,7 +109,20 @@ export default function CreateEventPage() {
         </span>
       </h1>
 
-      <div className="hidden md:block space-y-6">
+      <div className="hidden md:block space-y-8">
+        {/* Step 1 */}
+        <div className="flex items-center gap-3">
+          <div
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+              currentStep > 1
+                ? "bg-green-500 text-white"
+                : "bg-black text-white"
+            }`}
+          >
+            {currentStep > 1 ? "✓" : "1"}
+          </div>
+          <span className="text-sm font-medium">Event Details</span>
+        </div>
         <Card
           className={`shadow-xl rounded-2xl overflow-hidden transition-all duration-500 ${
             openDetails
@@ -141,7 +156,10 @@ export default function CreateEventPage() {
               </div>
             </div>
             <Button
-              onClick={() => setOpenOptions(true)}
+              onClick={() => {
+                setOpenOptions(true);
+                setCurrentStep(2);
+              }}
               className="mt-4 w-full md:w-auto cursor-pointer"
             >
               Next →
@@ -149,6 +167,21 @@ export default function CreateEventPage() {
           </CardContent>
         </Card>
 
+        {/* Step 2 */}
+        <div className="flex items-center gap-3">
+          <div
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+              currentStep > 2
+                ? "bg-green-500 text-white"
+                : currentStep === 2
+                ? "bg-black text-white"
+                : "bg-gray-300 text-black"
+            }`}
+          >
+            {currentStep > 2 ? "✓" : "2"}
+          </div>
+          <span className="text-sm font-medium">Options</span>
+        </div>
         <Card
           className={`shadow-xl rounded-2xl overflow-hidden transition-all duration-500 ${
             openOptions
@@ -224,7 +257,10 @@ export default function CreateEventPage() {
               </Button>
 
               <Button
-                onClick={() => setOpenGuests(true)}
+                onClick={() => {
+                  setOpenGuests(true);
+                  setCurrentStep(3);
+                }}
                 className="w-full md:w-auto cursor-pointer"
               >
                 Next →
@@ -233,6 +269,19 @@ export default function CreateEventPage() {
           </CardContent>
         </Card>
 
+        {/* Step 3 */}
+        <div className="flex items-center gap-3">
+          <div
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+              currentStep === 3
+                ? "bg-black text-white"
+                : "bg-gray-300 text-black"
+            }`}
+          >
+            3
+          </div>
+          <span className="text-sm font-medium">Guests</span>
+        </div>
         <Card
           className={`shadow-xl rounded-2xl overflow-hidden transition-all duration-500 ${
             openGuests
