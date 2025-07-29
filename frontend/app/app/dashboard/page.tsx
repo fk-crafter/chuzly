@@ -53,6 +53,14 @@ export default function DashboardPage() {
     fetchStats();
   }, [router]);
 
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().then((permission) => {
+        console.log("Notification permission:", permission);
+      });
+    }
+  }, []);
+
   if (!stats) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 space-y-8">

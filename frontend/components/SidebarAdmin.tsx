@@ -60,7 +60,7 @@ export default function SidebarAdmin() {
         <Separator />
       </aside>
 
-      {/* 📱 Mobile Bottom Navigation */}
+      {/* 📱 Mobile */}
       <div className="md:hidden fixed bottom-4 left-4 right-4 bg-white dark:bg-zinc-900 border shadow-xl rounded-2xl flex justify-around items-center z-50 py-3 px-2">
         {adminNavItems.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href;
