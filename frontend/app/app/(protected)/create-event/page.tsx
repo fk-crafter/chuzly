@@ -95,6 +95,20 @@ export default function CreateEventPage() {
     }
   };
 
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().then((permission) => {
+        console.log("Notification permission:", permission);
+        if (permission === "granted") {
+          new Notification("Chuzly", {
+            body: "This is a test notification 🎉",
+            icon: "/logo.png", // remplace par ton vrai logo si besoin
+          });
+        }
+      });
+    }
+  }, []);
+
   if (checkingAuth)
     return <p className="text-center mt-20">Checking authentication...</p>;
 
