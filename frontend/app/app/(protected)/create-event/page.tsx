@@ -72,6 +72,19 @@ export default function CreateEventPage() {
       });
       return;
     }
+
+    const invalidOption = options.find((opt) => {
+      if (!opt.datetime) return false;
+      const optionDate = new Date(opt.datetime);
+      return optionDate < new Date();
+    });
+
+    if (invalidOption) {
+      toast.error("One of the options has a date in the past", {
+        className: "bg-red-600 text-white",
+      });
+      return;
+    }
     const body = { eventName, votingDeadline: utcDeadline, options, guests };
 
     try {
@@ -159,6 +172,7 @@ export default function CreateEventPage() {
                   type="datetime-local"
                   value={votingDeadline}
                   onChange={(e) => setVotingDeadline(e.target.value)}
+                  min={new Date().toISOString().slice(0, 16)}
                 />
               </div>
             </div>
@@ -237,6 +251,7 @@ export default function CreateEventPage() {
                     onChange={(e) =>
                       handleOptionChange(i, "datetime", e.target.value)
                     }
+                    min={new Date().toISOString().slice(0, 16)}
                   />
                 </div>
                 <div className="flex items-end">
@@ -388,6 +403,7 @@ export default function CreateEventPage() {
                   type="datetime-local"
                   value={votingDeadline}
                   onChange={(e) => setVotingDeadline(e.target.value)}
+                  min={new Date().toISOString().slice(0, 16)}
                   className="py-4 text-base"
                 />
                 <Button
@@ -457,6 +473,7 @@ export default function CreateEventPage() {
                         onChange={(e) =>
                           handleOptionChange(i, "datetime", e.target.value)
                         }
+                        min={new Date().toISOString().slice(0, 16)}
                         className="py-4 text-base"
                       />
                     </div>
