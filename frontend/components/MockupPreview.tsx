@@ -18,7 +18,7 @@ export function MockupPreview() {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="w-full flex justify-center px-4 -mt-36"
+      className="w-full flex justify-center px-4 -mt-25"
     >
       <div className="aspect-video w-full max-w-4xl relative rounded-xl overflow-hidden border border-border bg-muted">
         {!isPlaying && (

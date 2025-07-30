@@ -6,13 +6,12 @@ import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import Link from "next/link";
-import Image from "next/image";
 import { DotPattern } from "@/components/magicui/dot-pattern";
 import { TestimonialSection } from "./TestimonialSection";
 
 export function Hero() {
   return (
-    <section className="relative min-h-[100vh] flex flex-col items-center justify-center px-4 text-center pb-30">
+    <section className="relative min-h-[100vh] flex flex-col items-center justify-center px-4 text-center pb-10">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -59,7 +58,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.4 }}
-        className="flex flex-col sm:flex-row gap-4 z-10"
+        className="flex flex-col sm:flex-row gap-4 z-10 mb-4"
       >
         <Link href="/create-account" passHref>
           <Button className="w-full sm:w-auto">Get started</Button>
@@ -71,15 +70,18 @@ export function Hero() {
         </Link>
       </motion.div>
 
+      {/* Testimonials */}
       <motion.div
-  initial={{ opacity: 0, y: 10 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.8, delay: 0.5 }}
-  className="z-10 mt-10"
->
-  <p className="text-muted-foreground text-sm ">What early users are saying</p>
-  <TestimonialSection />
-</motion.div>
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+        className="z-10 mt-2 flex flex-col items-center"
+      >
+        <p className="text-muted-foreground text-sm mb-2">
+          What early users are saying
+        </p>
+        <TestimonialSection />
+      </motion.div>
 
       <DotPattern
         className={cn(
