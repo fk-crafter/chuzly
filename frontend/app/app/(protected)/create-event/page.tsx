@@ -65,6 +65,13 @@ export default function CreateEventPage() {
       });
       return;
     }
+
+    if (new Date(votingDeadline) < new Date()) {
+      toast.error("Voting deadline can't be in the past", {
+        className: "bg-red-600 text-white",
+      });
+      return;
+    }
     const body = { eventName, votingDeadline: utcDeadline, options, guests };
 
     try {
