@@ -8,6 +8,7 @@ import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import Link from "next/link";
 import Image from "next/image";
 import { DotPattern } from "@/components/magicui/dot-pattern";
+import { TestimonialSection } from "./TestimonialSection";
 
 export function Hero() {
   return (
@@ -69,6 +70,16 @@ export function Hero() {
           </Button>
         </Link>
       </motion.div>
+
+      <motion.div
+  initial={{ opacity: 0, y: 10 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, delay: 0.5 }}
+  className="z-10 mt-10"
+>
+  <p className="text-muted-foreground text-sm ">What early users are saying</p>
+  <TestimonialSection />
+</motion.div>
 
       <DotPattern
         className={cn(
