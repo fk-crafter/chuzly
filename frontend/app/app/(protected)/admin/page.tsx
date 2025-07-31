@@ -148,6 +148,8 @@ export default function AdminDashboardPage() {
             <tr>
               <th className="p-3 font-medium">Name</th>
               <th className="p-3 font-medium">Email</th>
+              <th className="p-3 font-medium">Email Verified</th>
+              <th className="p-3 font-medium">Onboarded</th>
               <th className="p-3 font-medium">Plan</th>
               <th className="p-3 font-medium">Trial Ends</th>
               <th className="p-3 font-medium">Admin</th>
@@ -160,6 +162,18 @@ export default function AdminDashboardPage() {
               <tr key={user.id} className="border-t hover:bg-muted">
                 <td className="p-3">{user.name}</td>
                 <td className="p-3">{user.email}</td>
+                <td className="p-3">
+                  <Badge
+                    variant={user.emailVerified ? "default" : "destructive"}
+                  >
+                    {user.emailVerified ? "Yes" : "No"}
+                  </Badge>
+                </td>
+                <td className="p-3">
+                  <Badge variant={user.hasOnboarded ? "default" : "secondary"}>
+                    {user.hasOnboarded ? "Yes" : "No"}
+                  </Badge>
+                </td>
                 <td className="p-3">
                   <Badge variant="outline">{user.plan}</Badge>
                 </td>
@@ -275,6 +289,13 @@ export default function AdminDashboardPage() {
               </p>
               <p>
                 <strong>Admin:</strong> {user.isAdmin ? "Yes" : "No"}
+              </p>
+              <p>
+                <strong>Email Verified:</strong>{" "}
+                {user.emailVerified ? "Yes" : "No"}
+              </p>
+              <p>
+                <strong>Onboarded:</strong> {user.hasOnboarded ? "Yes" : "No"}
               </p>
               <p>
                 <strong>Created:</strong>{" "}

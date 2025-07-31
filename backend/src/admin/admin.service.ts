@@ -21,6 +21,8 @@ export class AdminService {
         trialEndsAt: true,
         freeStartedAt: true,
         isAdmin: true,
+        hasOnboarded: true,
+        emailVerified: true,
       },
     });
   }

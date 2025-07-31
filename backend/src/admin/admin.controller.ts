@@ -109,6 +109,8 @@ export class AdminController {
           createdAt: true,
           trialEndsAt: true,
           isAdmin: true,
+          hasOnboarded: true,
+          emailVerified: true,
         },
       }),
     };
