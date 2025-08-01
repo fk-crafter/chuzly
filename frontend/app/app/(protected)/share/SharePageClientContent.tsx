@@ -79,6 +79,26 @@ export default function ShareEventPageContent() {
 
       <div>
         <h2 className="text-lg font-semibold mb-2">Guest links</h2>
+
+        <Button
+          variant="default"
+          onClick={() => {
+            const linksText = event.guests
+              .map(
+                (guest: any) =>
+                  `${guest.nickname}: ${window.location.origin}/app/vote?id=${event.id}&guest=${guest.nickname}`
+              )
+              .join("\n");
+
+            navigator.clipboard.writeText(linksText);
+            setCopied("all");
+            setTimeout(() => setCopied(null), 2000);
+          }}
+          className="mb-4"
+        >
+          {copied === "all" ? "Copied!" : "Copy all guest links"}
+        </Button>
+
         <ul className="space-y-3">
           {event.guests.map((guest: any, i: number) => {
             const voteUrl = `${window.location.origin}/app/vote?id=${event.id}&guest=${guest.nickname}`;
