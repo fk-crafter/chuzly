@@ -86,9 +86,11 @@ export default function ShareEventPageContent() {
             const linksText = event.guests
               .map(
                 (guest: any) =>
-                  `${guest.nickname}: ${window.location.origin}/app/vote?id=${event.id}&guest=${guest.nickname}`
+                  `${guest.nickname}: ${window.location.origin}/app/vote?id=${
+                    event.id
+                  }&guest=${encodeURIComponent(guest.nickname)}`
               )
-              .join("\n");
+              .join("\n\n");
 
             navigator.clipboard.writeText(linksText);
             setCopied("all");
