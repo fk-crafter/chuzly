@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ShineBorder } from "@/components/magicui/shine-border";
 import Image from "next/image";
+import disposableDomains from "disposable-email-domains";
 
 const passwordSchema = z
   .string()
@@ -113,7 +114,13 @@ export function CreateAccountModal() {
       alert("Invalid password: " + (err.errors?.[0]?.message || "Error"));
       return;
     }
-
+    const domain = formData.email.split("@")[1]?.toLowerCase();
+    if (domain && disposableDomains.includes(domain)) {
+      alert(
+        "Disposable email addresses are not allowed. Please use a valid email."
+      );
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(
