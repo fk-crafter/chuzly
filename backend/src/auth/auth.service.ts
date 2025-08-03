@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
 import { EmailVerificationService } from './email-verification.service';
+import disposableDomains from 'disposable-email-domains';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,12 @@ export class AuthService {
   ) {}
 
   async register(data: { email: string; password: string; name: string }) {
+    const domain = data.email.split('@')[1]?.toLowerCase();
+    if (domain && disposableDomains.includes(domain)) {
+      throw new UnauthorizedException(
+        'Disposable email addresses are not allowed.',
+      );
+    }
     const hashed = await bcrypt.hash(data.password, 10);
     const trialEndsAt = addDays(new Date(), 7);
 
