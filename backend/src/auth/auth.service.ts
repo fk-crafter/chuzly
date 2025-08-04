@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
 import { EmailVerificationService } from './email-verification.service';
 import disposableDomains from 'disposable-email-domains';
+import customDisposables from '../utils/custom-disposable-domains';
 
 @Injectable()
 export class AuthService {
@@ -15,10 +16,12 @@ export class AuthService {
   ) {}
 
   async register(data: { email: string; password: string; name: string }) {
+    const allBlockedDomains = [...disposableDomains, ...customDisposables];
+
     const domain = data.email.split('@')[1]?.toLowerCase();
-    if (domain && disposableDomains.includes(domain)) {
+    if (domain && allBlockedDomains.includes(domain)) {
       throw new UnauthorizedException(
-        'Disposable email addresses are not allowed.',
+        'Disposable email addresses are not allowed. Please use a real email.',
       );
     }
     const hashed = await bcrypt.hash(data.password, 10);
