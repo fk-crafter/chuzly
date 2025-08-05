@@ -79,6 +79,13 @@ export default function CreateEventPage() {
       return optionDate < new Date();
     });
 
+    if (guests.length === 0 || guests.every((g) => g.trim() === "")) {
+      toast.error("Please add at least one guest", {
+        className: "bg-red-600 text-white",
+      });
+      return;
+    }
+
     if (invalidOption) {
       toast.error("One of the options has a date in the past", {
         className: "bg-red-600 text-white",
