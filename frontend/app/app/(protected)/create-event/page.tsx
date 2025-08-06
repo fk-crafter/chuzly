@@ -122,6 +122,17 @@ export default function CreateEventPage() {
     }
   };
 
+  const isStep1Valid = eventName.trim() !== "" && votingDeadline.trim() !== "";
+
+  const isStep2Valid =
+    options.length > 0 &&
+    options.every(
+      (opt) =>
+        opt.name.trim() !== "" && opt.datetime.trim() !== "" && opt.price !== ""
+    );
+
+  const isStep3Valid = guests.some((g) => g.trim() !== "");
+
   if (checkingAuth)
     return <p className="text-center mt-20">Checking authentication...</p>;
 
@@ -185,6 +196,10 @@ export default function CreateEventPage() {
             </div>
             <Button
               onClick={() => {
+                if (!isStep1Valid) {
+                  toast.error("Please fill in all event details.");
+                  return;
+                }
                 setOpenOptions(true);
                 setCurrentStep(2);
               }}
@@ -287,6 +302,12 @@ export default function CreateEventPage() {
 
               <Button
                 onClick={() => {
+                  if (!isStep2Valid) {
+                    toast.error(
+                      "Please complete all options before continuing."
+                    );
+                    return;
+                  }
                   setOpenGuests(true);
                   setCurrentStep(3);
                 }}
