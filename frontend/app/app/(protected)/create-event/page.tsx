@@ -107,7 +107,16 @@ export default function CreateEventPage() {
       if (!res.ok) {
         if (res.status === 403) {
           toast.error(
-            "Your plan limit has been reached. Please upgrade or wait for next month."
+            <span>
+              Your plan limit has been reached. Please{" "}
+              <a
+                href="/app/setting/choose-plan"
+                className="text-blue-500 underline hover:text-blue-600"
+              >
+                upgrade
+              </a>{" "}
+              or wait for next month.
+            </span>
           );
           return;
         }
