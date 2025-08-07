@@ -12,7 +12,6 @@ import { TestimonialSection } from "./TestimonialSection";
 export function Hero() {
   return (
     <section className="relative min-h-[100vh] flex flex-col items-center justify-center px-4 text-center pb-10">
-      {/* Shiny badge top */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -21,17 +20,16 @@ export function Hero() {
       >
         <div
           className={cn(
-            "group rounded-full border border-black/5 bg-primary/10 text-base text-primary transition-all ease-in hover:cursor-pointer hover:bg-primary/20 dark:border-white/5 dark:bg-primary/10 dark:hover:bg-primary/20"
+            "group rounded-full border border-black/5 bg-neutral-100 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-200 dark:border-white/5 dark:bg-neutral-900 dark:hover:bg-neutral-800"
           )}
         >
-          <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out">
+          <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
             <span>✨ Join the future of event planning</span>
             <ArrowRightIcon className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
           </AnimatedShinyText>
         </div>
       </motion.div>
 
-      {/* Headline */}
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -44,7 +42,6 @@ export function Hero() {
         </span>
       </motion.h1>
 
-      {/* Description */}
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -55,7 +52,6 @@ export function Hero() {
         decisions instantly. No logins. No endless chats.
       </motion.p>
 
-      {/* CTA */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -72,7 +68,6 @@ export function Hero() {
         </Link>
       </motion.div>
 
-      {/* Testimonials */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -85,7 +80,6 @@ export function Hero() {
         <TestimonialSection />
       </motion.div>
 
-      {/* Dot Background */}
       <DotPattern
         className={cn(
           "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]"
