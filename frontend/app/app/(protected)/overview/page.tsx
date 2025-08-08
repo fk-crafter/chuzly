@@ -46,9 +46,12 @@ export default function OverviewPage() {
     fetchStats();
   }, [router]);
 
+  // Classe utilitaire pour décaler le contenu à droite de la sidebar
+  const contentClasses = "max-w-6xl mx-auto px-4 py-16 space-y-8 lg:ml-64"; // lg:ml-64 = 16rem de marge à gauche
+
   if (loading || !stats) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-16 space-y-8">
+      <div className={contentClasses}>
         <h1 className="text-3xl font-bold">Dashboard Overview</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
@@ -65,7 +68,7 @@ export default function OverviewPage() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-16 space-y-10">
+    <main className={`max-w-6xl mx-auto px-4 py-16 space-y-10 lg:ml-64`}>
       <div className="text-center space-y-2">
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Here’s a summary of your activity. Track your events, votes, and guest
