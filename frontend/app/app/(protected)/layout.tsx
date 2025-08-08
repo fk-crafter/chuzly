@@ -9,10 +9,7 @@ export default function ProtectedLayout({
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <div className="flex flex-col flex-1">
-        <AppHeader />
-        <main className="flex-1 p-6">{children}</main>
-      </div>
+      <main className="flex-1 p-6">{children}</main>
     </div>
   );
 }
