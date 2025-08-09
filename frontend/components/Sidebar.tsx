@@ -97,11 +97,9 @@ export default function Sidebar() {
     { href: "/app/event-list", label: "Events", icon: Calendar },
   ];
 
-  // ====== DESKTOP ======
   return (
     <>
       <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-64 bg-white dark:bg-zinc-900 border-r flex-col z-40">
-        {/* Top brand + Quick create */}
         <div className="p-4 h-16 flex items-center justify-between border-b shrink-0">
           <div>
             <h1 className="text-xl font-bold tracking-tight">Chuzly.</h1>
@@ -114,7 +112,6 @@ export default function Sidebar() {
           </Link>
         </div>
 
-        {/* Nav (scrollable zone) */}
         <nav className="px-4 py-4 flex-1 overflow-y-auto">
           <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3 px-1">
             Navigation
@@ -141,7 +138,6 @@ export default function Sidebar() {
           </div>
         </nav>
 
-        {/* Footer profile (toujours visible) */}
         <div className="border-t p-4 shrink-0">
           {userName ? (
             <DropdownMenu>
@@ -207,7 +203,7 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* FAB to open on mobile */}
+      {/* mobile */}
       <div className="fixed z-50 bottom-4 left-4 md:hidden">
         <button
           className="p-3 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90 transition"
@@ -217,7 +213,6 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* ====== MOBILE SHEET ====== */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -283,7 +278,6 @@ export default function Sidebar() {
                 })}
               </div>
 
-              {/* mobile footer profile */}
               <div className="mt-auto pt-4 border-t">
                 {userName ? (
                   <DropdownMenu>
