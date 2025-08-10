@@ -243,7 +243,7 @@ export default function ChoosePlanPage() {
                       {isCurrent
                         ? "Current plan"
                         : plan.key === "PRO"
-                        ? "Start 7-day free trial"
+                        ? "Start"
                         : "Select"}
                     </Button>
 
