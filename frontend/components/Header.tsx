@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
+import { InstallPWAButton } from "./InstallPWAButton";
 
 export function Header() {
   return (
@@ -23,12 +24,8 @@ export function Header() {
         />
       </Link>
 
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
-        className="flex items-center gap-3"
-      >
+      <motion.div className="flex items-center gap-3">
+        <InstallPWAButton />
         <Link href="/login" className="text-sm hover:underline">
           Login
         </Link>
