@@ -117,12 +117,15 @@ export function PricingSection() {
             )}
 
             {plan.comingSoon && (
-              <div className="absolute inset-0 z-20 flex items-center justify-center">
-                <div className="absolute inset-0 backdrop-blur-[13px] bg-background/55 rounded-2xl" />
-                <div className="relative">
-                  <span className="inline-block rotate-[-6deg] bg-amber-400 text-black font-extrabold tracking-widest text-sm md:text-base px-6 py-2 rounded shadow border border-amber-500">
-                    COMING&nbsp;SOON
-                  </span>
+              <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+                <div className="absolute inset-0 backdrop-blur-[10px] bg-background/55" />
+
+                <div className="absolute left-[-40%] top-1/2 -translate-y-1/2 -rotate-6 w-[180%]">
+                  <div className="w-full bg-amber-400 border-y border-amber-500 shadow text-center py-3">
+                    <span className="font-extrabold tracking-[0.25em] text-black text-xs md:text-sm">
+                      COMING&nbsp;SOON&nbsp;•&nbsp;COMING&nbsp;SOON&nbsp;•&nbsp;COMING&nbsp;SOON
+                    </span>
+                  </div>
                 </div>
               </div>
             )}
