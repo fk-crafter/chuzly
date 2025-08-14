@@ -278,7 +278,7 @@ export default function Sidebar() {
                 })}
               </div>
 
-              <div className="mt-auto pt-4 border-t">
+              <div className="mt-auto pt-4 border-t mb-5">
                 {userName ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
