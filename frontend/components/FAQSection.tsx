@@ -27,9 +27,8 @@ export function FAQSection() {
               What is Chuzly?
             </AccordionTrigger>
             <AccordionContent>
-              Chuzly is a tool to easily plan group activities by letting
-              friends vote on options. No sign-up, no confusion — just fast,
-              clear decisions.
+              Chuzly helps you plan group activities by letting friends vote on
+              options. No sign-up required.
             </AccordionContent>
           </AccordionItem>
 
@@ -38,8 +37,8 @@ export function FAQSection() {
               Does everyone need an account?
             </AccordionTrigger>
             <AccordionContent>
-              Nope. Only the organizer needs Chuzly. Friends can vote directly
-              via a shared link.
+              No. Only the organizer needs Chuzly. Friends can vote using a
+              shared link.
             </AccordionContent>
           </AccordionItem>
 
@@ -48,8 +47,7 @@ export function FAQSection() {
               Can I track who voted?
             </AccordionTrigger>
             <AccordionContent>
-              Yes! You’ll see who voted, declined, or didn’t respond — no
-              guesswork.
+              Yes. You can see who voted, declined, or didn’t respond.
             </AccordionContent>
           </AccordionItem>
 
@@ -58,8 +56,8 @@ export function FAQSection() {
               How do I create an event?
             </AccordionTrigger>
             <AccordionContent>
-              Just pick a few activity options, set a deadline, and share the
-              link — it takes less than a minute.
+              Pick activity options, set a deadline, and share the link. It
+              takes less than a minute.
             </AccordionContent>
           </AccordionItem>
 
@@ -68,8 +66,8 @@ export function FAQSection() {
               Is it really free?
             </AccordionTrigger>
             <AccordionContent>
-              Yes, Chuzly has a free plan with all the basics. Advanced features
-              will be part of upcoming paid plans.
+              Yes. Chuzly has a free plan with the basics. You can upgrade
+              anytime for more features.
             </AccordionContent>
           </AccordionItem>
 
@@ -78,8 +76,7 @@ export function FAQSection() {
               What happens after everyone votes?
             </AccordionTrigger>
             <AccordionContent>
-              Chuzly picks the best option automatically based on votes. No
-              debate needed.
+              Chuzly selects the top option automatically based on votes.
             </AccordionContent>
           </AccordionItem>
 
@@ -88,8 +85,8 @@ export function FAQSection() {
               Can I add a cost per option?
             </AccordionTrigger>
             <AccordionContent>
-              Yes, you can add pricing info so friends can compare and decide
-              based on budget.
+              Yes. You can add prices so friends can compare and decide based on
+              budget.
             </AccordionContent>
           </AccordionItem>
 
@@ -98,8 +95,17 @@ export function FAQSection() {
               Does it work on mobile?
             </AccordionTrigger>
             <AccordionContent>
-              Absolutely — Chuzly works seamlessly on phones, tablets, and
-              desktop.
+              Yes. Chuzly works on phones, tablets, and desktop. You can also
+              install it as an app (PWA):
+              <ol className="list-decimal list-inside mt-2 space-y-1">
+                <li>
+                  Tap the <strong>Share</strong> button in Safari or Chrome
+                </li>
+                <li>
+                  Select <strong>"Add to Home Screen"</strong>
+                </li>
+                <li>Confirm installation</li>
+              </ol>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
