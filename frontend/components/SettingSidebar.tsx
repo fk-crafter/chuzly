@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const settingNav = [
-  { href: "/app/setting", label: "Account overview", icon: User },
+  { href: "/app/setting", label: "Overview", icon: User },
   {
     href: "/app/setting/subscription",
     label: "Subscription",

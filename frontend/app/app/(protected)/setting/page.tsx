@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { User, CreditCard } from "lucide-react";
 import { motion } from "motion/react";
+import { HandWaving } from "phosphor-react";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -86,8 +87,6 @@ export default function SettingsPage() {
         </motion.div>
       </div>
 
-      {/* Mobile Version */}
-      {/* Mobile Version */}
       <div className="block md:hidden">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -100,7 +99,9 @@ export default function SettingsPage() {
               {profile.name.charAt(0).toUpperCase()}
             </div>
             <h1 className="text-xl font-bold mt-4">{profile.name}</h1>
-            <p className="text-sm text-muted-foreground">Welcome 👋</p>
+            <p className="text-sm text-muted-foreground">
+              Welcome <HandWaving className="w-4 h-4 inline-block" />
+            </p>
           </div>
 
           <div className="space-y-4">
