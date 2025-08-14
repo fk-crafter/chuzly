@@ -34,6 +34,7 @@ export default function SettingsPage() {
   return (
     <main className="px-6 py-10 md:pl-64">
       <div className="max-w-6xl mx-auto">
+        {/* Desktop */}
         <div className="hidden md:block">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -41,8 +42,8 @@ export default function SettingsPage() {
             transition={{ duration: 0.4 }}
             className="space-y-8"
           >
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex justify-center">
+              <div className="text-center">
                 <h1 className="text-3xl font-bold tracking-tight">
                   Account overview
                 </h1>
