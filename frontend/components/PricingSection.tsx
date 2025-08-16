@@ -16,7 +16,7 @@ export function PricingSection() {
         subtitle: "For small plans with friends",
         priceLabel: "Free",
         priceNote: "Forever free",
-        cta: "Start free",
+        cta: "Start 7-day free trial",
         href: "/create-account",
         accent: "from-zinc-100 to-zinc-50 dark:from-zinc-900 dark:to-zinc-950",
         icon: <Sparkles className="w-5 h-5" />,
@@ -72,7 +72,10 @@ export function PricingSection() {
   );
 
   return (
-    <section className="relative w-full py-28 px-4 bg-background text-center overflow-hidden">
+    <section
+      id="pricing"
+      className="relative w-full py-28 px-4 bg-background text-center overflow-hidden"
+    >
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

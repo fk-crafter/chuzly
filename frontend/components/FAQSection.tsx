@@ -9,7 +9,7 @@ import {
 
 export function FAQSection() {
   return (
-    <section className="w-full py-24 px-4 bg-background text-center">
+    <section id="faq" className="w-full py-24 px-4 bg-background text-center">
       <p className="text-sm text-primary font-semibold mb-2 tracking-tight">
         Need help?
       </p>

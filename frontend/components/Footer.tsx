@@ -14,18 +14,18 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-sm">
+        <nav className="grid grid-cols-2 md:grid-cols-3 gap-6 text-sm">
           <div>
             <h4 className="text-foreground font-medium mb-2">Product</h4>
             <ul className="space-y-1">
               <li>
-                <Link href="#features">Features</Link>
+                <Link href="/#features">Features</Link>
               </li>
               <li>
-                <Link href="#pricing">Pricing</Link>
+                <Link href="/#pricing">Pricing</Link>
               </li>
               <li>
-                <Link href="#faq">FAQ</Link>
+                <Link href="/#faq">FAQ</Link>
               </li>
             </ul>
           </div>
@@ -34,13 +34,12 @@ export function Footer() {
             <h4 className="text-foreground font-medium mb-2">Company</h4>
             <ul className="space-y-1">
               <li>
-                <Link href="#">About</Link>
+                <Link href="/about">About</Link>
               </li>
               <li>
-                <Link href="#">Contact</Link>
-              </li>
-              <li>
-                <Link href="#">Blog</Link>
+                <a href="mailto:support@chuzly.com" aria-label="Email support">
+                  Contact
+                </a>
               </li>
             </ul>
           </div>
@@ -49,14 +48,14 @@ export function Footer() {
             <h4 className="text-foreground font-medium mb-2">Legal</h4>
             <ul className="space-y-1">
               <li>
-                <Link href="#">Privacy policy</Link>
+                <Link href="/privacy">Privacy policy</Link>
               </li>
               <li>
-                <Link href="#">Terms of service</Link>
+                <Link href="/terms">Terms of service</Link>
               </li>
             </ul>
           </div>
-        </div>
+        </nav>
       </div>
 
       <div className="mt-10 text-xs text-center text-muted-foreground">
