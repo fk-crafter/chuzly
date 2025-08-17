@@ -240,7 +240,7 @@ export default function Sidebar() {
               animate={{ x: 0 }}
               exit={{ x: -320 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed top-0 left-0 bottom-0 w-80 bg-white dark:bg-zinc-900 z-50 shadow-2xl flex flex-col"
+              className="fixed top-0 left-0 bottom-0 w-68 bg-white dark:bg-zinc-900 z-50 shadow-2xl flex flex-col"
             >
               <div className="p-4 border-b flex items-center justify-between">
                 <div>
@@ -317,7 +317,7 @@ export default function Sidebar() {
                 )}
               </div>
 
-              <div className="mt-auto pt-3 border-t px-3 pb-5">
+              <div className="mt-auto pt-3 border-t px-3 pb-6">
                 {userName ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
