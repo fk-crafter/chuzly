@@ -263,7 +263,7 @@ export default function Sidebar() {
                   Navigation
                 </p>
 
-                <div className="space-y-1 mb-4">
+                <div className="space-y-1">
                   <Link
                     href="/app/create-event"
                     onClick={() => setIsOpen(false)}
@@ -306,18 +306,18 @@ export default function Sidebar() {
                     Overview
                   </Link>
                 </div>
+              </div>
 
+              <div className="mt-auto pt-3 border-t px-3 pb-6">
                 {userPlan === "FREE" && (
                   <Link
                     href="/app/setting/choose-plan"
                     onClick={() => setIsOpen(false)}
                   >
-                    <Button className="w-full mb-4">Upgrade to PRO</Button>
+                    <Button className="w-full mb-3">Upgrade to PRO</Button>
                   </Link>
                 )}
-              </div>
 
-              <div className="mt-auto pt-3 border-t px-3 pb-6">
                 {userName ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
