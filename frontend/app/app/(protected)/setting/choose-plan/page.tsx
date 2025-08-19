@@ -133,15 +133,44 @@ export default function ChoosePlanPage() {
 
   const openPortal = async () => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token) {
+      toast.error("You must be logged in.");
+      return;
+    }
+
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/stripe/portal-session`,
-        { method: "POST", headers: { Authorization: `Bearer ${token}` } }
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-      const data = await res.json();
-      window.location.href = data.url;
-    } catch {
+
+      // Try to parse JSON even on non-2xx for clearer messages
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch {}
+
+      if (!res.ok) {
+        const msg =
+          data?.message ||
+          (Array.isArray(data?.errors) ? data.errors.join(", ") : "") ||
+          "Unable to create billing portal session";
+        toast.error(msg);
+        return;
+      }
+
+      const url = data?.url;
+      if (typeof url === "string" && url.startsWith("http")) {
+        window.location.assign(url);
+      } else {
+        console.error("Unexpected portal-session payload:", data);
+        toast.error("Billing portal link is unavailable right now.");
+      }
+    } catch (err) {
+      console.error("Portal error:", err);
       toast.error("Unable to open Stripe portal");
     }
   };
