@@ -40,10 +40,8 @@ export function MockupPreview() {
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
-          src="/chuzly.mp4"
-          playsInline
+          src="/chuzly-presentation.mp4"
           controls={isPlaying}
-          preload="metadata"
         />
       </div>
     </motion.section>
