@@ -168,7 +168,7 @@ export default function Sidebar() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="w-full flex items-center justify-between text-sm px-2"
+                  className="w-full flex items-center justify-between text-sm px-2 pb-6"
                 >
                   <div className="flex items-center gap-3">
                     <div
