@@ -40,7 +40,7 @@ export function MockupPreview() {
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
-          src="/chuzly-presentation.mp4"
+          src="/chuzly-presentation-smaller.mp4"
           controls={isPlaying}
         />
       </div>
