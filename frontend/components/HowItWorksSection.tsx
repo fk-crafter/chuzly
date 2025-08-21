@@ -20,7 +20,7 @@ const steps = [
   },
   {
     title: "Vote & decide",
-    description: "Friends vote. Chuzly picks the best plan automatically.",
+    description: "Friends vote. Chuzly picks the best plan automatically",
     video: "/step3.mp4",
   },
 ];
