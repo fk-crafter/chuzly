@@ -191,7 +191,7 @@ export default function Sidebar() {
                           className="bg-yellow-400 text-black mt-1"
                           variant="secondary"
                         >
-                          PR
+                          PRO
                         </Badge>
                       )}
                     </div>
