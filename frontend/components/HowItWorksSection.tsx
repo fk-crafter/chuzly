@@ -11,17 +11,17 @@ const steps = [
   {
     title: "Create your event",
     description: "Pick options like cinema, bowling, or paintball in seconds.",
-    video: "/step1.mp4",
+    video: "/step1-web.mp4",
   },
   {
     title: "Share the link",
     description: "Send it to your friends.",
-    video: "/step2.mp4",
+    video: "/step2-web.mp4",
   },
   {
     title: "Vote & decide",
     description: "Friends vote. Chuzly picks the best plan automatically.",
-    video: "/step3.mp4",
+    video: "/step3-web.mp4",
   },
 ];
 
