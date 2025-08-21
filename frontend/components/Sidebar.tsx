@@ -130,39 +130,45 @@ export default function Sidebar() {
           </Link>
         </div>
 
-        <nav className="px-4 py-4 overflow-y-auto">
-          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3 px-1">
-            Navigation
-          </p>
-          <div className="space-y-1">
-            {navMain.map(({ href, label, icon: Icon }) => {
-              const isActive = pathname === href;
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-primary text-white"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
-                >
-                  <Icon className={cn("w-4 h-4", !isActive && "opacity-70")} />
-                  {label}
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
+        <div className="flex-1 flex flex-col">
+          <nav className="px-4 py-4 overflow-y-auto flex-1">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3 px-1">
+              Navigation
+            </p>
+            <div className="space-y-1">
+              {navMain.map(({ href, label, icon: Icon }) => {
+                const isActive = pathname === href;
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-primary text-white"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                    <Icon
+                      className={cn("w-4 h-4", !isActive && "opacity-70")}
+                    />
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
 
-        <div className="mt-auto border-t p-4 shrink-0 pb-[calc(env(safe-area-inset-bottom)+8px)]">
           {userPlan === "FREE" && (
-            <Link href="/app/setting/choose-plan">
-              <Button className="w-full mb-3">Upgrade to PRO</Button>
-            </Link>
+            <div className="px-4 pb-4">
+              <Link href="/app/setting/choose-plan">
+                <Button className="w-full">Upgrade to PRO</Button>
+              </Link>
+            </div>
           )}
+        </div>
 
+        <div className="border-t p-4 shrink-0 pb-[calc(env(safe-area-inset-bottom)+8px)]">
           {userName ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -308,16 +314,18 @@ export default function Sidebar() {
                 </div>
               </div>
 
-              <div className="mt-auto pt-3 border-t px-3 pb-6">
-                {userPlan === "FREE" && (
+              {userPlan === "FREE" && (
+                <div className="px-3 pb-3">
                   <Link
                     href="/app/setting/choose-plan"
                     onClick={() => setIsOpen(false)}
                   >
-                    <Button className="w-full mb-3">Upgrade to PRO</Button>
+                    <Button className="w-full">Upgrade to PRO</Button>
                   </Link>
-                )}
+                </div>
+              )}
 
+              <div className="mt-auto pt-3 border-t px-3 pb-6">
                 {userName ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
