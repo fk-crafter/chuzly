@@ -14,7 +14,6 @@ import {
   BarChart2,
   Plus,
   Search,
-  Copy,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -189,12 +188,10 @@ export default function EventListPage() {
 
   return (
     <main className="max-w-5xl mx-auto px-4 md:pl-64 py-8 md:py-14">
-      {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5 md:mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">My Events</h1>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          {/* Search */}
           <div className="relative w-full sm:w-72 md:w-64">
             <Search className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -205,7 +202,6 @@ export default function EventListPage() {
             />
           </div>
 
-          {/* Sort */}
           <Select value={sort} onValueChange={(v: any) => setSort(v)}>
             <SelectTrigger className="h-9 sm:w-[150px]">
               <SelectValue placeholder="Sort by" />
@@ -216,18 +212,9 @@ export default function EventListPage() {
               <SelectItem value="progress">Highest progress</SelectItem>
             </SelectContent>
           </Select>
-
-          {/* Create */}
-          <Link href="/app/create-event" className="hidden sm:block">
-            <Button className="gap-2 h-9">
-              <Plus className="w-4 h-4" />
-              Create
-            </Button>
-          </Link>
         </div>
       </div>
 
-      {/* GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {filtered.map((event) => {
           const rate =
@@ -247,7 +234,6 @@ export default function EventListPage() {
               key={event.id}
               className="group relative overflow-hidden border-border/80 hover:shadow-md transition"
             >
-              {/* HEADER CARD */}
               <CardHeader className="pb-2 md:pb-3 px-4 md:px-6">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -294,7 +280,6 @@ export default function EventListPage() {
                 </div>
               </CardHeader>
 
-              {/* BODY CARD */}
               <CardContent className="pt-0 px-4 md:px-6 pb-4 md:pb-6 space-y-3 md:space-y-4">
                 <div className="flex items-center gap-2 text-xs md:text-sm">
                   <Badge variant="outline" className="gap-1">
@@ -313,7 +298,6 @@ export default function EventListPage() {
                   />
                 </div>
 
-                {/* ACTIONS */}
                 <div className="flex gap-2">
                   <Button
                     size="sm"
@@ -338,17 +322,6 @@ export default function EventListPage() {
         })}
       </div>
 
-      {/* FAB mobile */}
-      <Link
-        href="/app/create-event"
-        className="fixed right-4 bottom-20 md:hidden"
-      >
-        <Button size="icon" className="h-12 w-12 rounded-full shadow-lg">
-          <Plus className="w-5 h-5" />
-        </Button>
-      </Link>
-
-      {/* CONFIRM DELETE */}
       <AlertDialog
         open={!!pendingDelete}
         onOpenChange={() => setPendingDelete(null)}
