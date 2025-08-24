@@ -148,7 +148,7 @@ export default function CreateEventPage() {
   const progressPercent = step === 1 ? 33 : step === 2 ? 66 : 100;
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-16 space-y-8">
+    <main className="max-w-3xl mx-auto px-4 md:pl-35 py-16 space-y-8">
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 flex items-center justify-center gap-2">
         <span className="flex items-center justify-center gap-2">
           <PartyPopper className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
