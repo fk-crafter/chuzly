@@ -20,11 +20,11 @@ export function Hero() {
       >
         <div
           className={cn(
-            "group rounded-full border border-black/5 bg-neutral-100 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-200 dark:border-white/5 dark:bg-neutral-900 dark:hover:bg-neutral-800"
+            "group rounded-full border border-black/5 bg-neutral-100 text-base transition-all ease-in hover:cursor-pointer hover:bg-neutral-200 dark:border-white/5 dark:bg-neutral-900 dark:hover:bg-neutral-800"
           )}
         >
           <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
-            <span>✨ Join the future of event planning</span>
+            <span>✨ Plan faster with Chuzly</span>
             <ArrowRightIcon className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
           </AnimatedShinyText>
         </div>
@@ -36,12 +36,13 @@ export function Hero() {
         transition={{ duration: 0.6 }}
         className="text-4xl md:text-5xl font-bold tracking-tight mb-6 z-10 selection:bg-black selection:text-white"
       >
-        Plan events without <br />
+        Stop debating in{" "}
         <span className="inline-block mt-2 px-2 py-1 rounded bg-primary text-white">
-          group chaos
+          group chats
         </span>
+        <br />
+        Decide plans instantly
       </motion.h1>
-
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -59,11 +60,11 @@ export function Hero() {
         className="flex flex-col sm:flex-row gap-4 z-10 mb-6"
       >
         <Link href="/create-account">
-          <Button className="w-full sm:w-auto">Get started</Button>
+          <Button className="w-full sm:w-auto">Create my first event</Button>
         </Link>
-        <Link href="#features">
+        <Link href="#how-it-works">
           <Button variant="outline" className="w-full sm:w-auto">
-            Learn more
+            See how it works
           </Button>
         </Link>
       </motion.div>
