@@ -259,15 +259,7 @@ export default function EventListPage() {
                     <DropdownMenuContent align="end" className="w-48">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => viewLinks(event.id)}>
-                        <Share2 className="w-4 h-4 mr-2" />
-                        View links
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => viewVotes(event)}>
-                        <BarChart2 className="w-4 h-4 mr-2" />
-                        View votes
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
+
                       <DropdownMenuItem
                         className="text-red-600 focus:text-red-600"
                         onClick={() => setPendingDelete(event)}
