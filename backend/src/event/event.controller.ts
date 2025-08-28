@@ -40,6 +40,21 @@ export class EventController {
     return this.eventService.getOverviewStats(user.userId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('upcoming')
+  async getUpcoming(@User() user: { userId: string }): Promise<
+    Array<{
+      id: string;
+      name: string;
+      votingDeadline: Date;
+      guestsCount: number;
+      votesCount: number;
+    }>
+  > {
+    const events = await this.eventService.getUpcomingEvents(user.userId, 5);
+    return events;
+  }
+
   @Get()
   findAll() {
     return this.eventService.findAll();

@@ -238,6 +238,7 @@ export class EventService {
         id: event.id,
         name: event.name,
         createdAt: event.createdAt,
+        votingDeadline: event.votingDeadline,
         guestsCount: event.guests.length,
         votesCount: event.guests.filter((g) => g.vote !== null).length,
         guestLink: creatorGuest
@@ -245,6 +246,28 @@ export class EventService {
           : null,
       };
     });
+  }
+
+  async getUpcomingEvents(userId: string, limit = 5) {
+    const events = await this.prisma.event.findMany({
+      where: {
+        creatorId: userId,
+        votingDeadline: { gt: new Date() },
+      },
+      include: {
+        guests: { include: { vote: true } },
+      },
+      orderBy: { votingDeadline: 'asc' },
+      take: limit,
+    });
+
+    return events.map((e) => ({
+      id: e.id,
+      name: e.name,
+      votingDeadline: e.votingDeadline!, // présent par construction
+      guestsCount: e.guests.length,
+      votesCount: e.guests.filter((g) => g.voteId !== null).length,
+    }));
   }
 
   async deleteEvent(eventId: string, userId: string) {
