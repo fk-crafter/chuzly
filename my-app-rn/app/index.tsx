@@ -54,7 +54,7 @@ export default function Index() {
           className="w-full max-w-sm space-y-4"
         >
           <TouchableOpacity
-            onPress={() => router.push("/")}
+            onPress={() => router.push("/login")}
             className="w-full py-5 rounded-full bg-white"
           >
             <Text className="text-black font-semibold text-base text-center">
