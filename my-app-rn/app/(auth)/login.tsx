@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome, AntDesign } from "@expo/vector-icons";
-import GoogleIcon from "../components/GoogleIcon";
+import GoogleIcon from "../../components/GoogleIcon";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -58,7 +58,7 @@ export default function LoginScreen() {
 
       <View className="items-center mb-10">
         <Image
-          source={require("../assets/images/logo.png")}
+          source={require("../../assets/images/logo.png")}
           className="w-12 h-12 rounded-full"
           resizeMode="contain"
         />
@@ -155,7 +155,10 @@ export default function LoginScreen() {
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push("/")} className="mt-6">
+      <TouchableOpacity
+        onPress={() => router.push("/createaccount")}
+        className="mt-6"
+      >
         <Text className="text-center text-sm text-gray-600">
           Don’t have an account?{" "}
           <Text className="text-black font-semibold">Sign up</Text>
