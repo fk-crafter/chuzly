@@ -8,8 +8,8 @@ import {
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons"; // pour Google, Apple
-import { AntDesign } from "@expo/vector-icons"; // pour Github
+import { FontAwesome, AntDesign } from "@expo/vector-icons";
+import GoogleIcon from "../components/GoogleIcon";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -35,7 +35,6 @@ export default function LoginScreen() {
       const data = await res.json();
       console.log("✅ Login success:", data);
 
-      // TODO: stocker token avec AsyncStorage ou SecureStore
       router.replace("/");
     } catch (err) {
       console.error(err);
@@ -50,7 +49,6 @@ export default function LoginScreen() {
       className="flex-1 bg-white px-6 pt-16"
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      {/* Back button */}
       <TouchableOpacity
         onPress={() => router.back()}
         className="absolute top-6 left-6"
@@ -58,7 +56,6 @@ export default function LoginScreen() {
         <Text className="text-gray-500 text-sm">← Back</Text>
       </TouchableOpacity>
 
-      {/* Logo + Title */}
       <View className="items-center mb-10">
         <Image
           source={require("../assets/images/logo.png")}
@@ -71,29 +68,25 @@ export default function LoginScreen() {
         </Text>
       </View>
 
-      {/* Social Logins */}
       <View className="space-y-3">
-        {/* Google */}
         <TouchableOpacity className="w-full flex-row items-center justify-center border border-gray-300 rounded-xl py-3">
-          <FontAwesome name="google" size={20} color="#DB4437" />
+          <GoogleIcon />
           <Text className="ml-2 text-base font-medium">
             Continue with Google
           </Text>
         </TouchableOpacity>
 
-        {/* GitHub */}
-        <TouchableOpacity className="w-full flex-row items-center justify-center border border-gray-300 rounded-xl py-3">
+        <TouchableOpacity className="w-full flex-row items-center justify-center border border-gray-300 rounded-full py-3">
           <AntDesign name="github" size={20} color="#000" />
           <Text className="ml-2 text-base font-medium">
             Continue with GitHub
           </Text>
         </TouchableOpacity>
 
-        {/* Apple */}
         <View className="relative">
           <TouchableOpacity
             disabled
-            className="w-full flex-row items-center justify-center border border-gray-300 rounded-xl py-3 opacity-50"
+            className="w-full flex-row items-center justify-center border border-gray-300 rounded-full py-3 opacity-50"
           >
             <FontAwesome name="apple" size={22} color="#000" />
             <Text className="ml-2 text-base font-medium">
@@ -108,14 +101,12 @@ export default function LoginScreen() {
         </View>
       </View>
 
-      {/* Separator */}
       <View className="flex-row items-center my-6">
         <View className="flex-1 h-px bg-gray-300" />
         <Text className="mx-2 text-gray-400 text-sm">or</Text>
         <View className="flex-1 h-px bg-gray-300" />
       </View>
 
-      {/* Form */}
       <View className="space-y-4">
         <View>
           <Text className="text-base font-medium mb-1">Email</Text>
@@ -149,27 +140,25 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
           <TouchableOpacity className="mt-2 self-end">
-            <Text className="text-sm text-blue-600">Forgot password?</Text>
+            <Text className="text-sm text-black">Forgot password?</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Submit */}
       <TouchableOpacity
         onPress={handleLogin}
         disabled={loading}
-        className="mt-6 w-full py-4 rounded-full bg-blue-600"
+        className="mt-6 w-full py-4 rounded-full bg-black"
       >
         <Text className="text-white text-center font-semibold text-base">
           {loading ? "Logging in..." : "Login"}
         </Text>
       </TouchableOpacity>
 
-      {/* Footer */}
       <TouchableOpacity onPress={() => router.push("/")} className="mt-6">
         <Text className="text-center text-sm text-gray-600">
           Don’t have an account?{" "}
-          <Text className="text-blue-600 font-semibold">Sign up</Text>
+          <Text className="text-black font-semibold">Sign up</Text>
         </Text>
       </TouchableOpacity>
     </ScrollView>
