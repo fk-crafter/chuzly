@@ -70,6 +70,12 @@ export default function Index() {
               Create an account
             </Text>
           </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push("/event/create-event")}>
+            <Text className="text-white font-semibold text-base text-center">
+              Go to Create Event
+            </Text>
+          </TouchableOpacity>
         </Animated.View>
       </View>
     </View>
