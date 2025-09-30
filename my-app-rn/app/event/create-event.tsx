@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Plus, Trash } from "lucide-react-native";
 import { AnimatePresence, MotiView } from "moti";
@@ -42,6 +43,17 @@ export default function CreateEventScreen() {
     updated[i][field] = val;
     setOptions(updated);
   };
+
+  const isStep1Valid = eventName.trim() !== "" && votingDeadline.trim() !== "";
+  const isStep2Valid =
+    options.length > 0 &&
+    options.every(
+      (opt) =>
+        opt.name.trim() !== "" &&
+        opt.price.trim() !== "" &&
+        opt.datetime.trim() !== ""
+    );
+  const isStep3Valid = guests.some((g) => g.trim() !== "");
 
   return (
     <View className="flex-1 bg-white px-6 pt-16">
@@ -85,6 +97,10 @@ export default function CreateEventScreen() {
 
               <TouchableOpacity
                 onPress={() => {
+                  if (!isStep1Valid) {
+                    Alert.alert("Error", "Please fill in all fields.");
+                    return;
+                  }
                   setDirection(1);
                   setStep(2);
                 }}
@@ -169,6 +185,10 @@ export default function CreateEventScreen() {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
+                      if (!isStep2Valid) {
+                        Alert.alert("Error", "Please complete all options.");
+                        return;
+                      }
                       setDirection(1);
                       setStep(3);
                     }}
@@ -229,6 +249,10 @@ export default function CreateEventScreen() {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
+                      if (!isStep3Valid) {
+                        Alert.alert("Error", "Please add at least one guest.");
+                        return;
+                      }
                       console.log("Submit form 🚀");
                     }}
                     className="flex-1 bg-black rounded-full py-4"
