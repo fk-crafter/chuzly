@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   View,
   Text,
@@ -5,13 +6,61 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome, AntDesign } from "@expo/vector-icons";
 import GoogleIcon from "../../components/GoogleIcon";
+import { API_URL } from "../../config";
 
 export default function CreateAccountScreen() {
   const router = useRouter();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (key: keyof typeof formData, value: string) => {
+    setFormData({ ...formData, [key]: value });
+  };
+
+  const handleSubmit = async () => {
+    if (formData.password !== formData.confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || "Registration failed");
+      }
+
+      Alert.alert("Success 🎉", "Account created. Please verify your email.");
+      router.push("/login");
+    } catch (err: any) {
+      console.error(err);
+      Alert.alert("Error", err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScrollView
@@ -38,6 +87,7 @@ export default function CreateAccountScreen() {
         </Text>
       </View>
 
+      {/* Social logins */}
       <View className="space-y-3">
         <TouchableOpacity className="w-full flex-row items-center justify-center border border-gray-300 rounded-xl py-3">
           <GoogleIcon />
@@ -71,17 +121,21 @@ export default function CreateAccountScreen() {
         </View>
       </View>
 
+      {/* Separator */}
       <View className="flex-row items-center my-6">
         <View className="flex-1 h-px bg-gray-300" />
         <Text className="mx-2 text-gray-400 text-sm">or</Text>
         <View className="flex-1 h-px bg-gray-300" />
       </View>
 
+      {/* Form */}
       <View className="space-y-4">
         <View>
           <Text className="text-base font-medium mb-1">Full Name</Text>
           <TextInput
             placeholder="John Doe"
+            value={formData.name}
+            onChangeText={(val) => handleChange("name", val)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300"
           />
         </View>
@@ -90,9 +144,11 @@ export default function CreateAccountScreen() {
           <Text className="text-base font-medium mb-1">Email</Text>
           <TextInput
             placeholder="you@example.com"
-            className="w-full px-4 py-3 rounded-xl border border-gray-300"
+            value={formData.email}
+            onChangeText={(val) => handleChange("email", val)}
             keyboardType="email-address"
             autoCapitalize="none"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300"
           />
         </View>
 
@@ -101,12 +157,11 @@ export default function CreateAccountScreen() {
           <View className="relative">
             <TextInput
               placeholder="Your password"
+              value={formData.password}
+              onChangeText={(val) => handleChange("password", val)}
               secureTextEntry
               className="w-full px-4 py-3 rounded-xl border border-gray-300"
             />
-            <TouchableOpacity className="absolute right-3 top-3">
-              <Text className="text-sm text-blue-600">Show</Text>
-            </TouchableOpacity>
           </View>
         </View>
 
@@ -115,19 +170,25 @@ export default function CreateAccountScreen() {
           <View className="relative">
             <TextInput
               placeholder="Confirm password"
+              value={formData.confirmPassword}
+              onChangeText={(val) => handleChange("confirmPassword", val)}
               secureTextEntry
               className="w-full px-4 py-3 rounded-xl border border-gray-300"
             />
-            <TouchableOpacity className="absolute right-3 top-3">
-              <Text className="text-sm text-blue-600">Show</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>
 
-      <TouchableOpacity className="mt-6 w-full py-4 rounded-full bg-black">
+      {/* Submit */}
+      <TouchableOpacity
+        onPress={handleSubmit}
+        disabled={loading}
+        className={`mt-6 w-full py-4 rounded-full ${
+          loading ? "bg-gray-400" : "bg-black"
+        }`}
+      >
         <Text className="text-white text-center font-semibold text-base">
-          Create Account
+          {loading ? "Creating account..." : "Create Account"}
         </Text>
       </TouchableOpacity>
 
