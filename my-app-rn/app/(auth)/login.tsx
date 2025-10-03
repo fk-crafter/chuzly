@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   View,
   Text,
@@ -5,13 +6,61 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome, AntDesign } from "@expo/vector-icons";
 import GoogleIcon from "../../components/GoogleIcon";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "../../config";
 
 export default function LoginScreen() {
   const router = useRouter();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (key: keyof typeof formData, value: string) => {
+    setFormData({ ...formData, [key]: value });
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.email || !formData.password) {
+      Alert.alert("Error", "Please fill in both fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(err || "Login failed");
+      }
+
+      const data = await res.json();
+
+      await AsyncStorage.setItem("token", data.token);
+      await AsyncStorage.setItem("userName", data.name || "");
+      await AsyncStorage.setItem("userPlan", data.plan || "");
+
+      Alert.alert("Success 🎉", "Welcome back " + data.name);
+      router.push("/event/create-event");
+    } catch (err: any) {
+      console.error(err);
+      Alert.alert("Login failed", err.message || "Check your credentials");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScrollView
@@ -81,6 +130,8 @@ export default function LoginScreen() {
           <Text className="text-base font-medium mb-1">Email</Text>
           <TextInput
             placeholder="you@example.com"
+            value={formData.email}
+            onChangeText={(val) => handleChange("email", val)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300"
             keyboardType="email-address"
             autoCapitalize="none"
@@ -92,12 +143,11 @@ export default function LoginScreen() {
           <View className="relative">
             <TextInput
               placeholder="Your password"
+              value={formData.password}
+              onChangeText={(val) => handleChange("password", val)}
               secureTextEntry
               className="w-full px-4 py-3 rounded-xl border border-gray-300"
             />
-            <TouchableOpacity className="absolute right-3 top-3">
-              <Text className="text-sm text-blue-600">Show</Text>
-            </TouchableOpacity>
           </View>
           <TouchableOpacity className="mt-2 self-end">
             <Text className="text-sm text-black">Forgot password?</Text>
@@ -105,9 +155,15 @@ export default function LoginScreen() {
         </View>
       </View>
 
-      <TouchableOpacity className="mt-6 w-full py-4 rounded-full bg-black">
+      <TouchableOpacity
+        onPress={handleSubmit}
+        disabled={loading}
+        className={`mt-6 w-full py-4 rounded-full ${
+          loading ? "bg-gray-400" : "bg-black"
+        }`}
+      >
         <Text className="text-white text-center font-semibold text-base">
-          Login
+          {loading ? "Logging in..." : "Login"}
         </Text>
       </TouchableOpacity>
 
