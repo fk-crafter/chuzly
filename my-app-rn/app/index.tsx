@@ -71,9 +71,9 @@ export default function Index() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.push("/event/create-event")}>
+          <TouchableOpacity onPress={() => router.push("/onboarding")}>
             <Text className="text-white font-semibold text-base text-center">
-              Go to Create Event
+              Go to onboarding
             </Text>
           </TouchableOpacity>
         </Animated.View>
