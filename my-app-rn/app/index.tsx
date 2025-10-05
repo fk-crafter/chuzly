@@ -71,7 +71,7 @@ export default function Index() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.push("/onboarding")}>
+          <TouchableOpacity onPress={() => router.push("/OnboardingScreen")}>
             <Text className="text-white font-semibold text-base text-center">
               Go to onboarding
             </Text>
