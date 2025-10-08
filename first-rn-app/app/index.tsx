@@ -77,9 +77,15 @@ export default function Index() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.push("./event")}>
+          <TouchableOpacity onPress={() => router.push("/event")}>
             <Text className="text-white font-semibold text-base text-center">
               Go to event
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push("/dashboard")}>
+            <Text className="text-white font-semibold text-base text-center">
+              Go to dashboard
             </Text>
           </TouchableOpacity>
         </Animated.View>
