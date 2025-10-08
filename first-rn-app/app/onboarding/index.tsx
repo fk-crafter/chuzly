@@ -23,26 +23,25 @@ import {
 import { API_URL } from "../../config";
 
 const COLORS = [
-  "#f3f4f6", // muted
-  "#c7f9cc", // pastel green
-  "#cfe9ff", // pastel blue
-  "#fff3c4", // pastel yellow
-  "#ffd6e0", // pastel pink
-  "#e6e0ff", // pastel lavender
+  "#f3f4f6",
+  "#c7f9cc",
+  "#cfe9ff",
+  "#fff3c4",
+  "#ffd6e0",
+  "#e6e0ff",
 ];
 
 const windowW = Dimensions.get("window").width;
 
 export default function Onboarding() {
   const router = useRouter();
-  const [step, setStep] = useState<number>(0);
-  const [name, setName] = useState<string>("");
-  const [color, setColor] = useState<string>(COLORS[0]);
+  const [step, setStep] = useState(0);
+  const [name, setName] = useState("");
+  const [color, setColor] = useState(COLORS[0]);
   const [token, setToken] = useState<string | null>(null);
-  const [imageIndex, setImageIndex] = useState<number>(0);
+  const [imageIndex, setImageIndex] = useState(0);
   const scrollRef = useRef<ScrollView | null>(null);
 
-  // images locales (remplace /assets/ par ton chemin)
   const IMAGES = [
     require("../../assets/images/tst.png"),
     require("../../assets/images/tst.png"),
@@ -50,33 +49,20 @@ export default function Onboarding() {
   ];
 
   useEffect(() => {
-    // récupérer token depuis AsyncStorage (même logique que localStorage côté web)
-    AsyncStorage.getItem("token").then((t) => {
-      setToken(t);
-    });
-    // si tu veux préremplir le nom depuis storage
-    AsyncStorage.getItem("newUserName").then((n) => {
-      if (n) setName(n);
-    });
+    AsyncStorage.getItem("token").then((t) => setToken(t));
+    AsyncStorage.getItem("newUserName").then((n) => n && setName(n));
   }, []);
 
-  const next = (to: number | null = null) => {
+  const next = (to: number | null = null) =>
     setStep((s) => (typeof to === "number" ? to : Math.min(s + 1, 5)));
-  };
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
   const handleNameSubmit = async () => {
-    if (!name.trim()) {
-      Alert.alert("Nom requis", "Merci d'entrer ton nom.");
-      return;
-    }
-    if (!token) {
-      Alert.alert("Erreur", "Utilisateur non connecté (token manquant).");
-      return;
-    }
+    if (!name.trim())
+      return Alert.alert("Nom requis", "Merci d'entrer ton nom.");
+    if (!token) return Alert.alert("Erreur", "Utilisateur non connecté.");
 
     try {
-      // update name
       await fetch(`${API_URL}/auth/update-name`, {
         method: "POST",
         headers: {
@@ -86,7 +72,6 @@ export default function Onboarding() {
         body: JSON.stringify({ name: name.trim() }),
       });
 
-      // update color
       await fetch(`${API_URL}/auth/avatar-color`, {
         method: "POST",
         headers: {
@@ -100,7 +85,7 @@ export default function Onboarding() {
       await AsyncStorage.setItem("userName", name.trim());
       next(5);
     } catch (err) {
-      console.error("Onboarding error:", err);
+      console.error(err);
       Alert.alert("Erreur", "Impossible de mettre à jour le profil.");
     }
   };
@@ -117,108 +102,58 @@ export default function Onboarding() {
     }
   };
 
-  // petit helper UI pour les dots
-  function ProgressDots() {
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          gap: 8,
-          marginBottom: 16,
-        }}
-      >
-        {[0, 1, 2, 3, 4, 5].map((i) => (
-          <View
-            key={i}
-            style={{
-              height: i === step ? 8 : 6,
-              width: i === step ? 28 : 14,
-              borderRadius: 10,
-              backgroundColor: i === step ? "#111" : "#e6e6e6",
-              marginHorizontal: 2,
-            }}
-          />
-        ))}
-      </View>
-    );
-  }
-
-  // animation wrapper
   const MotionCard = ({ children }: { children: React.ReactNode }) => (
     <MotiView
       from={{ opacity: 0, translateY: 12 }}
       animate={{ opacity: 1, translateY: 0 }}
       exit={{ opacity: 0, translateY: -10 }}
       transition={{ type: "timing", duration: 280 }}
-      style={{ width: "100%", alignItems: "center" }}
+      className="w-full items-center"
     >
       {children}
     </MotiView>
   );
 
+  const ProgressDots = () => (
+    <View className="flex-row justify-center mb-6">
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <View
+          key={i}
+          className={`${
+            i === step ? "h-2 w-7 bg-black" : "h-1.5 w-3 bg-gray-300"
+          } mx-1 rounded-full`}
+        />
+      ))}
+    </View>
+  );
+
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "#fff",
-        paddingHorizontal: 20,
-        paddingTop: 36,
-      }}
-    >
+    <View className="flex-1 bg-white px-5 pt-10 justify-center">
       <ProgressDots />
 
       <AnimatePresence exitBeforeEnter>
         {step === 0 && (
           <MotionCard key="0">
-            <Sparkles width={36} height={36} color="#111" />
-            <Text style={{ fontSize: 22, fontWeight: "700", marginTop: 12 }}>
-              Welcome to Chuzly
-            </Text>
-            <Text
-              style={{
-                color: "#6b7280",
-                textAlign: "center",
-                marginTop: 10,
-                paddingHorizontal: 6,
-              }}
-            >
+            <Sparkles size={36} color="#000" />
+            <Text className="text-2xl font-bold mt-3">Welcome to Chuzly</Text>
+            <Text className="text-gray-500 text-center mt-3 max-w-xs">
               Plan events faster. Suggest options, vote and share with friends.
             </Text>
-            <View
-              style={{ width: "100%", marginTop: 18, alignItems: "flex-end" }}
+
+            <TouchableOpacity
+              onPress={() => next(1)}
+              className="bg-black rounded-xl py-3 px-6 mt-6"
             >
-              <TouchableOpacity
-                onPress={() => next(1)}
-                style={{
-                  backgroundColor: "#111",
-                  paddingVertical: 12,
-                  paddingHorizontal: 18,
-                  borderRadius: 10,
-                }}
-              >
-                <Text style={{ color: "#fff", fontWeight: "600" }}>
-                  Get started
-                </Text>
-              </TouchableOpacity>
-            </View>
+              <Text className="text-white font-semibold">Get started</Text>
+            </TouchableOpacity>
           </MotionCard>
         )}
 
         {step === 1 && (
           <MotionCard key="1">
-            <Info width={32} height={32} color="#111" />
-            <Text style={{ fontSize: 20, fontWeight: "700", marginTop: 12 }}>
-              How it works
-            </Text>
-            <Text
-              style={{
-                color: "#6b7280",
-                textAlign: "center",
-                marginTop: 10,
-                paddingHorizontal: 6,
-              }}
-            >
+            <Info size={32} color="#000" />
+            <Text className="text-xl font-bold mt-3">How it works</Text>
+            <Text className="text-gray-500 text-center mt-2 max-w-xs">
               Quick walkthrough — swipe images or tap next to see steps.
             </Text>
 
@@ -227,7 +162,7 @@ export default function Onboarding() {
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
-              style={{ marginTop: 14, width: windowW - 40 }}
+              className="mt-4 w-full"
               onMomentumScrollEnd={(e) => {
                 const i = Math.round(
                   e.nativeEvent.contentOffset.x / (windowW - 40)
@@ -239,25 +174,13 @@ export default function Onboarding() {
                 <Image
                   key={idx}
                   source={src}
-                  style={{
-                    width: windowW - 40,
-                    height: 180,
-                    borderRadius: 12,
-                    resizeMode: "cover",
-                    marginRight: 8,
-                  }}
+                  className="w-[90vw] h-44 rounded-xl mr-2"
+                  resizeMode="cover"
                 />
               ))}
             </ScrollView>
 
-            <View
-              style={{
-                width: "100%",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginTop: 12,
-              }}
-            >
+            <View className="flex-row justify-between w-full mt-4">
               <TouchableOpacity
                 onPress={() => {
                   setImageIndex((p) => Math.max(p - 1, 0));
@@ -267,18 +190,11 @@ export default function Onboarding() {
                   });
                 }}
                 disabled={imageIndex === 0}
-                style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 12,
-                  borderRadius: 8,
-                  backgroundColor: imageIndex === 0 ? "#efefef" : "#fff",
-                  borderWidth: 1,
-                  borderColor: "#e5e7eb",
-                }}
+                className={`border border-gray-300 rounded-lg py-2 px-4 ${
+                  imageIndex === 0 ? "opacity-50" : ""
+                }`}
               >
-                <Text style={{ color: imageIndex === 0 ? "#9ca3af" : "#111" }}>
-                  ← Back
-                </Text>
+                <Text>← Back</Text>
               </TouchableOpacity>
 
               {imageIndex < IMAGES.length - 1 ? (
@@ -293,26 +209,16 @@ export default function Onboarding() {
                       animated: true,
                     });
                   }}
-                  style={{
-                    paddingVertical: 10,
-                    paddingHorizontal: 12,
-                    borderRadius: 8,
-                    backgroundColor: "#111",
-                  }}
+                  className="bg-black rounded-lg py-2 px-4"
                 >
-                  <Text style={{ color: "#fff" }}>Next →</Text>
+                  <Text className="text-white">Next →</Text>
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity
                   onPress={() => next(2)}
-                  style={{
-                    paddingVertical: 10,
-                    paddingHorizontal: 12,
-                    borderRadius: 8,
-                    backgroundColor: "#111",
-                  }}
+                  className="bg-black rounded-lg py-2 px-4"
                 >
-                  <Text style={{ color: "#fff" }}>Continue</Text>
+                  <Text className="text-white">Continue</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -321,60 +227,36 @@ export default function Onboarding() {
 
         {step === 2 && (
           <MotionCard key="2">
-            <User width={32} height={32} color="#111" />
-            <Text style={{ fontSize: 20, fontWeight: "700", marginTop: 12 }}>
-              Your name
-            </Text>
-            <Text
-              style={{
-                color: "#6b7280",
-                textAlign: "center",
-                marginTop: 10,
-                paddingHorizontal: 6,
-              }}
-            >
-              How you&apos;ll appear to others in events.
+            <User size={32} color="#000" />
+            <Text className="text-xl font-bold mt-3">Your name</Text>
+            <Text className="text-gray-500 text-center mt-2 max-w-xs">
+              How you ll appear to others in events.
             </Text>
             <TextInput
               placeholder="Your name"
               value={name}
               onChangeText={setName}
-              style={{
-                marginTop: 12,
-                width: "100%",
-                borderColor: "#e5e7eb",
-                borderWidth: 1,
-                paddingVertical: 12,
-                paddingHorizontal: 12,
-                borderRadius: 8,
-                backgroundColor: "#fff",
-              }}
+              className="border border-gray-300 rounded-lg w-full px-4 py-3 mt-4"
             />
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginTop: 14,
-                width: "100%",
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => prev()}
-                style={{ paddingVertical: 10, paddingHorizontal: 12 }}
-              >
+
+            <View className="flex-row justify-between w-full mt-5">
+              <TouchableOpacity onPress={prev}>
                 <Text>Back</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => next(3)}
                 disabled={!name.trim()}
-                style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 16,
-                  backgroundColor: !name.trim() ? "#e5e7eb" : "#111",
-                  borderRadius: 8,
-                }}
+                className={`rounded-lg py-2 px-5 ${
+                  name.trim()
+                    ? "bg-black"
+                    : "bg-gray-200 border border-gray-300"
+                }`}
               >
-                <Text style={{ color: !name.trim() ? "#9ca3af" : "#fff" }}>
+                <Text
+                  className={`${
+                    name.trim() ? "text-white" : "text-gray-400"
+                  } font-semibold`}
+                >
                   Continue
                 </Text>
               </TouchableOpacity>
@@ -384,71 +266,39 @@ export default function Onboarding() {
 
         {step === 3 && (
           <MotionCard key="3">
-            <Palette width={32} height={32} color="#111" />
-            <Text style={{ fontSize: 20, fontWeight: "700", marginTop: 12 }}>
-              Pick a color
-            </Text>
-            <Text
-              style={{
-                color: "#6b7280",
-                textAlign: "center",
-                marginTop: 8,
-                paddingHorizontal: 6,
-              }}
-            >
+            <Palette size={32} color="#000" />
+            <Text className="text-xl font-bold mt-3">Pick a color</Text>
+            <Text className="text-gray-500 text-center mt-2 max-w-xs">
               Choose your avatar color for voting and messages.
             </Text>
 
-            <View
-              style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
-                justifyContent: "center",
-                gap: 10,
-                marginTop: 14,
-              }}
-            >
+            <View className="flex-row flex-wrap justify-center mt-4">
               {COLORS.map((c) => (
                 <TouchableOpacity
                   key={c}
                   onPress={() => setColor(c)}
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 48,
-                    backgroundColor: c,
-                    borderWidth: color === c ? 3 : 1,
-                    borderColor: color === c ? "#111" : "#e5e7eb",
-                    margin: 6,
-                  }}
-                />
+                  className="m-2"
+                >
+                  <View
+                    className={`w-12 h-12 rounded-full border-2`}
+                    style={{
+                      backgroundColor: c,
+                      borderColor: color === c ? "#000" : "#e5e7eb",
+                    }}
+                  />
+                </TouchableOpacity>
               ))}
             </View>
 
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-                marginTop: 18,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => prev()}
-                style={{ paddingVertical: 10 }}
-              >
+            <View className="flex-row justify-between w-full mt-6">
+              <TouchableOpacity onPress={prev}>
                 <Text>Back</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => next(4)}
-                style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 12,
-                  backgroundColor: "#111",
-                  borderRadius: 8,
-                }}
+                className="bg-black rounded-lg py-2 px-5"
               >
-                <Text style={{ color: "#fff" }}>Preview</Text>
+                <Text className="text-white">Preview</Text>
               </TouchableOpacity>
             </View>
           </MotionCard>
@@ -456,61 +306,25 @@ export default function Onboarding() {
 
         {step === 4 && (
           <MotionCard key="4">
-            <BadgeCheck width={32} height={32} color="#111" />
-            <Text style={{ fontSize: 20, fontWeight: "700", marginTop: 12 }}>
-              Here’s your profile
-            </Text>
-            <Text
-              style={{
-                color: "#6b7280",
-                textAlign: "center",
-                marginTop: 8,
-                paddingHorizontal: 6,
-              }}
-            >
-              You can change this later from settings.
-            </Text>
-
-            <View style={{ alignItems: "center", marginTop: 16 }}>
+            <BadgeCheck size={32} color="#000" />
+            <Text className="text-xl font-bold mt-3">Here’s your profile</Text>
+            <View className="items-center mt-5 space-y-2">
               <View
-                style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: 72,
-                  backgroundColor: color,
-                  borderWidth: 1,
-                  borderColor: "#e5e7eb",
-                }}
+                className="w-16 h-16 rounded-full border border-gray-300"
+                style={{ backgroundColor: color }}
               />
-              <Text style={{ marginTop: 8, fontWeight: "600" }}>
-                {name || "—"}
-              </Text>
+              <Text className="font-semibold">{name || "—"}</Text>
             </View>
 
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-                marginTop: 18,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => prev()}
-                style={{ paddingVertical: 10 }}
-              >
+            <View className="flex-row justify-between w-full mt-6">
+              <TouchableOpacity onPress={prev}>
                 <Text>Back</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleNameSubmit}
-                style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 12,
-                  backgroundColor: "#111",
-                  borderRadius: 8,
-                }}
+                className="bg-black rounded-lg py-2 px-5"
               >
-                <Text style={{ color: "#fff" }}>Confirm</Text>
+                <Text className="text-white">Confirm</Text>
               </TouchableOpacity>
             </View>
           </MotionCard>
@@ -518,35 +332,21 @@ export default function Onboarding() {
 
         {step === 5 && (
           <MotionCard key="5">
-            <PartyPopper width={32} height={32} color="#111" />
-            <Text style={{ fontSize: 20, fontWeight: "700", marginTop: 12 }}>
-              You&apos;re ready!
-            </Text>
-            <Text
-              style={{
-                color: "#6b7280",
-                textAlign: "center",
-                marginTop: 8,
-                paddingHorizontal: 6,
-              }}
-            >
+            <PartyPopper size={32} color="#000" />
+            <Text className="text-xl font-bold mt-3">You’re ready!</Text>
+            <Text className="text-gray-500 text-center mt-2 max-w-xs">
               Time to create your first event or explore the dashboard.
             </Text>
 
-            <View style={{ width: "100%", marginTop: 14 }}>
+            <View className="w-full mt-5 space-y-3">
               <TouchableOpacity
                 onPress={async () => {
                   await finishOnboarding();
                   router.push("/event");
                 }}
-                style={{
-                  backgroundColor: "#111",
-                  paddingVertical: 12,
-                  borderRadius: 10,
-                  marginBottom: 10,
-                }}
+                className="bg-black rounded-xl py-3"
               >
-                <Text style={{ color: "#fff", textAlign: "center" }}>
+                <Text className="text-white text-center font-semibold">
                   Create Event
                 </Text>
               </TouchableOpacity>
@@ -556,14 +356,9 @@ export default function Onboarding() {
                   await finishOnboarding();
                   router.push("/");
                 }}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#e5e7eb",
-                  paddingVertical: 12,
-                  borderRadius: 10,
-                }}
+                className="border border-gray-300 rounded-xl py-3"
               >
-                <Text style={{ textAlign: "center" }}>Go to Dashboard</Text>
+                <Text className="text-center font-medium">Go to Dashboard</Text>
               </TouchableOpacity>
             </View>
           </MotionCard>
