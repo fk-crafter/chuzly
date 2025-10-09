@@ -88,6 +88,12 @@ export default function Index() {
               Go to dashboard
             </Text>
           </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push("/vote")}>
+            <Text className="text-white font-semibold text-base text-center">
+              Go to vote
+            </Text>
+          </TouchableOpacity>
         </Animated.View>
       </View>
     </View>
