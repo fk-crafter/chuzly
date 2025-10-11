@@ -139,13 +139,13 @@ export default function ShareEventScreen() {
 
       <View className="flex-row justify-center gap-3">
         <TouchableOpacity
-          onPress={() => router.push("/event/create-event")}
+          onPress={() => router.push("./create-event")}
           className="border rounded-full px-5 py-3"
         >
           <Text className="font-medium">Create new event</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => router.push("/overview")}
+          onPress={() => router.push("./overview")}
           className="bg-black rounded-full px-5 py-3"
         >
           <Text className="text-white font-semibold">Go to Dashboard</Text>

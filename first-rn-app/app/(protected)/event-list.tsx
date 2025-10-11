@@ -9,8 +9,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { API_URL } from "../../config";
-import { useRouter } from "expo-router";
+import { RelativePathString, useRouter } from "expo-router";
 import { Search, Trash2 } from "lucide-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type EventItem = {
   id: string;
@@ -30,14 +31,14 @@ export default function EventListScreen() {
 
   useEffect(() => {
     const fetchMyEvents = async () => {
-      const token = await Promise.resolve(localStorage?.getItem?.("token"));
+      const token = await AsyncStorage.getItem("token");
       try {
         const res = await fetch(`${API_URL}/events/mine`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         const data = await res.json();
         setEvents(data);
-      } catch (e) {
+      } catch {
         Alert.alert("Error", "Failed to load your events.");
       } finally {
         setLoading(false);
@@ -94,12 +95,11 @@ export default function EventListScreen() {
   };
 
   const viewLinks = (id: string) => {
-    router.push(`/share?id=${encodeURIComponent(id)}`);
+    router.push(`/share?id=${encodeURIComponent(id)}` as RelativePathString);
   };
 
   const viewVotes = (ev: EventItem) => {
     if (!ev.guestLink) return;
-    // sur mobile, on va plutôt renvoyer vers vote screen si tu l’as en RN
     router.push(
       `/vote?id=${ev.id}&guest=${encodeURIComponent(ev.guestLink.split("/guest/")[1])}`
     );
@@ -121,7 +121,7 @@ export default function EventListScreen() {
             You haven’t created any events yet.
           </Text>
           <TouchableOpacity
-            onPress={() => router.push("/event/create-event")}
+            onPress={() => router.push("/event")}
             className="bg-black rounded-full px-5 py-3"
           >
             <Text className="text-white font-semibold">
@@ -142,7 +142,6 @@ export default function EventListScreen() {
         <Text className="text-2xl font-bold">My Events</Text>
       </View>
 
-      {/* Search + sort */}
       <View className="gap-2 mb-4">
         <View className="relative">
           <Search

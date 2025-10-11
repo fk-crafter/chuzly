@@ -39,7 +39,7 @@ export default function SettingsScreen() {
 
       <View className="gap-4">
         <TouchableOpacity
-          onPress={() => router.push("/setting/profile")}
+          onPress={() => router.push("./profile")}
           className="border rounded-2xl p-4 flex-row items-center gap-3"
         >
           <View className="border rounded-xl p-2">
@@ -54,7 +54,7 @@ export default function SettingsScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => router.push("/setting/subscription")}
+          onPress={() => router.push("./subscription")}
           className="border rounded-2xl p-4 flex-row items-center gap-3"
         >
           <View className="border rounded-xl p-2">
@@ -78,7 +78,7 @@ export default function SettingsScreen() {
           </Text>
           <TouchableOpacity
             className="bg-black rounded-md px-4 py-3"
-            onPress={() => router.push("/setting/subscription")}
+            onPress={() => router.push("./subscription")}
           >
             <Text className="text-white text-center">Manage subscription</Text>
           </TouchableOpacity>

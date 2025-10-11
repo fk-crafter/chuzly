@@ -28,7 +28,7 @@ export default function SubscriptionScreen() {
     })();
   }, []);
 
-  const choosePlan = () => router.push("/setting/choose-plan");
+  const choosePlan = () => router.push("./choose-plan");
 
   const cancelSub = async () => {
     try {

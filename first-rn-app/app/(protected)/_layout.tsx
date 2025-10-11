@@ -1,6 +1,34 @@
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { View, ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProtectedLayout() {
+  const router = useRouter();
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    const verifyAuth = async () => {
+      const token = await AsyncStorage.getItem("token");
+
+      if (!token) {
+        router.replace("/login");
+      }
+
+      setCheckingAuth(false);
+    };
+
+    verifyAuth();
+  }, [router]);
+
+  if (checkingAuth) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    );
+  }
+
   return (
     <Stack
       screenOptions={{ headerShown: false, animation: "slide_from_right" }}

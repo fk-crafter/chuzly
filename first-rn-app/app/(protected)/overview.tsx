@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { RelativePathString, useRouter } from "expo-router";
 import {
   CalendarCheck,
   Users,
@@ -14,6 +14,7 @@ import {
   BarChart3,
 } from "lucide-react-native";
 import { API_URL } from "../../config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type OverviewStats = {
   totalEvents: number;
@@ -50,8 +51,7 @@ export default function OverviewScreen() {
 
   useEffect(() => {
     const fetchAll = async () => {
-      const token = await Promise.resolve(localStorage?.getItem?.("token"));
-      // si tu n'utilises pas localStorage en RN, remplace par AsyncStorage
+      const token = await AsyncStorage.getItem("token");
       try {
         const s = await fetch(`${API_URL}/events/overview`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -63,7 +63,7 @@ export default function OverviewScreen() {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         setUpcoming(u.ok ? ((await u.json()) as UpcomingEvent[]) : []);
-      } catch (e) {
+      } catch {
         setUpcoming([]);
       } finally {
         setLoading(false);
@@ -95,7 +95,6 @@ export default function OverviewScreen() {
     >
       <Text className="text-3xl font-bold mb-6">Overview</Text>
 
-      {/* KPI cards */}
       <View className="grid grid-cols-1 gap-4">
         <View className="border rounded-xl p-4">
           <View className="flex-row items-center gap-2 mb-2">
@@ -132,13 +131,12 @@ export default function OverviewScreen() {
         </View>
       </View>
 
-      {/* Upcoming */}
       <View className="border rounded-xl p-4 mt-6">
         <View className="flex-row items-center justify-between mb-3">
           <Text className="text-xl font-semibold">Upcoming deadlines</Text>
           <TouchableOpacity
             className="border rounded-full px-4 py-2"
-            onPress={() => router.push("/event-list")}
+            onPress={() => router.push("../event-list")}
           >
             <Text className="font-medium">Manage</Text>
           </TouchableOpacity>
@@ -172,7 +170,9 @@ export default function OverviewScreen() {
                     <TouchableOpacity
                       className="border rounded-full px-3 py-1"
                       onPress={() =>
-                        router.push(`/share?id=${encodeURIComponent(ev.id)}`)
+                        router.push(
+                          `/share?id=${encodeURIComponent(ev.id)}` as RelativePathString
+                        )
                       }
                     >
                       <Text>Manage</Text>

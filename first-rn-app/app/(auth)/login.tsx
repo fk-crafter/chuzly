@@ -53,7 +53,7 @@ export default function LoginScreen() {
       await AsyncStorage.setItem("userPlan", data.plan || "");
 
       Alert.alert("Success 🎉", "Welcome back " + data.name);
-      router.push("/event");
+      router.replace("/(protected)/overview");
     } catch (err: any) {
       console.error(err);
       Alert.alert("Login failed", err.message || "Check your credentials");
