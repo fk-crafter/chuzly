@@ -9,8 +9,12 @@ import {
 } from "react-native";
 import { Plus, Trash } from "lucide-react-native";
 import { AnimatePresence, MotiView } from "moti";
+import { useRouter } from "expo-router";
+import { API_URL } from "@/config";
 
 export default function CreateEventScreen() {
+  const router = useRouter();
+
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
 
@@ -248,12 +252,39 @@ export default function CreateEventScreen() {
                     <Text className="text-center font-medium">← Previous</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => {
+                    onPress={async () => {
                       if (!isStep3Valid) {
                         Alert.alert("Error", "Please add at least one guest.");
                         return;
                       }
-                      console.log("Submit form 🚀");
+
+                      try {
+                        // Appel backend pour créer l'événement
+                        const res = await fetch(`${API_URL}/events`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            name: eventName,
+                            votingDeadline,
+                            options,
+                            guests,
+                          }),
+                        });
+
+                        const data = await res.json();
+
+                        if (res.ok) {
+                          router.push(`/share-event?id=${data.id}`);
+                        } else {
+                          Alert.alert(
+                            "Error",
+                            data.message || "Failed to create event."
+                          );
+                        }
+                      } catch (err) {
+                        console.error("Error creating event", err);
+                        Alert.alert("Error", "Something went wrong.");
+                      }
                     }}
                     className="flex-1 bg-black rounded-full py-4"
                   >
