@@ -90,12 +90,37 @@ export default function OverviewScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-white px-6 pt-16"
+      className="flex-1 bg-white px-6 pt-24"
       contentContainerStyle={{ paddingBottom: 40 }}
     >
-      <Text className="text-3xl font-bold mb-6">Overview</Text>
+      <View className="items-center text-center mb-8">
+        <Text className="text-3xl font-bold mb-2">Welcome back! 👋</Text>
+        <Text className="text-gray-500 text-center">
+          Ready to create a new event or manage your current ones?
+        </Text>
+      </View>
 
-      <View className="grid grid-cols-1 gap-4">
+      <View className="flex flex-col gap-3 mb-8">
+        <TouchableOpacity
+          className="bg-black rounded-full py-4"
+          onPress={() => router.push("/event")}
+        >
+          <Text className="text-white text-center font-semibold text-base">
+            Create new event
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="border border-gray-300 rounded-full py-4"
+          onPress={() => router.push("/(protected)/event-list")}
+        >
+          <Text className="text-black text-center font-semibold text-base">
+            View my events
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View className="gap-4 mb-6">
         <View className="border rounded-xl p-4">
           <View className="flex-row items-center gap-2 mb-2">
             <CalendarCheck size={18} color="#6b7280" />
@@ -131,12 +156,12 @@ export default function OverviewScreen() {
         </View>
       </View>
 
-      <View className="border rounded-xl p-4 mt-6">
+      <View className="border rounded-xl p-4">
         <View className="flex-row items-center justify-between mb-3">
           <Text className="text-xl font-semibold">Upcoming deadlines</Text>
           <TouchableOpacity
             className="border rounded-full px-4 py-2"
-            onPress={() => router.push("../event-list")}
+            onPress={() => router.push("/(protected)/event-list")}
           >
             <Text className="font-medium">Manage</Text>
           </TouchableOpacity>
