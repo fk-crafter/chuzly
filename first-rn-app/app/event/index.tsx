@@ -11,6 +11,8 @@ import { Plus, Trash } from "lucide-react-native";
 import { AnimatePresence, MotiView } from "moti";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimeInput from "@/components/DateTimeInput";
 
 export default function CreateEventScreen() {
   const router = useRouter();
@@ -92,11 +94,10 @@ export default function CreateEventScreen() {
               <Text className="text-base font-medium mb-2">
                 Voting deadline
               </Text>
-              <TextInput
-                placeholder="YYYY-MM-DD HH:mm"
+              <DateTimeInput
+                label="Voting deadline"
                 value={votingDeadline}
-                onChangeText={setVotingDeadline}
-                className="border border-gray-300 rounded-xl px-4 py-3"
+                onChange={setVotingDeadline}
               />
 
               <TouchableOpacity
@@ -150,13 +151,10 @@ export default function CreateEventScreen() {
                       }
                       className="border border-gray-300 rounded-xl px-4 py-3"
                     />
-                    <TextInput
-                      placeholder="YYYY-MM-DD HH:mm"
+                    <DateTimeInput
+                      label="Date & time"
                       value={opt.datetime}
-                      onChangeText={(val) =>
-                        handleOptionChange(i, "datetime", val)
-                      }
-                      className="border border-gray-300 rounded-xl px-4 py-3"
+                      onChange={(val) => handleOptionChange(i, "datetime", val)}
                     />
                     {i > 0 && (
                       <TouchableOpacity
@@ -259,14 +257,65 @@ export default function CreateEventScreen() {
                       }
 
                       try {
-                        // Appel backend pour créer l'événement
+                        const token = await AsyncStorage.getItem("token");
+
+                        if (!token) {
+                          Alert.alert(
+                            "Error",
+                            "You must be logged in to create an event."
+                          );
+                          return;
+                        }
+
+                        let formattedDeadline =
+                          votingDeadline.trim().replace(" ", "T") +
+                          (votingDeadline.includes(":") &&
+                          votingDeadline.split(":").length === 2
+                            ? ":00"
+                            : "");
+
+                        let deadlineDate = new Date(formattedDeadline);
+                        if (isNaN(deadlineDate.getTime())) {
+                          Alert.alert(
+                            "Invalid Date",
+                            "Please enter a valid voting deadline (YYYY-MM-DD HH:mm)"
+                          );
+                          return;
+                        }
+
+                        const formattedOptions = options.map((opt) => {
+                          const safeDate =
+                            opt.datetime.trim().replace(" ", "T") +
+                            (opt.datetime.includes(":") &&
+                            opt.datetime.split(":").length === 2
+                              ? ":00"
+                              : "");
+
+                          const dateObj = new Date(safeDate);
+
+                          if (isNaN(dateObj.getTime())) {
+                            throw new Error(
+                              `Invalid date for option "${opt.name}"`
+                            );
+                          }
+
+                          return {
+                            name: opt.name,
+                            price: parseFloat(opt.price) || 0,
+                            datetime: dateObj.toISOString(),
+                          };
+                        });
+
                         const res = await fetch(`${API_URL}/events`, {
                           method: "POST",
-                          headers: { "Content-Type": "application/json" },
+                          headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                          },
                           body: JSON.stringify({
-                            name: eventName,
-                            votingDeadline,
-                            options,
+                            eventName,
+                            votingDeadline: deadlineDate.toISOString(),
+                            options: formattedOptions,
                             guests,
                           }),
                         });
@@ -274,7 +323,7 @@ export default function CreateEventScreen() {
                         const data = await res.json();
 
                         if (res.ok) {
-                          router.push(`/share-event?id=${data.id}`);
+                          router.push(`/share?id=${data.id}`);
                         } else {
                           Alert.alert(
                             "Error",
