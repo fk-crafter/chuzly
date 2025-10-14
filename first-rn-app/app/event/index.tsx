@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimeInput from "@/components/DateTimeInput";
+import HamburgerMenu from "@/components/HamburgerMenu";
 
 export default function CreateEventScreen() {
   const router = useRouter();
@@ -347,6 +348,7 @@ export default function CreateEventScreen() {
           </MotiView>
         )}
       </AnimatePresence>
+      <HamburgerMenu />
     </View>
   );
 }
