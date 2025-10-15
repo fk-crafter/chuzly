@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   TouchableOpacity,
@@ -6,6 +6,8 @@ import {
   Modal,
   Pressable,
   ScrollView,
+  Animated,
+  Easing,
 } from "react-native";
 import { useRouter, usePathname } from "expo-router";
 import {
@@ -19,6 +21,7 @@ import {
 
 export default function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const slideAnim = useRef(new Animated.Value(-300)).current;
   const router = useRouter();
   const pathname = usePathname();
 
@@ -37,9 +40,17 @@ export default function HamburgerMenu() {
     { label: "Settings", route: "/(protected)/setting", icon: Settings },
   ];
 
+  useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: isOpen ? 0 : -300,
+      duration: 250,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [isOpen, slideAnim]);
+
   return (
     <>
-      {/* Bouton flottant */}
       <TouchableOpacity
         onPress={() => setIsOpen(true)}
         className="absolute bottom-6 left-6 bg-black p-4 rounded-full shadow-lg z-50"
@@ -47,13 +58,18 @@ export default function HamburgerMenu() {
         <Menu size={24} color="white" />
       </TouchableOpacity>
 
-      {/* Menu latéral */}
-      <Modal visible={isOpen} animationType="slide" transparent>
+      <Modal visible={isOpen} transparent animationType="none">
         <Pressable
           onPress={() => setIsOpen(false)}
           className="absolute inset-0 bg-black/40"
         />
-        <View className="absolute top-0 left-0 h-full w-[260px] bg-white p-6 shadow-2xl z-50">
+
+        <Animated.View
+          style={{
+            transform: [{ translateX: slideAnim }],
+          }}
+          className="absolute top-0 left-0 h-full w-[260px] bg-white p-6 shadow-2xl z-50"
+        >
           <View className="flex-row justify-between items-center mb-6">
             <View>
               <Text className="text-xl font-bold">Chuzly.</Text>
@@ -96,7 +112,7 @@ export default function HamburgerMenu() {
               <TouchableOpacity
                 onPress={() => {
                   setIsOpen(false);
-                  router.push("/(protected)/setting/profile");
+                  router.push("/(protected)/setting/profile" as any);
                 }}
                 className="flex-row items-center gap-3"
               >
@@ -105,7 +121,7 @@ export default function HamburgerMenu() {
               </TouchableOpacity>
             </View>
           </ScrollView>
-        </View>
+        </Animated.View>
       </Modal>
     </>
   );
