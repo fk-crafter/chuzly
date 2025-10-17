@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../../config";
 
 const COLORS = [
@@ -30,28 +31,37 @@ export default function ProfileSettingsScreen() {
   const [nameInput, setNameInput] = useState("");
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
 
+  const getToken = async () => {
+    return await AsyncStorage.getItem("token");
+  };
+
   useEffect(() => {
     (async () => {
-      const token = await Promise.resolve(localStorage?.getItem?.("token"));
-      const res = await fetch(`${API_URL}/auth/me`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      const data = await res.json();
-      setProfile({
-        name: data.name,
-        email: data.email ?? "",
-        plan: data.plan,
-        avatarColor: data.avatarColor || COLORS[0],
-      });
-      setNameInput(data.name);
-      setSelectedColor(data.avatarColor || COLORS[0]);
-      setLoading(false);
+      try {
+        const token = await getToken();
+        const res = await fetch(`${API_URL}/auth/me`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        const data = await res.json();
+        setProfile({
+          name: data.name,
+          email: data.email ?? "",
+          plan: data.plan,
+          avatarColor: data.avatarColor || COLORS[0],
+        });
+        setNameInput(data.name);
+        setSelectedColor(data.avatarColor || COLORS[0]);
+      } catch (err) {
+        Alert.alert("Error", "Failed to load profile.");
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
   const saveName = async () => {
     try {
-      const token = await Promise.resolve(localStorage?.getItem?.("token"));
+      const token = await getToken();
       await fetch(`${API_URL}/auth/update-name`, {
         method: "POST",
         headers: {
@@ -61,6 +71,7 @@ export default function ProfileSettingsScreen() {
         body: JSON.stringify({ name: nameInput }),
       });
       setProfile((p) => (p ? { ...p, name: nameInput } : p));
+      Alert.alert("Success", "Name updated!");
     } catch {
       Alert.alert("Error", "Failed to update name");
     }
@@ -68,7 +79,7 @@ export default function ProfileSettingsScreen() {
 
   const saveColor = async () => {
     try {
-      const token = await Promise.resolve(localStorage?.getItem?.("token"));
+      const token = await getToken();
       await fetch(`${API_URL}/auth/avatar-color`, {
         method: "POST",
         headers: {
@@ -86,7 +97,7 @@ export default function ProfileSettingsScreen() {
   const deleteAccount = async () => {
     if (confirm !== "DELETE") return;
     try {
-      const token = await Promise.resolve(localStorage?.getItem?.("token"));
+      const token = await getToken();
       await fetch(`${API_URL}/auth/delete`, {
         method: "DELETE",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -104,7 +115,7 @@ export default function ProfileSettingsScreen() {
       </View>
     );
 
-  const initials = profile!.name
+  const initials = (profile?.name ?? "U")
     .split(" ")
     .map((w) => w[0])
     .join("")
@@ -126,15 +137,19 @@ export default function ProfileSettingsScreen() {
         >
           <Text className="text-xl font-semibold">{initials}</Text>
         </View>
+
         <View className="flex-row flex-wrap gap-2 justify-center mt-4">
           {COLORS.map((c) => (
             <TouchableOpacity
               key={c}
               onPress={() => setSelectedColor(c)}
-              className={`w-10 h-10 rounded-full border-2 ${c} ${selectedColor === c ? "border-black" : "border-transparent"}`}
+              className={`w-10 h-10 rounded-full border-2 ${c} ${
+                selectedColor === c ? "border-black" : "border-transparent"
+              }`}
             />
           ))}
         </View>
+
         <TouchableOpacity
           onPress={saveColor}
           className="mt-3 bg-black rounded-full px-5 py-3"
@@ -186,16 +201,20 @@ export default function ProfileSettingsScreen() {
           This action cannot be undone. Type{" "}
           <Text className="font-bold">DELETE</Text> to confirm.
         </Text>
+
         <TextInput
           placeholder="Type DELETE"
           value={confirm}
           onChangeText={(t) => setConfirm(t.toUpperCase())}
           className="border rounded-xl px-4 py-3 mb-3"
         />
+
         <TouchableOpacity
           disabled={confirm !== "DELETE"}
           onPress={deleteAccount}
-          className={`rounded-full px-5 py-3 ${confirm === "DELETE" ? "bg-red-600" : "bg-red-300"}`}
+          className={`rounded-full px-5 py-3 ${
+            confirm === "DELETE" ? "bg-red-600" : "bg-red-300"
+          }`}
         >
           <Text className="text-white text-center font-semibold">Confirm</Text>
         </TouchableOpacity>
