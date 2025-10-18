@@ -28,7 +28,7 @@ export default function HamburgerMenu() {
   const navItems = [
     {
       label: "Create Event",
-      route: "/event",
+      route: "/(protected)/create-event",
       icon: Calendar,
     },
     { label: "Events", route: "/(protected)/event-list", icon: Calendar },

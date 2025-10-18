@@ -103,7 +103,7 @@ export default function OverviewScreen() {
       <View className="flex flex-col gap-3 mb-8">
         <TouchableOpacity
           className="bg-black rounded-full py-4"
-          onPress={() => router.push("/event")}
+          onPress={() => router.push("./create-event")}
         >
           <Text className="text-white text-center font-semibold text-base">
             Create new event
