@@ -9,8 +9,9 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'https://chuzly.app',
-      'http://192.168.1.173:5001', // (optionnel si tu veux tester dans le navigateur)
-      'null', // React Native fetch
+      'http://192.168.1.173:5001',
+      'http://192.168.1.255:3000',
+      'null',
     ],
     credentials: true,
   });
