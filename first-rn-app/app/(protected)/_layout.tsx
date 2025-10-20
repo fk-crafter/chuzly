@@ -1,5 +1,6 @@
-import { Stack } from "expo-router";
+import React from "react";
 import { View } from "react-native";
+import { Stack } from "expo-router";
 import HeaderApp from "@/components/HeaderApp";
 import HamburgerMenu from "@/components/HamburgerMenu";
 

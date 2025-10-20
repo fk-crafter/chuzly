@@ -35,6 +35,7 @@ export default function VerifyScreen() {
           setStatus("error");
         }
       } catch (err) {
+        console.error("Verify email error:", err);
         setStatus("error");
       } finally {
         setLoading(false);
