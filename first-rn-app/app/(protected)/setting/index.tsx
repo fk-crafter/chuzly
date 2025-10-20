@@ -78,7 +78,6 @@ export default function SettingsScreen() {
     >
       <Text className="text-3xl font-bold mb-8 text-center">Settings ⚙️</Text>
 
-      {/* Avatar section */}
       <View className="items-center mb-8">
         <View
           className={`w-24 h-24 rounded-full items-center justify-center bg-gray-200`}
@@ -95,7 +94,6 @@ export default function SettingsScreen() {
         )}
       </View>
 
-      {/* Menu items */}
       <View className="space-y-4">
         <SettingItem
           label="Edit Profile"
