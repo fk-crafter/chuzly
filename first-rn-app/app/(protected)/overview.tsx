@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OverviewScreen() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function OverviewScreen() {
 
   useEffect(() => {
     const fetchOverview = async () => {
-      const token = localStorage.getItem("token");
+      const token = await AsyncStorage.getItem("token"); // ✅ remplacé
       if (!token) {
         router.push("/(auth)/login");
         return;
