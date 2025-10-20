@@ -63,7 +63,7 @@ export default function Index() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => router.push("/createaccount")}
+            onPress={() => router.push("/register")}
             className="w-full py-5 rounded-full bg-[#111] border border-[#333]"
           >
             <Text className="text-white font-semibold text-base text-center">
