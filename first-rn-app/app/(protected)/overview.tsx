@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,7 +16,7 @@ export default function OverviewScreen() {
 
   useEffect(() => {
     const fetchOverview = async () => {
-      const token = await AsyncStorage.getItem("token"); // ✅ remplacé
+      const token = await AsyncStorage.getItem("token");
       if (!token) {
         router.push("/(auth)/login");
         return;
@@ -47,9 +41,23 @@ export default function OverviewScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="black" />
-        <Text className="text-gray-600 mt-3">Loading your dashboard...</Text>
+      <View className="flex-1 bg-white px-6 py-10">
+        <View className="w-48 h-8 bg-gray-200 rounded-md self-center mb-8 animate-pulse" />
+        <View className="w-60 h-4 bg-gray-200 rounded-md self-center mb-10 animate-pulse" />
+
+        <View className="space-y-4">
+          {[...Array(4)].map((_, i) => (
+            <View
+              key={i}
+              className="bg-gray-200 h-20 rounded-2xl animate-pulse"
+            />
+          ))}
+        </View>
+
+        <View className="mt-10 space-y-4">
+          <View className="h-14 bg-gray-200 rounded-full animate-pulse" />
+          <View className="h-14 bg-gray-200 rounded-full animate-pulse" />
+        </View>
       </View>
     );
   }
