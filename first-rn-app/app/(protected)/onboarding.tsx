@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Alert,
   ActivityIndicator,
   Dimensions,
+  Animated,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -24,6 +25,33 @@ const COLORS = [
 ];
 
 const { width } = Dimensions.get("window");
+
+function SmoothProgress({ value }: { value: number }) {
+  const anim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.spring(anim, {
+      toValue: value,
+      useNativeDriver: false,
+      bounciness: 8,
+      speed: 12,
+    }).start();
+  }, [value, anim]);
+
+  const widthAnim = anim.interpolate({
+    inputRange: [0, 100],
+    outputRange: ["0%", "100%"],
+  });
+
+  return (
+    <View className="w-full h-2 bg-gray-200 rounded-full mb-6 overflow-hidden">
+      <Animated.View
+        className="h-full bg-black rounded-full"
+        style={{ width: widthAnim }}
+      />
+    </View>
+  );
+}
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -188,14 +216,11 @@ export default function OnboardingScreen() {
           <Text className="text-gray-500 text-center mb-4">
             {videoSteps[videoIndex].description}
           </Text>
-          <View className="w-full h-2 bg-gray-200 rounded-full mb-6">
-            <View
-              className="h-full bg-black rounded-full"
-              style={{
-                width: `${((videoIndex + 1) / videoSteps.length) * 100}%`,
-              }}
-            />
-          </View>
+
+          <SmoothProgress
+            value={((videoIndex + 1) / videoSteps.length) * 100}
+          />
+
           <View className="flex-row justify-between">
             <TouchableOpacity
               onPress={() => setVideoIndex(Math.max(videoIndex - 1, 0))}
