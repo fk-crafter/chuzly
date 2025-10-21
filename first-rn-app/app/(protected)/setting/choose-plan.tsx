@@ -11,7 +11,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import { useRouter } from "expo-router";
-import { Wallet } from "lucide-react-native";
+import { Wallet, Sparkles, Crown, Check, Info } from "lucide-react-native";
 
 export default function ChoosePlanScreen() {
   const router = useRouter();
@@ -143,11 +143,14 @@ export default function ChoosePlanScreen() {
       className="flex-1 bg-white px-6 py-10"
       contentContainerStyle={{ paddingBottom: 100 }}
     >
-      <View className="flex flex-row items-center justify-center gap-2 mb-8">
+      <View className="flex-row items-center justify-center mb-8">
         <Wallet size={28} color="black" strokeWidth={2.2} />
-        <Text className="text-3xl font-bold text-center">Choose Your Plan</Text>
+        <Text className="text-3xl font-bold text-center ml-2">
+          Choose Your Plan
+        </Text>
       </View>
 
+      {/* Starter Plan */}
       <PlanCard
         title="Starter"
         subtitle="For small plans with friends"
@@ -157,22 +160,24 @@ export default function ChoosePlanScreen() {
           "Share with a link",
           "Basic voting (dates & places)",
         ]}
+        icon={<Sparkles size={20} color="black" />}
         isCurrent={plan === "FREE"}
-        accent="bg-gray-50"
         onPress={() => handleSelectPlan("FREE")}
         cancelAt={cancelAt}
         onCancelDowngrade={handleCancelScheduledDowngrade}
       />
 
+      {/* Pro Plan — identique à Starter mais avec le contenu Pro */}
       <PlanCard
         title="Pro"
         subtitle="Everything you need to plan fast"
         price="$10.99/month"
         features={["Unlimited events", "Access to chat"]}
+        icon={<Crown size={20} color="black" />}
         isCurrent={plan === "PRO"}
-        accent="bg-yellow-50"
         onPress={() => handleSelectPlan("PRO")}
         onManage={openPortal}
+        popular
       />
 
       <TouchableOpacity
@@ -193,37 +198,43 @@ function PlanCard({
   price,
   features,
   isCurrent,
-  accent,
+  icon,
   onPress,
   cancelAt,
   onCancelDowngrade,
   onManage,
-}: {
-  title: string;
-  subtitle: string;
-  price: string;
-  features: string[];
-  isCurrent?: boolean;
-  accent: string;
-  onPress: () => void;
-  cancelAt?: string | null;
-  onCancelDowngrade?: () => void;
-  onManage?: () => void;
-}) {
+  popular,
+}: any) {
   return (
     <View
-      className={`border rounded-2xl p-6 mb-6 ${accent} ${
+      className={`border rounded-2xl p-6 mb-6 bg-gray-50 ${
         isCurrent ? "border-black" : "border-gray-300"
       }`}
     >
-      <Text className="text-xl font-bold">{title}</Text>
+      {popular && !isCurrent && (
+        <View className="absolute -top-3 left-1/2 -translate-x-1/2 bg-black px-3 py-1 rounded-full">
+          <Text className="text-white text-xs font-semibold">Most popular</Text>
+        </View>
+      )}
+
+      {isCurrent && (
+        <View className="absolute -top-3 left-1/2 -translate-x-[25%] bg-gray-900 px-3 py-1 rounded-full">
+          <Text className="text-white text-xs font-semibold">Current plan</Text>
+        </View>
+      )}
+
+      <View className="flex-row items-center gap-2 mb-2">
+        {icon}
+        <Text className="text-xl font-bold">{title}</Text>
+      </View>
       <Text className="text-gray-600 mb-2">{subtitle}</Text>
       <Text className="text-2xl font-bold mb-4">{price}</Text>
 
-      {features.map((f, i) => (
-        <Text key={i} className="text-gray-700 mb-1">
-          • {f}
-        </Text>
+      {features.map((f: string, i: number) => (
+        <View key={i} className="flex-row items-center mb-1">
+          <Check size={16} color="green" />
+          <Text className="text-gray-700 ml-1">{f}</Text>
+        </View>
       ))}
 
       <TouchableOpacity
@@ -243,16 +254,19 @@ function PlanCard({
       </TouchableOpacity>
 
       {cancelAt && (
-        <Text className="text-sm text-gray-600 mt-3">
-          You will be switched to Free on{" "}
-          {new Date(cancelAt).toLocaleDateString()}.
-          <Text
-            onPress={onCancelDowngrade}
-            className="text-blue-600 underline ml-1"
-          >
-            Cancel
+        <View className="flex-row items-center mt-3">
+          <Info size={14} color="gray" />
+          <Text className="text-sm text-gray-600 ml-1">
+            You will be switched to Free on{" "}
+            {new Date(cancelAt).toLocaleDateString()}.
+            <Text
+              onPress={onCancelDowngrade}
+              className="text-blue-600 underline ml-1"
+            >
+              Cancel
+            </Text>
           </Text>
-        </Text>
+        </View>
       )}
 
       {isCurrent && title === "Pro" && (
