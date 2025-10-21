@@ -1,50 +1,115 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Alert,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Animated, { SlideInRight, SlideInLeft } from "react-native-reanimated";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { API_URL } from "@/config";
 
 export default function CreateEventScreen() {
   const router = useRouter();
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
-  const [price, setPrice] = useState("");
-  const [dateOptions, setDateOptions] = useState<string[]>([]);
-  const [newDate, setNewDate] = useState("");
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [step, setStep] = useState(1);
+  const [direction, setDirection] = useState(1);
 
-  const handleAddDate = () => {
-    if (!newDate.trim()) return;
-    setDateOptions([...dateOptions, newDate]);
-    setNewDate("");
+  const [eventName, setEventName] = useState("");
+  const [votingDeadline, setVotingDeadline] = useState<string | null>(null);
+  const [options, setOptions] = useState([
+    { name: "", price: "", datetime: "" },
+  ]);
+  const [guests, setGuests] = useState([""]);
+
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(
+    null
+  );
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        router.push("/(auth)/login");
+        return;
+      }
+      setCheckingAuth(false);
+    };
+    checkAuth();
+  }, [router]);
+
+  const handleOptionChange = (index: number, field: string, value: string) => {
+    const updated = [...options];
+    updated[index][field as keyof (typeof updated)[number]] = value;
+    setOptions(updated);
   };
 
-  const handleRemoveDate = (index: number) => {
-    const updated = [...dateOptions];
-    updated.splice(index, 1);
-    setDateOptions(updated);
+  const addOption = () =>
+    setOptions([...options, { name: "", price: "", datetime: "" }]);
+  const removeOption = (i: number) =>
+    setOptions((prev) => prev.filter((_, index) => index !== i));
+
+  const handleGuestChange = (index: number, value: string) => {
+    const updated = [...guests];
+    updated[index] = value;
+    setGuests(updated);
+  };
+
+  const addGuest = () => setGuests([...guests, ""]);
+
+  const handleConfirmDate = (date: Date) => {
+    if (selectedOptionIndex !== null) {
+      const updated = [...options];
+      updated[selectedOptionIndex].datetime = date.toISOString();
+      setOptions(updated);
+      setSelectedOptionIndex(null);
+    } else {
+      setVotingDeadline(date.toISOString());
+    }
+    setDatePickerVisible(false);
   };
 
   const handleSubmit = async () => {
-    const token = localStorage.getItem("token");
+    const token = await AsyncStorage.getItem("token");
     if (!token) {
       router.push("/(auth)/login");
       return;
     }
 
-    if (!name.trim()) {
-      Alert.alert("Missing name", "Please enter an event name");
+    if (!votingDeadline) {
+      Alert.alert("Error", "Please select a valid deadline date");
       return;
     }
+
+    if (new Date(votingDeadline) < new Date()) {
+      Alert.alert("Error", "Voting deadline can't be in the past");
+      return;
+    }
+
+    const invalidOption = options.find((opt) => {
+      if (!opt.datetime) return false;
+      return new Date(opt.datetime) < new Date();
+    });
+
+    if (invalidOption) {
+      Alert.alert("Error", "One of the options has a date in the past");
+      return;
+    }
+
+    if (guests.length === 0 || guests.every((g) => g.trim() === "")) {
+      Alert.alert("Error", "Please add at least one guest");
+      return;
+    }
+
+    const body = { eventName, votingDeadline, options, guests };
 
     try {
       const res = await fetch(`${API_URL}/events`, {
@@ -53,125 +118,267 @@ export default function CreateEventScreen() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          name,
-          description,
-          location,
-          price: price ? Number(price) : null,
-          dateOptions,
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(msg || "Failed to create event");
+        const text = await res.text();
+        throw new Error(text || "Failed to create event");
       }
 
+      const data = await res.json();
       Alert.alert("🎉 Success", "Event created successfully!");
-      router.push("/(protected)/event-list");
+      router.push(`/(protected)/share?id=${data.id}`);
     } catch (err) {
       console.error(err);
       Alert.alert("Error", "Something went wrong while creating the event.");
     }
   };
 
+  const progressPercent = step === 1 ? 33 : step === 2 ? 66 : 100;
+  const isStep1Valid = eventName.trim() !== "" && !!votingDeadline;
+  const isStep2Valid =
+    options.length > 0 &&
+    options.every(
+      (opt) =>
+        opt.name.trim() !== "" &&
+        opt.datetime.trim() !== "" &&
+        opt.price.trim() !== ""
+    );
+
+  if (checkingAuth)
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <Text className="text-gray-700">Checking authentication...</Text>
+      </View>
+    );
+
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-white"
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <ScrollView
-        className="flex-1 px-6 py-8"
-        contentContainerStyle={{ paddingBottom: 100 }}
+    <>
+      <KeyboardAvoidingView
+        className="flex-1 bg-white"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <Text className="text-3xl font-bold mb-2">Create Event</Text>
-        <Text className="text-gray-500 mb-6">
-          Fill in the details to plan your event.
-        </Text>
-
-        <View className="mb-4">
-          <Text className="text-sm text-gray-700 mb-2">Event Name</Text>
-          <TextInput
-            placeholder="Movie Night"
-            value={name}
-            onChangeText={setName}
-            className="border border-gray-300 rounded-xl px-4 py-3"
-          />
-        </View>
-
-        <View className="mb-4">
-          <Text className="text-sm text-gray-700 mb-2">Description</Text>
-          <TextInput
-            placeholder="Bring snacks 🍿"
-            multiline
-            numberOfLines={3}
-            value={description}
-            onChangeText={setDescription}
-            className="border border-gray-300 rounded-xl px-4 py-3"
-          />
-        </View>
-
-        <View className="mb-4">
-          <Text className="text-sm text-gray-700 mb-2">Location</Text>
-          <TextInput
-            placeholder="123 Main Street"
-            value={location}
-            onChangeText={setLocation}
-            className="border border-gray-300 rounded-xl px-4 py-3"
-          />
-        </View>
-
-        <View className="mb-4">
-          <Text className="text-sm text-gray-700 mb-2">Price (optional)</Text>
-          <TextInput
-            placeholder="20"
-            keyboardType="numeric"
-            value={price}
-            onChangeText={setPrice}
-            className="border border-gray-300 rounded-xl px-4 py-3"
-          />
-        </View>
-
-        <View className="mb-6">
-          <Text className="text-sm text-gray-700 mb-2">Date Options</Text>
-
-          {dateOptions.map((date, index) => (
-            <View
-              key={index}
-              className="flex-row justify-between items-center border border-gray-200 rounded-lg px-4 py-2 mb-2"
-            >
-              <Text>{date}</Text>
-              <TouchableOpacity onPress={() => handleRemoveDate(index)}>
-                <Text className="text-red-500 font-semibold">Remove</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-
-          <View className="flex-row items-center gap-2">
-            <TextInput
-              placeholder="e.g. 2025-10-15 18:00"
-              value={newDate}
-              onChangeText={setNewDate}
-              className="flex-1 border border-gray-300 rounded-xl px-4 py-3"
-            />
-            <TouchableOpacity
-              onPress={handleAddDate}
-              className="bg-black px-4 py-3 rounded-xl"
-            >
-              <Text className="text-white font-semibold">Add</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <TouchableOpacity
-          onPress={handleSubmit}
-          className="bg-black py-4 rounded-full mt-4"
+        <ScrollView
+          className="flex-1 px-6 py-8"
+          contentContainerStyle={{ paddingBottom: 120 }}
         >
-          <Text className="text-white text-center font-semibold text-base">
-            Create Event
+          <Text className="text-3xl font-bold mb-6 text-center">
+            🎉 Create a new event
           </Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+
+          <View className="w-full h-2 bg-gray-200 rounded-full mb-10 overflow-hidden">
+            <View
+              className="h-full bg-black rounded-full"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </View>
+
+          {step === 1 && (
+            <Animated.View
+              key="step1"
+              entering={
+                direction === 1
+                  ? SlideInRight.duration(400)
+                  : SlideInLeft.duration(400)
+              }
+            >
+              <Text className="text-base mb-2 font-semibold">Event name</Text>
+              <TextInput
+                placeholder="Saturday plans"
+                value={eventName}
+                onChangeText={setEventName}
+                className="border border-gray-300 rounded-xl px-4 py-3 mb-4"
+              />
+
+              <Text className="text-base mb-2 font-semibold">
+                Voting deadline
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedOptionIndex(null);
+                  setDatePickerVisible(true);
+                }}
+                className="border border-gray-300 rounded-xl px-4 py-3 mb-4"
+              >
+                <Text>
+                  {votingDeadline
+                    ? new Date(votingDeadline).toLocaleString()
+                    : "Select date & time"}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                className="bg-black rounded-full py-4 mt-8"
+                onPress={() => {
+                  if (!isStep1Valid) {
+                    Alert.alert("Error", "Please fill in all event details");
+                    return;
+                  }
+                  setDirection(1);
+                  setStep(2);
+                }}
+              >
+                <Text className="text-white text-center font-semibold">
+                  Next →
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+
+          {step === 2 && (
+            <Animated.View
+              key="step2"
+              entering={
+                direction === 1
+                  ? SlideInRight.duration(400)
+                  : SlideInLeft.duration(400)
+              }
+            >
+              {options.map((opt, i) => (
+                <View
+                  key={i}
+                  className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
+                >
+                  <TextInput
+                    placeholder="Option name (ex: Pizza night)"
+                    value={opt.name}
+                    onChangeText={(text) => handleOptionChange(i, "name", text)}
+                    className="border border-gray-300 rounded-lg px-3 py-2 mb-2"
+                  />
+                  <TextInput
+                    placeholder="Price"
+                    value={opt.price}
+                    keyboardType="numeric"
+                    onChangeText={(text) =>
+                      handleOptionChange(i, "price", text)
+                    }
+                    className="border border-gray-300 rounded-lg px-3 py-2 mb-2"
+                  />
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedOptionIndex(i);
+                      setDatePickerVisible(true);
+                    }}
+                    className="border border-gray-300 rounded-lg px-3 py-2"
+                  >
+                    <Text>
+                      {opt.datetime
+                        ? new Date(opt.datetime).toLocaleString()
+                        : "Select date & time"}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {i > 0 && (
+                    <TouchableOpacity
+                      onPress={() => removeOption(i)}
+                      className="mt-2 self-end"
+                    >
+                      <Text className="text-red-500 font-semibold">Remove</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ))}
+
+              <TouchableOpacity
+                onPress={addOption}
+                className="border border-gray-300 rounded-full py-3 mb-4"
+              >
+                <Text className="text-center font-semibold">+ Add option</Text>
+              </TouchableOpacity>
+
+              <View className="flex-row justify-between mt-6">
+                <TouchableOpacity
+                  className="border border-gray-300 py-3 px-6 rounded-full"
+                  onPress={() => {
+                    setDirection(-1);
+                    setStep(1);
+                  }}
+                >
+                  <Text className="font-semibold">← Previous</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="bg-black py-3 px-6 rounded-full"
+                  onPress={() => {
+                    if (!isStep2Valid) {
+                      Alert.alert("Error", "Please fill in all options");
+                      return;
+                    }
+                    setDirection(1);
+                    setStep(3);
+                  }}
+                >
+                  <Text className="text-white font-semibold">Next →</Text>
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+          )}
+
+          {step === 3 && (
+            <Animated.View
+              key="step3"
+              entering={
+                direction === 1
+                  ? SlideInRight.duration(400)
+                  : SlideInLeft.duration(400)
+              }
+            >
+              {guests.map((g, i) => (
+                <View key={i} className="mb-3 relative">
+                  <TextInput
+                    placeholder="Guest name"
+                    value={g}
+                    onChangeText={(text) => handleGuestChange(i, text)}
+                    className="border border-gray-300 rounded-xl px-4 py-3"
+                  />
+                  {guests.length > 1 && (
+                    <TouchableOpacity
+                      className="absolute right-3 top-1/2 -translate-y-1/2"
+                      onPress={() =>
+                        setGuests(guests.filter((_, idx) => idx !== i))
+                      }
+                    >
+                      <Text className="text-red-500 font-semibold">X</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ))}
+
+              <TouchableOpacity
+                onPress={addGuest}
+                className="border border-gray-300 rounded-full py-3 mb-4"
+              >
+                <Text className="text-center font-semibold">+ Add guest</Text>
+              </TouchableOpacity>
+
+              <View className="flex-row justify-between mt-6">
+                <TouchableOpacity
+                  className="border border-gray-300 py-3 px-6 rounded-full"
+                  onPress={() => {
+                    setDirection(-1);
+                    setStep(2);
+                  }}
+                >
+                  <Text className="font-semibold">← Previous</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="bg-black py-3 px-6 rounded-full"
+                  onPress={handleSubmit}
+                >
+                  <Text className="text-white font-semibold">Finish →</Text>
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
+
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="datetime"
+        onConfirm={handleConfirmDate}
+        onCancel={() => setDatePickerVisible(false)}
+      />
+    </>
   );
 }
