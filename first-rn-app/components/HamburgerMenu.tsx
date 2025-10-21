@@ -21,7 +21,7 @@ export default function HamburgerMenu() {
           <Link key={tab.name} href={`/(protected)${tab.path}` as any} asChild>
             <TouchableOpacity
               activeOpacity={0.8}
-              className={`flex-1 mx-1 py-2 rounded-full border items-center justify-center transition-all duration-150 ${
+              className={`flex-1 mx-1 py-2 rounded-full items-center justify-center transition-all duration-150 ${
                 isActive ? "bg-black" : " bg-transparent"
               }`}
             >

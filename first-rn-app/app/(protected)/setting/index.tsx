@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -42,9 +36,25 @@ export default function SettingsScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <ActivityIndicator size="large" color="black" />
-        <Text className="text-gray-600 mt-3">Loading your settings...</Text>
+      <View className="flex-1 bg-white px-6 py-10">
+        <View className="w-40 h-8 bg-gray-200 rounded-md self-center mb-10 animate-pulse" />
+
+        <View className="items-center mb-8">
+          <View className="w-24 h-24 rounded-full bg-gray-200 animate-pulse" />
+          <View className="w-32 h-5 bg-gray-200 rounded-md mt-4 animate-pulse" />
+          <View className="w-48 h-4 bg-gray-200 rounded-md mt-2 animate-pulse" />
+        </View>
+
+        <View className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <View
+              key={i}
+              className="w-full h-14 bg-gray-200 rounded-xl animate-pulse"
+            />
+          ))}
+        </View>
+
+        <View className="w-full h-14 bg-gray-200 rounded-full mt-10 animate-pulse" />
       </View>
     );
   }
