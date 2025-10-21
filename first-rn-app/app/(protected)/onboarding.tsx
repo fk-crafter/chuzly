@@ -33,7 +33,6 @@ export default function OnboardingScreen() {
   const [videoIndex, setVideoIndex] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Stable video steps
   const videoSteps = useMemo(
     () => [
       {
@@ -58,23 +57,32 @@ export default function OnboardingScreen() {
     []
   );
 
-  // ✅ Call the hook directly (not inside useMemo)
   const player = useVideoPlayer(videoSteps[0].source, (p) => {
     p.loop = true;
     p.play();
   });
 
-  // ✅ Properly handle video updates
   useEffect(() => {
-    if (step === 1) {
-      const timeout = setTimeout(() => {
-        player.replace(videoSteps[videoIndex].source);
-        player.play();
-      }, 300);
-      return () => clearTimeout(timeout);
-    } else {
-      player.pause();
-    }
+    let isMounted = true;
+
+    const updateVideo = async () => {
+      if (step === 1) {
+        try {
+          await player.replaceAsync(videoSteps[videoIndex].source);
+          if (isMounted) player.play();
+        } catch (error) {
+          console.warn("Failed to load video:", error);
+        }
+      } else {
+        player.pause();
+      }
+    };
+
+    updateVideo();
+
+    return () => {
+      isMounted = false;
+    };
   }, [step, videoIndex, player, videoSteps]);
 
   const handleNext = () => {
@@ -130,7 +138,6 @@ export default function OnboardingScreen() {
       className="flex-1 bg-white px-6 py-10"
       contentContainerStyle={{ paddingBottom: 60 }}
     >
-      {/* Step progress bar */}
       <View className="flex-row justify-center mb-8 gap-1">
         {[...Array(6)].map((_, i) => (
           <View
@@ -142,7 +149,6 @@ export default function OnboardingScreen() {
         ))}
       </View>
 
-      {/* Step 0 */}
       {step === 0 && (
         <View>
           <Text className="text-3xl font-bold mb-4 text-center">
@@ -162,7 +168,6 @@ export default function OnboardingScreen() {
         </View>
       )}
 
-      {/* Step 1 */}
       {step === 1 && (
         <View>
           <Text className="text-2xl font-bold mb-4 text-center">
