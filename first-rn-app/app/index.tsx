@@ -13,9 +13,7 @@ import Animated, { FadeInUp, FadeInDown } from "react-native-reanimated";
 export default function Index() {
   const router = useRouter();
 
-  useEffect(() => {
-    // check token
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <View className="flex-1 bg-black">
@@ -83,13 +81,17 @@ export default function Index() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.push("/dashboard")}>
+          <TouchableOpacity
+            onPress={() => router.push("/(protected)/overview")}
+          >
             <Text className="text-white font-semibold text-base text-center">
               Go to dashboard
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.push("/vote")}>
+          <TouchableOpacity
+            onPress={() => router.push("/(protected)/create-event")}
+          >
             <Text className="text-white font-semibold text-base text-center">
               Go to vote
             </Text>
