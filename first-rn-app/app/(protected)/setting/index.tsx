@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Cog } from "lucide-react-native";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -86,7 +87,10 @@ export default function SettingsScreen() {
       className="flex-1 bg-white px-6 py-10"
       contentContainerStyle={{ paddingBottom: 100 }}
     >
-      <Text className="text-3xl font-bold mb-8 text-center">Settings ⚙️</Text>
+      <View className="flex flex-row items-center justify-center gap-2 mb-8">
+        <Cog size={28} color="black" strokeWidth={2.2} />
+        <Text className="text-3xl font-bold text-center">Settings</Text>
+      </View>
 
       <View className="items-center mb-8">
         <View

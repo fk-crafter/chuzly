@@ -33,7 +33,7 @@ export default function OnboardingScreen() {
   const [videoIndex, setVideoIndex] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  // ✅ useMemo empêche la recréation de ce tableau à chaque rendu
+  // ✅ Stable video steps
   const videoSteps = useMemo(
     () => [
       {
@@ -58,11 +58,13 @@ export default function OnboardingScreen() {
     []
   );
 
+  // ✅ Call the hook directly (not inside useMemo)
   const player = useVideoPlayer(videoSteps[0].source, (p) => {
     p.loop = true;
     p.play();
   });
 
+  // ✅ Properly handle video updates
   useEffect(() => {
     if (step === 1) {
       const timeout = setTimeout(() => {
@@ -73,8 +75,7 @@ export default function OnboardingScreen() {
     } else {
       player.pause();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, videoIndex]); // on ignore 'player' et 'videoSteps' car gérés manuellement
+  }, [step, videoIndex, player, videoSteps]);
 
   const handleNext = () => {
     if (step < 5) setStep((prev) => prev + 1);
@@ -129,6 +130,7 @@ export default function OnboardingScreen() {
       className="flex-1 bg-white px-6 py-10"
       contentContainerStyle={{ paddingBottom: 60 }}
     >
+      {/* Step progress bar */}
       <View className="flex-row justify-center mb-8 gap-1">
         {[...Array(6)].map((_, i) => (
           <View
@@ -140,6 +142,7 @@ export default function OnboardingScreen() {
         ))}
       </View>
 
+      {/* Step 0 */}
       {step === 0 && (
         <View>
           <Text className="text-3xl font-bold mb-4 text-center">
@@ -159,6 +162,7 @@ export default function OnboardingScreen() {
         </View>
       )}
 
+      {/* Step 1 */}
       {step === 1 && (
         <View>
           <Text className="text-2xl font-bold mb-4 text-center">
@@ -173,14 +177,12 @@ export default function OnboardingScreen() {
             }}
             contentFit="cover"
           />
-
           <Text className="text-lg font-semibold mt-4 text-center">
             {videoSteps[videoIndex].title}
           </Text>
           <Text className="text-gray-500 text-center mb-4">
             {videoSteps[videoIndex].description}
           </Text>
-
           <View className="w-full h-2 bg-gray-200 rounded-full mb-6">
             <View
               className="h-full bg-black rounded-full"
@@ -189,7 +191,6 @@ export default function OnboardingScreen() {
               }}
             />
           </View>
-
           <View className="flex-row justify-between">
             <TouchableOpacity
               onPress={() => setVideoIndex(Math.max(videoIndex - 1, 0))}
@@ -198,7 +199,6 @@ export default function OnboardingScreen() {
             >
               <Text className="font-semibold">← Back</Text>
             </TouchableOpacity>
-
             {videoIndex < videoSteps.length - 1 ? (
               <TouchableOpacity
                 onPress={() =>

@@ -10,6 +10,7 @@ import {
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
+import { Pencil } from "lucide-react-native";
 
 const COLORS = [
   "bg-gray-300",
@@ -75,7 +76,6 @@ export default function ProfileScreen() {
         body: JSON.stringify({ name }),
       });
 
-      // update avatar color
       await fetch(`${API_URL}/auth/avatar-color`, {
         method: "POST",
         headers: {
@@ -115,9 +115,10 @@ export default function ProfileScreen() {
       className="flex-1 bg-white px-6 py-10"
       contentContainerStyle={{ paddingBottom: 100 }}
     >
-      <Text className="text-3xl font-bold mb-8 text-center">
-        Edit Profile 🖋️
-      </Text>
+      <View className="flex flex-row items-center justify-center gap-2 mb-8">
+        <Pencil size={28} color="black" strokeWidth={2.2} />
+        <Text className="text-3xl font-bold text-center">Edit Profile</Text>
+      </View>
 
       <View className="items-center mb-8">
         <View

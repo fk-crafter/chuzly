@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Animated, { SlideInRight, SlideInLeft } from "react-native-reanimated";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { API_URL } from "@/config";
+import { PartyPopper } from "lucide-react-native";
 
 export default function CreateEventScreen() {
   const router = useRouter();
@@ -163,9 +164,12 @@ export default function CreateEventScreen() {
           className="flex-1 px-6 py-8"
           contentContainerStyle={{ paddingBottom: 120 }}
         >
-          <Text className="text-3xl font-bold mb-6 text-center">
-            🎉 Create a new event
-          </Text>
+          <View className="flex flex-row items-center justify-center gap-2 mb-6">
+            <PartyPopper size={28} color="black" />
+            <Text className="text-3xl font-bold text-center">
+              Create a new event
+            </Text>
+          </View>
 
           <View className="w-full h-2 bg-gray-200 rounded-full mb-10 overflow-hidden">
             <View

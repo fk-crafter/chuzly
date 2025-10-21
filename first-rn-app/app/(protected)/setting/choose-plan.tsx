@@ -11,6 +11,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import { useRouter } from "expo-router";
+import { Wallet } from "lucide-react-native";
 
 export default function ChoosePlanScreen() {
   const router = useRouter();
@@ -142,9 +143,10 @@ export default function ChoosePlanScreen() {
       className="flex-1 bg-white px-6 py-10"
       contentContainerStyle={{ paddingBottom: 100 }}
     >
-      <Text className="text-3xl font-bold text-center mb-10">
-        Choose Your Plan 💼
-      </Text>
+      <View className="flex flex-row items-center justify-center gap-2 mb-8">
+        <Wallet size={28} color="black" strokeWidth={2.2} />
+        <Text className="text-3xl font-bold text-center">Choose Your Plan</Text>
+      </View>
 
       <PlanCard
         title="Starter"

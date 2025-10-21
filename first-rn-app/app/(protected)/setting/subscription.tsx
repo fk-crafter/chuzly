@@ -11,6 +11,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import { useRouter } from "expo-router";
+import { CreditCard } from "lucide-react-native";
 
 type SubscriptionInfo = {
   plan: "FREE" | "TRIAL" | "PRO";
@@ -111,9 +112,12 @@ export default function SubscriptionScreen() {
       className="flex-1 bg-white px-6 py-10"
       contentContainerStyle={{ paddingBottom: 100 }}
     >
-      <Text className="text-3xl font-bold mb-8 text-center">
-        Subscription Details 💳
-      </Text>
+      <View className="flex flex-row items-center justify-center gap-2 mb-8">
+        <CreditCard size={28} color="black" strokeWidth={2.2} />
+        <Text className="text-3xl font-bold text-center">
+          Subscription Details
+        </Text>
+      </View>
 
       <View className="border border-gray-200 rounded-2xl p-6 mb-6 bg-gray-50">
         <Text className="text-xl font-bold mb-1">{planLabel}</Text>
