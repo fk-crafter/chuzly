@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function EventListScreen() {
   const router = useRouter();
@@ -16,14 +17,14 @@ export default function EventListScreen() {
   const [loading, setLoading] = useState(true);
 
   const fetchEvents = useCallback(async () => {
-    const token = localStorage.getItem("token");
+    const token = await AsyncStorage.getItem("token");
     if (!token) {
       router.push("/(auth)/login");
       return;
     }
 
     try {
-      const res = await fetch(`${API_URL}/events`, {
+      const res = await fetch(`${API_URL}/events/mine`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -43,7 +44,7 @@ export default function EventListScreen() {
   }, [fetchEvents]);
 
   const handleDelete = async (id: string) => {
-    const token = localStorage.getItem("token");
+    const token = await AsyncStorage.getItem("token");
     if (!token) return;
 
     Alert.alert("Delete Event", "Are you sure you want to delete this event?", [
