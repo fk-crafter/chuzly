@@ -7,7 +7,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,6 +14,7 @@ import Animated, { SlideInRight, SlideInLeft } from "react-native-reanimated";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { API_URL } from "@/config";
 import { PartyPopper } from "lucide-react-native";
+import Toast from "react-native-toast-message";
 
 export default function CreateEventScreen() {
   const router = useRouter();
@@ -86,12 +86,20 @@ export default function CreateEventScreen() {
     }
 
     if (!votingDeadline) {
-      Alert.alert("Error", "Please select a valid deadline date");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please select a valid deadline date",
+      });
       return;
     }
 
     if (new Date(votingDeadline) < new Date()) {
-      Alert.alert("Error", "Voting deadline can't be in the past");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Voting deadline can't be in the past",
+      });
       return;
     }
 
@@ -101,12 +109,20 @@ export default function CreateEventScreen() {
     });
 
     if (invalidOption) {
-      Alert.alert("Error", "One of the options has a date in the past");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "One of the options has a date in the past",
+      });
       return;
     }
 
     if (guests.length === 0 || guests.every((g) => g.trim() === "")) {
-      Alert.alert("Error", "Please add at least one guest");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please add at least one guest",
+      });
       return;
     }
 
@@ -128,11 +144,19 @@ export default function CreateEventScreen() {
       }
 
       const data = await res.json();
-      Alert.alert("🎉 Success", "Event created successfully!");
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Event created successfully!",
+      });
       router.push(`/(protected)/share?id=${data.id}`);
     } catch (err) {
       console.error(err);
-      Alert.alert("Error", "Something went wrong while creating the event.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Something went wrong while creating the event.",
+      });
     }
   };
 
@@ -216,7 +240,11 @@ export default function CreateEventScreen() {
                 className="bg-black rounded-full py-4 mt-8"
                 onPress={() => {
                   if (!isStep1Valid) {
-                    Alert.alert("Error", "Please fill in all event details");
+                    Toast.show({
+                      type: "error",
+                      text1: "Error",
+                      text2: "Please fill in all event details",
+                    });
                     return;
                   }
                   setDirection(1);
@@ -305,7 +333,11 @@ export default function CreateEventScreen() {
                   className="bg-black py-3 px-6 rounded-full"
                   onPress={() => {
                     if (!isStep2Valid) {
-                      Alert.alert("Error", "Please fill in all options");
+                      Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2: "Please fill in all options",
+                      });
                       return;
                     }
                     setDirection(1);

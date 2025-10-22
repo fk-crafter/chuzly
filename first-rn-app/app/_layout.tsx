@@ -3,6 +3,7 @@ import {
   ReanimatedLogLevel,
 } from "react-native-reanimated";
 import { Stack } from "expo-router";
+import Toast from "react-native-toast-message"; // 👈 ajout important
 
 if (__DEV__) {
   configureReanimatedLogger({
@@ -12,5 +13,10 @@ if (__DEV__) {
 }
 
 export default function RootLayout() {
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }} />
+      <Toast />
+    </>
+  );
 }
