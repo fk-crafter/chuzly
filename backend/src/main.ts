@@ -9,8 +9,8 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'https://chuzly.app',
-      'http://192.168.1.173:5001',
-      'http://192.168.1.255:3000',
+      'http://192.168.1.173:8081',
+      'http://192.168.1.173:19000',
       'null',
     ],
     credentials: true,
