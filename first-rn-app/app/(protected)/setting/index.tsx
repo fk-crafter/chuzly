@@ -1,39 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Cog } from "lucide-react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function SettingsScreen() {
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        router.push("/(auth)/login");
-        return;
-      }
+  useFocusEffect(
+    useCallback(() => {
+      const fetchProfile = async () => {
+        const token = await AsyncStorage.getItem("token");
+        if (!token) {
+          router.push("/(auth)/login");
+          return;
+        }
 
-      try {
-        const res = await fetch(`${API_URL}/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch profile");
-        const data = await res.json();
-        setProfile(data);
-      } catch (err) {
-        console.error("Error loading profile:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+        try {
+          const res = await fetch(`${API_URL}/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("Failed to fetch profile");
+          const data = await res.json();
+          setProfile(data);
+        } catch (err) {
+          console.error("Error loading profile:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchProfile();
-  }, [router]);
+      fetchProfile();
+    }, [router])
+  );
 
   if (loading) {
     return (
@@ -94,7 +97,7 @@ export default function SettingsScreen() {
 
       <View className="items-center mb-8">
         <View
-          className={`w-24 h-24 rounded-full items-center justify-center bg-gray-200`}
+          className={`w-24 h-24 rounded-full items-center justify-center ${profile.avatarColor || "bg-gray-200"}`}
         >
           <Text className="text-2xl font-bold text-gray-800">{initials}</Text>
         </View>
