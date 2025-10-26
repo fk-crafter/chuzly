@@ -1,10 +1,15 @@
 import React from "react";
 import { View } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import HeaderApp from "@/components/HeaderApp";
 import HamburgerMenu from "@/components/HamburgerMenu";
 
 export default function ProtectedLayout() {
+  const pathname = usePathname();
+
+  const shouldHideMenu =
+    pathname.includes("/setting/") && pathname !== "/(protected)/setting";
+
   return (
     <View className="flex-1 bg-white">
       <HeaderApp />
@@ -14,7 +19,7 @@ export default function ProtectedLayout() {
           animation: "none",
         }}
       />
-      <HamburgerMenu />
+      {!shouldHideMenu && <HamburgerMenu />}
     </View>
   );
 }
