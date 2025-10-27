@@ -277,14 +277,21 @@ export default function CreateEventScreen() {
                   key={i}
                   className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
                 >
+                  {/* Label for Name */}
+                  <Text className="text-sm font-semibold mb-1">
+                    Option name
+                  </Text>
                   <TextInput
-                    placeholder="Option name (ex: Pizza night)"
+                    placeholder="Ex: Pizza night"
                     value={opt.name}
                     onChangeText={(text) => handleOptionChange(i, "name", text)}
                     className="border border-gray-300 rounded-lg px-3 py-2 mb-2"
                   />
+
+                  {/* Label for Price */}
+                  <Text className="text-sm font-semibold mb-1">Price</Text>
                   <TextInput
-                    placeholder="Price"
+                    placeholder="Ex: 20"
                     value={opt.price}
                     keyboardType="numeric"
                     onChangeText={(text) =>
@@ -292,6 +299,11 @@ export default function CreateEventScreen() {
                     }
                     className="border border-gray-300 rounded-lg px-3 py-2 mb-2"
                   />
+
+                  {/* Label for Date & Time */}
+                  <Text className="text-sm font-semibold mb-1">
+                    Date & Time
+                  </Text>
                   <TouchableOpacity
                     onPress={() => {
                       setSelectedOptionIndex(i);
