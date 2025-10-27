@@ -78,7 +78,6 @@ export default function ChoosePlanScreen() {
       return;
     }
 
-    // PRO PLAN
     try {
       const res = await fetch(`${API_URL}/stripe/checkout-session`, {
         method: "POST",
@@ -150,7 +149,6 @@ export default function ChoosePlanScreen() {
         </Text>
       </View>
 
-      {/* Starter Plan */}
       <PlanCard
         title="Starter"
         subtitle="For small plans with friends"
@@ -167,7 +165,6 @@ export default function ChoosePlanScreen() {
         onCancelDowngrade={handleCancelScheduledDowngrade}
       />
 
-      {/* Pro Plan — identique à Starter mais avec le contenu Pro */}
       <PlanCard
         title="Pro"
         subtitle="Everything you need to plan fast"

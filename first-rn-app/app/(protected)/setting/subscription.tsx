@@ -160,11 +160,11 @@ export default function SubscriptionScreen() {
       )}
 
       <TouchableOpacity
-        onPress={() => router.push("/(protected)/setting/choose-plan")}
-        className="mt-6 border border-gray-300 py-4 rounded-full"
+        onPress={() => router.push("/(protected)/setting")}
+        className="mt-10 border border-gray-300 py-4 rounded-full"
       >
         <Text className="text-black text-center font-semibold text-base">
-          Back to Plans
+          Back to Settings
         </Text>
       </TouchableOpacity>
     </ScrollView>

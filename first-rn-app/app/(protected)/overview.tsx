@@ -100,10 +100,10 @@ export default function OverviewScreen() {
         />
       </View>
 
-      <View className="mt-10 space-y-4">
+      <View className="mt-10 space-y-2">
         <TouchableOpacity
           onPress={() => router.push("/(protected)/create-event")}
-          className="bg-black py-4 rounded-full"
+          className="bg-black py-4 mb-2 rounded-full"
         >
           <Text className="text-white font-semibold text-center text-base">
             Create New Event

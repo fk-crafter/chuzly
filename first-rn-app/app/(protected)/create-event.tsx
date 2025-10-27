@@ -49,6 +49,11 @@ export default function CreateEventScreen() {
 
   const handleOptionChange = (index: number, field: string, value: string) => {
     const updated = [...options];
+
+    if (field === "price") {
+      value = value.replace(/[^0-9.]/g, "");
+    }
+
     updated[index][field as keyof (typeof updated)[number]] = value;
     setOptions(updated);
   };
