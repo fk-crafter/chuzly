@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Animated, { SlideInRight, SlideInLeft } from "react-native-reanimated";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { API_URL } from "@/config";
-import { PartyPopper } from "lucide-react-native";
+import { PartyPopper, Trash } from "lucide-react-native";
 import Toast from "react-native-toast-message";
 
 export default function CreateEventScreen() {
@@ -321,9 +321,9 @@ export default function CreateEventScreen() {
                   {i > 0 && (
                     <TouchableOpacity
                       onPress={() => removeOption(i)}
-                      className="mt-2 self-end"
+                      className="mt-2 self-end p-2"
                     >
-                      <Text className="text-red-500 font-semibold">Remove</Text>
+                      <Trash size={18} color="#ef4444" />
                     </TouchableOpacity>
                   )}
                 </View>
