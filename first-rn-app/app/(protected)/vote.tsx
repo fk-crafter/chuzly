@@ -22,7 +22,7 @@ export default function VoteScreen() {
   const fetchEvent = useCallback(async () => {
     if (!id || !guest) {
       Alert.alert("Error", "Missing event or guest info");
-      router.push("/"); // ou une autre page
+      router.push("/");
       return;
     }
 
@@ -40,7 +40,6 @@ export default function VoteScreen() {
       const data = await res.json();
       setEvent(data);
 
-      // exemple : déterminer s’il a déjà voté
       const guestData = data.guests.find((g: any) => g.nickname === guest);
       if (guestData?.vote?.id) {
         setSelectedOptionId(guestData.vote.id);

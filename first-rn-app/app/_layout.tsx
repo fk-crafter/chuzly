@@ -3,7 +3,7 @@ import {
   ReanimatedLogLevel,
 } from "react-native-reanimated";
 import { Stack } from "expo-router";
-import Toast from "react-native-toast-message"; // 👈 ajout important
+import Toast from "react-native-toast-message";
 
 if (__DEV__) {
   configureReanimatedLogger({
