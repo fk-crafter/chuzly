@@ -12,8 +12,13 @@ import {
   ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
+import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -23,6 +28,34 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleOAuthLogin = async (provider: "google" | "github" | "apple") => {
+    try {
+      const redirectUri = Linking.createURL("/");
+      const authUrl = `${API_URL}/auth/${provider}?redirect_uri=${encodeURIComponent(
+        redirectUri
+      )}`;
+
+      const result = await WebBrowser.openAuthSessionAsync(
+        authUrl,
+        redirectUri
+      );
+
+      if (result.type === "success" && result.url) {
+        const tokenMatch = result.url.match(/token=([^&]+)/);
+        if (tokenMatch) {
+          const token = decodeURIComponent(tokenMatch[1]);
+          await AsyncStorage.setItem("token", token);
+          router.replace("/(protected)/overview");
+        } else {
+          Alert.alert("Error", "No token found in redirect URL");
+        }
+      }
+    } catch (err) {
+      console.error("OAuth error:", err);
+      Alert.alert("Error", "Failed to sign in with " + provider);
+    }
+  };
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -150,6 +183,42 @@ export default function RegisterScreen() {
                 Create Account
               </Text>
             )}
+          </TouchableOpacity>
+
+          <View className="flex-row items-center my-6">
+            <View className="flex-1 h-[1px] bg-gray-300" />
+            <Text className="mx-3 text-gray-400 text-sm">or</Text>
+            <View className="flex-1 h-[1px] bg-gray-300" />
+          </View>
+
+          <TouchableOpacity
+            onPress={() => handleOAuthLogin("google")}
+            className="border border-gray-300 rounded-full py-4 flex-row items-center justify-center mb-3"
+          >
+            <FontAwesome name="google" size={20} color="black" />
+            <Text className="ml-2 text-base font-semibold text-gray-800">
+              Continue with Google
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => handleOAuthLogin("github")}
+            className="border border-gray-300 rounded-full py-4 flex-row items-center justify-center mb-3"
+          >
+            <FontAwesome name="github" size={20} color="black" />
+            <Text className="ml-2 text-base font-semibold text-gray-800">
+              Continue with GitHub
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            disabled
+            className="border border-gray-300 rounded-full py-4 flex-row items-center justify-center opacity-50"
+          >
+            <FontAwesome name="apple" size={20} color="black" />
+            <Text className="ml-2 text-base font-semibold text-gray-800">
+              Continue with Apple (soon)
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
