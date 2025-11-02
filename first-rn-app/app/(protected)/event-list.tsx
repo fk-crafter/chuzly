@@ -10,6 +10,7 @@ import {
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Share2, Trash2 } from "lucide-react-native";
 
 export default function EventListScreen() {
   const router = useRouter();
@@ -130,7 +131,7 @@ export default function EventListScreen() {
               </Text>
             )}
 
-            <View className="flex-row justify-between mt-3">
+            <View className="flex-row justify-end gap-3 mt-3">
               <TouchableOpacity
                 onPress={() =>
                   router.push({
@@ -138,20 +139,16 @@ export default function EventListScreen() {
                     params: { id: event.id },
                   })
                 }
-                className="border border-gray-300 rounded-full px-5 py-2"
+                className="p-2 rounded-full border border-gray-300"
               >
-                <Text className="text-sm font-semibold text-gray-700">
-                  Share
-                </Text>
+                <Share2 size={20} color="black" />
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() => handleDelete(event.id)}
-                className="border border-red-400 rounded-full px-5 py-2"
+                className="p-2 rounded-full border border-red-400"
               >
-                <Text className="text-sm font-semibold text-red-500">
-                  Delete
-                </Text>
+                <Trash2 size={20} color="red" />
               </TouchableOpacity>
             </View>
           </View>
