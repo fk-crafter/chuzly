@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import { Pencil } from "lucide-react-native";
+import Toast from "react-native-toast-message";
 
 const COLORS = [
   "bg-gray-300",
@@ -86,11 +87,19 @@ export default function ProfileScreen() {
       });
 
       await AsyncStorage.setItem("avatarColor", color);
-      Alert.alert("✅ Updated", "Your profile has been updated!");
+      Toast.show({
+        type: "success",
+        text1: "Updated",
+        text2: "Your profile has been updated!",
+      });
       router.push("/(protected)/setting");
     } catch (err) {
       console.error(err);
-      Alert.alert("Error", "Failed to update profile");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to update profile",
+      });
     }
   };
 
