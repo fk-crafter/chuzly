@@ -157,7 +157,6 @@ export default function CreateEventPage() {
       </h1>
 
       <div className="hidden md:block space-y-8">
-        {/* Step 1 */}
         <div className="flex items-center gap-3">
           <div
             className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
@@ -219,7 +218,6 @@ export default function CreateEventPage() {
           </CardContent>
         </Card>
 
-        {/* Step 2 */}
         <div className="flex items-center gap-3">
           <div
             className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
@@ -328,7 +326,6 @@ export default function CreateEventPage() {
           </CardContent>
         </Card>
 
-        {/* Step 3 */}
         <div className="flex items-center gap-3">
           <div
             className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${

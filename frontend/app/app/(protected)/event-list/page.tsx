@@ -6,15 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  MoreVertical,
-  Trash2,
-  Share2,
-  User2,
-  BarChart2,
-  Plus,
-  Search,
-} from "lucide-react";
+import { MoreVertical, Trash2, User2, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";

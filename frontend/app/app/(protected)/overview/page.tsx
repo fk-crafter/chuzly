@@ -18,7 +18,7 @@ type OverviewStats = {
 type UpcomingEvent = {
   id: string;
   name: string;
-  votingDeadline: string; // ISO
+  votingDeadline: string;
   guestsCount: number;
   votesCount: number;
 };
@@ -61,7 +61,7 @@ export default function OverviewPage() {
         const sJson = (await s.json()) as OverviewStats;
         setStats(sJson);
 
-        // upcoming events (limite 5)
+        // upcoming events
         const u = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/events/upcoming?limit=5`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -70,7 +70,7 @@ export default function OverviewPage() {
           const uJson = (await u.json()) as UpcomingEvent[];
           setUpcoming(uJson);
         } else {
-          setUpcoming([]); // évite le loader infini si 404/pas d’endpoint
+          setUpcoming([]);
         }
       } catch (err) {
         console.error("Failed to fetch overview data", err);
@@ -125,7 +125,6 @@ export default function OverviewPage() {
     <main className={contentClasses}>
       <h1 className="text-3xl font-bold">Overview</h1>
 
-      {/* KPI cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="shadow-md hover:shadow-lg transition">
           <CardContent className="p-6">
@@ -170,7 +169,6 @@ export default function OverviewPage() {
         </Card>
       </div>
 
-      {/* Upcoming deadlines list */}
       <Card className="shadow-sm">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-3">

@@ -147,7 +147,6 @@ export default function ChoosePlanPage() {
         }
       );
 
-      // Try to parse JSON even on non-2xx for clearer messages
       let data: any = {};
       try {
         data = await res.json();

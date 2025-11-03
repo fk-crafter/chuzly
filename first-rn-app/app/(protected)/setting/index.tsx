@@ -1,9 +1,22 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Cog } from "lucide-react-native";
+import {
+  Cog,
+  User,
+  CreditCard,
+  Star,
+  LogOut,
+  ChevronRight,
+} from "lucide-react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function SettingsScreen() {
@@ -40,25 +53,9 @@ export default function SettingsScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-white px-6 py-10">
-        <View className="w-40 h-8 bg-gray-200 rounded-md self-center mb-10 animate-pulse" />
-
-        <View className="items-center mb-8">
-          <View className="w-24 h-24 rounded-full bg-gray-200 animate-pulse" />
-          <View className="w-32 h-5 bg-gray-200 rounded-md mt-4 animate-pulse" />
-          <View className="w-48 h-4 bg-gray-200 rounded-md mt-2 animate-pulse" />
-        </View>
-
-        <View className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <View
-              key={i}
-              className="w-full h-14 bg-gray-200 rounded-xl animate-pulse"
-            />
-          ))}
-        </View>
-
-        <View className="w-full h-14 bg-gray-200 rounded-full mt-10 animate-pulse" />
+      <View className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator size="large" color="black" />
+        <Text className="text-gray-500 mt-4">Loading settings...</Text>
       </View>
     );
   }
@@ -87,41 +84,48 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-white px-6 py-10"
-      contentContainerStyle={{ paddingBottom: 100 }}
+      className="flex-1 bg-gray-50"
+      contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
     >
-      <View className="flex flex-row items-center justify-center gap-2 mb-8">
-        <Cog size={28} color="black" strokeWidth={2.2} />
-        <Text className="text-3xl font-bold text-center">Settings</Text>
+      <View className="flex-row items-center justify-center mb-8">
+        <Cog size={26} color="black" strokeWidth={2.2} />
+        <Text className="text-3xl font-bold text-gray-900 ml-2">Settings</Text>
       </View>
 
-      <View className="items-center mb-8">
-        <View
-          className={`w-24 h-24 rounded-full items-center justify-center ${profile.avatarColor || "bg-gray-200"}`}
-        >
-          <Text className="text-2xl font-bold text-gray-800">{initials}</Text>
-        </View>
-        <Text className="text-lg font-semibold mt-3">{profile.name}</Text>
-        <Text className="text-gray-500">{profile.email}</Text>
-
-        {profile.plan === "PRO" && (
-          <View className="mt-2 px-4 py-1 bg-yellow-300 rounded-full">
-            <Text className="font-semibold text-black">PRO PLAN</Text>
+      <View className="bg-white shadow-sm border border-gray-100 rounded-2xl p-6 mb-8">
+        <View className="items-center">
+          <View
+            className={`w-20 h-20 rounded-full items-center justify-center ${
+              profile.avatarColor || "bg-gray-200"
+            }`}
+          >
+            <Text className="text-2xl font-bold text-gray-800">{initials}</Text>
           </View>
-        )}
+          <Text className="text-lg font-semibold mt-3">{profile.name}</Text>
+          <Text className="text-gray-500">{profile.email}</Text>
+
+          {profile.plan === "PRO" && (
+            <View className="mt-2 px-4 py-1 bg-yellow-400/80 rounded-full">
+              <Text className="font-semibold text-black">PRO PLAN</Text>
+            </View>
+          )}
+        </View>
       </View>
 
-      <View className="space-y-4">
+      <View className="bg-white shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
         <SettingItem
           label="Edit Profile"
+          icon={<User size={20} color="#111" />}
           onPress={() => router.push("/(protected)/setting/profile")}
         />
         <SettingItem
           label="Choose Plan"
+          icon={<Star size={20} color="#111" />}
           onPress={() => router.push("/(protected)/setting/choose-plan")}
         />
         <SettingItem
           label="Subscription"
+          icon={<CreditCard size={20} color="#111" />}
           onPress={() => router.push("/(protected)/setting/subscription")}
         />
       </View>
@@ -131,9 +135,10 @@ export default function SettingsScreen() {
           await AsyncStorage.clear();
           router.push("/(auth)/login");
         }}
-        className="mt-10 bg-red-600 py-4 rounded-full"
+        className="mt-8 flex-row items-center justify-center bg-red-600 py-4 rounded-full shadow-sm"
       >
-        <Text className="text-white text-center font-semibold">Log out</Text>
+        <LogOut size={20} color="white" />
+        <Text className="text-white text-base font-semibold ml-2">Log out</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -141,17 +146,24 @@ export default function SettingsScreen() {
 
 function SettingItem({
   label,
+  icon,
   onPress,
 }: {
   label: string;
+  icon: React.ReactNode;
   onPress: () => void;
 }) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="border border-gray-300 rounded-xl px-5 py-4"
+      activeOpacity={0.7}
+      className="flex-row items-center justify-between px-5 py-4 border-b border-gray-100"
     >
-      <Text className="text-base font-semibold text-gray-800">{label}</Text>
+      <View className="flex-row items-center">
+        <View className="mr-3">{icon}</View>
+        <Text className="text-base font-semibold text-gray-800">{label}</Text>
+      </View>
+      <ChevronRight size={18} color="#9ca3af" />
     </TouchableOpacity>
   );
 }

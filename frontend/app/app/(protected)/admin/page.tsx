@@ -265,7 +265,7 @@ export default function AdminDashboardPage() {
         </table>
       </div>
 
-      {/* Mobile List View */}
+      {/* Mobile */}
       <div className="block md:hidden space-y-4">
         {users.map((user) => (
           <details
