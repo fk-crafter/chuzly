@@ -11,6 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import { Pencil } from "lucide-react-native";
 import Toast from "react-native-toast-message";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
 const COLORS = [
   "bg-gray-300",
@@ -21,60 +22,69 @@ const COLORS = [
   "bg-purple-300",
 ];
 
+type Profile = {
+  name: string;
+  email?: string;
+  avatarColor?: string;
+  plan?: string;
+};
+
 export default function ProfileScreen() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [color, setColor] = useState(COLORS[0]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchProfile = async () => {
+  const {
+    data: profile,
+    isLoading,
+    error,
+  } = useQuery<Profile>({
+    queryKey: ["profile"],
+    queryFn: async () => {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
         router.push("/(auth)/login");
-        return;
+        throw new Error("No token");
       }
 
-      try {
-        const res = await fetch(`${API_URL}/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to load profile");
-        const data = await res.json();
-        setName(data.name || "");
-        setColor(data.avatarColor || COLORS[0]);
-      } catch (err) {
-        console.error("Error loading profile:", err);
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "Could not load your profile",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+      const res = await fetch(`${API_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to load profile");
+      return res.json() as Promise<Profile>;
+    },
+  });
 
-    fetchProfile();
-  }, [router]);
-
-  const handleSave = async () => {
-    const token = await AsyncStorage.getItem("token");
-    if (!token) {
-      router.push("/(auth)/login");
-      return;
-    }
-
-    if (!name.trim()) {
+  useEffect(() => {
+    if (error) {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Missing name",
+        text2: "Could not load your profile",
       });
-      return;
     }
+  }, [error]);
 
-    try {
+  useEffect(() => {
+    if (profile) {
+      setName(profile.name || "");
+      setColor(profile.avatarColor || COLORS[0]);
+    }
+  }, [profile]);
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        router.push("/(auth)/login");
+        throw new Error("No token");
+      }
+
+      if (!name.trim()) {
+        throw new Error("Missing name");
+      }
+
       await fetch(`${API_URL}/auth/update-name`, {
         method: "POST",
         headers: {
@@ -94,23 +104,31 @@ export default function ProfileScreen() {
       });
 
       await AsyncStorage.setItem("avatarColor", color);
+    },
+    onSuccess: () => {
       Toast.show({
         type: "success",
         text1: "Updated",
         text2: "Your profile has been updated!",
       });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
       router.push("/(protected)/setting");
-    } catch (err) {
-      console.error(err);
+    },
+    onError: (error: any) => {
+      console.error(error);
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Failed to update profile",
+        text2: error?.message || "Failed to update profile",
       });
-    }
+    },
+  });
+
+  const handleSave = () => {
+    updateProfileMutation.mutate();
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <Text className="text-gray-600">Loading profile...</Text>
@@ -169,10 +187,13 @@ export default function ProfileScreen() {
 
       <TouchableOpacity
         onPress={handleSave}
-        className="bg-black py-4 rounded-full"
+        disabled={updateProfileMutation.isPending}
+        className={`py-4 rounded-full ${
+          updateProfileMutation.isPending ? "bg-gray-400" : "bg-black"
+        }`}
       >
         <Text className="text-white text-center font-semibold text-base">
-          Save Changes
+          {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
         </Text>
       </TouchableOpacity>
 
