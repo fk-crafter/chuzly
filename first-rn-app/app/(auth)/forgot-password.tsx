@@ -5,13 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
+import Toast from "react-native-toast-message";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
@@ -21,7 +21,11 @@ export default function ForgotPasswordScreen() {
 
   const handleSendResetLink = async () => {
     if (!email) {
-      Alert.alert("Error", "Please enter your email");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please enter your email",
+      });
       return;
     }
 
@@ -38,7 +42,11 @@ export default function ForgotPasswordScreen() {
 
       setSent(true);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Something went wrong");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: err.message || "Something went wrong",
+      });
     } finally {
       setLoading(false);
     }

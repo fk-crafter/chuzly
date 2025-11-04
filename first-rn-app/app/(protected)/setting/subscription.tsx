@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import { useRouter } from "expo-router";
 import { CreditCard } from "lucide-react-native";
+import Toast from "react-native-toast-message";
 
 type SubscriptionInfo = {
   plan: "FREE" | "TRIAL" | "PRO";
@@ -40,7 +41,11 @@ export default function SubscriptionScreen() {
       setSub(data);
     } catch (err) {
       console.error(err);
-      Alert.alert("Error", "Failed to load subscription details.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to load subscription details.",
+      });
     } finally {
       setLoading(false);
     }

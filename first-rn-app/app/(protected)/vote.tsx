@@ -5,11 +5,11 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
+import Toast from "react-native-toast-message";
 
 export default function VoteScreen() {
   const router = useRouter();
@@ -21,7 +21,11 @@ export default function VoteScreen() {
 
   const fetchEvent = useCallback(async () => {
     if (!id || !guest) {
-      Alert.alert("Error", "Missing event or guest info");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Missing event or guest info",
+      });
       router.push("/");
       return;
     }
@@ -49,7 +53,11 @@ export default function VoteScreen() {
       }
     } catch (err) {
       console.error(err);
-      Alert.alert("Error", "Could not load event details.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Could not load event details.",
+      });
     } finally {
       setLoading(false);
     }
@@ -61,7 +69,11 @@ export default function VoteScreen() {
 
   const handleVoteSubmit = async () => {
     if (!id || !guest || !selectedOptionId) {
-      Alert.alert("Select an option first");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Select an option first",
+      });
       return;
     }
     try {
@@ -79,11 +91,19 @@ export default function VoteScreen() {
         body: JSON.stringify({ choice: selectedOptionId }),
       });
       if (!res.ok) throw new Error("Vote failed");
-      Alert.alert("Success", "Your vote has been recorded");
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Your vote has been recorded",
+      });
       await fetchEvent();
     } catch (err) {
       console.error(err);
-      Alert.alert("Error", "Vote failed");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Vote failed",
+      });
     }
   };
 

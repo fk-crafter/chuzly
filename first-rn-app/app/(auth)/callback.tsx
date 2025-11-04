@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import { View, Text, ActivityIndicator, Alert } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
+import Toast from "react-native-toast-message";
 
 export default function OAuthCallback() {
   const router = useRouter();
@@ -11,8 +12,11 @@ export default function OAuthCallback() {
   useEffect(() => {
     const handleAuth = async () => {
       if (!token) {
-        Alert.alert("Error", "Missing token");
-        router.push("/(auth)/login");
+        Toast.show({
+          type: "error",
+          text1: "Missing token",
+          text2: "Please try again",
+        });
         return;
       }
 
@@ -31,7 +35,11 @@ export default function OAuthCallback() {
         }
       } catch (err) {
         console.error(err);
-        Alert.alert("Login error", "Could not complete OAuth login");
+        Toast.show({
+          type: "error",
+          text1: "Login error",
+          text2: "Could not complete OAuth login",
+        });
         router.replace("/(auth)/login");
       }
     };

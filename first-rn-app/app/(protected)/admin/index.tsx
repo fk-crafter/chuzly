@@ -10,6 +10,7 @@ import {
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
+import Toast from "react-native-toast-message";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -35,7 +36,11 @@ export default function AdminDashboard() {
         setUsers(data);
       } catch (err) {
         console.error(err);
-        Alert.alert("Error", "Failed to load users");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to load users",
+        });
         router.replace("/(protected)/overview");
       } finally {
         setLoading(false);

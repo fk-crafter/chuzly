@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Alert,
   ActivityIndicator,
   Dimensions,
   Animated,
@@ -14,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { API_URL } from "@/config";
+import Toast from "react-native-toast-message";
 
 const COLORS = [
   "bg-gray-300",
@@ -155,7 +155,11 @@ export default function OnboardingScreen() {
       );
     } catch (err) {
       console.error(err);
-      Alert.alert("Error", "Failed to complete onboarding");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to complete onboarding",
+      });
     } finally {
       setLoading(false);
     }
@@ -263,7 +267,12 @@ export default function OnboardingScreen() {
           />
           <TouchableOpacity
             onPress={() => {
-              if (!name.trim()) Alert.alert("Error", "Please enter your name");
+              if (!name.trim())
+                Toast.show({
+                  type: "error",
+                  text1: "Error",
+                  text2: "Please enter your name",
+                });
               else handleNext();
             }}
             className="bg-black py-4 rounded-full"

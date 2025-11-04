@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Share2, Trash2 } from "lucide-react-native";
+import Toast from "react-native-toast-message";
 
 export default function EventListScreen() {
   const router = useRouter();
@@ -34,7 +35,11 @@ export default function EventListScreen() {
       setEvents(data);
     } catch (err) {
       console.error("Error fetching events:", err);
-      Alert.alert("Error", "Could not load your events.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Could not load your events.",
+      });
     } finally {
       setLoading(false);
     }
@@ -60,11 +65,19 @@ export default function EventListScreen() {
               headers: { Authorization: `Bearer ${token}` },
             });
             if (!res.ok) throw new Error("Failed to delete");
-            Alert.alert("Deleted", "Event has been deleted.");
+            Toast.show({
+              type: "success",
+              text1: "Success",
+              text2: "Event has been deleted.",
+            });
             fetchEvents();
           } catch (err) {
             console.error(err);
-            Alert.alert("Error", "Unable to delete event.");
+            Toast.show({
+              type: "error",
+              text1: "Error",
+              text2: "Unable to delete event.",
+            });
           }
         },
       },

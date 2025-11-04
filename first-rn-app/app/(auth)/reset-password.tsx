@@ -5,13 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Image,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { API_URL } from "@/config";
+import Toast from "react-native-toast-message";
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
@@ -25,15 +25,27 @@ export default function ResetPasswordScreen() {
 
   const handleResetPassword = async () => {
     if (!password || !confirm) {
-      Alert.alert("Error", "Please fill in all fields");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please fill in all fields",
+      });
       return;
     }
     if (password !== confirm) {
-      Alert.alert("Error", "Passwords do not match");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Passwords do not match",
+      });
       return;
     }
     if (!token) {
-      Alert.alert("Error", "Invalid or missing reset token");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Invalid or missing reset token",
+      });
       return;
     }
 
@@ -50,7 +62,11 @@ export default function ResetPasswordScreen() {
 
       setDone(true);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Something went wrong");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: err.message || "Something went wrong",
+      });
     } finally {
       setLoading(false);
     }

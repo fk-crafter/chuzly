@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -16,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import { FontAwesome } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -28,7 +28,11 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Error", "Please fill in all fields");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please fill in all fields",
+      });
       return;
     }
 
@@ -52,7 +56,11 @@ export default function LoginScreen() {
       router.replace("/(protected)/overview");
     } catch (err: any) {
       console.error("Login error:", err);
-      Alert.alert("Login failed", err.message || "Please try again.");
+      Toast.show({
+        type: "error",
+        text1: "Login failed",
+        text2: err.message || "Please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -60,7 +68,7 @@ export default function LoginScreen() {
 
   const handleOAuthLogin = async (provider: "google" | "github" | "apple") => {
     try {
-      const redirectUri = Linking.createURL("/"); // ex: chuzly://
+      const redirectUri = Linking.createURL("/");
       const authUrl = `${API_URL}/auth/${provider}?redirect_uri=${encodeURIComponent(
         redirectUri
       )}`;
@@ -77,12 +85,20 @@ export default function LoginScreen() {
           await AsyncStorage.setItem("token", token);
           router.replace("/(protected)/overview");
         } else {
-          Alert.alert("Error", "No token found in redirect URL");
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "No token found in redirect URL",
+          });
         }
       }
     } catch (err) {
       console.error("OAuth error:", err);
-      Alert.alert("Error", "Failed to sign in with " + provider);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to sign in with " + provider,
+      });
     }
   };
 

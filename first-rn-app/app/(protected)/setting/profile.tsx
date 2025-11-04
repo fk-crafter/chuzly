@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -46,7 +45,11 @@ export default function ProfileScreen() {
         setColor(data.avatarColor || COLORS[0]);
       } catch (err) {
         console.error("Error loading profile:", err);
-        Alert.alert("Error", "Could not load your profile");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Could not load your profile",
+        });
       } finally {
         setLoading(false);
       }
@@ -63,7 +66,11 @@ export default function ProfileScreen() {
     }
 
     if (!name.trim()) {
-      Alert.alert("Missing name", "Please enter your name");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Missing name",
+      });
       return;
     }
 

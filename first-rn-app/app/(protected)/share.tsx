@@ -5,12 +5,12 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
-  Alert,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
+import Toast from "react-native-toast-message";
 
 export default function ShareEventScreen() {
   const router = useRouter();
@@ -36,7 +36,11 @@ export default function ShareEventScreen() {
         setEvent(data);
       } catch (err) {
         console.error("Error loading event:", err);
-        Alert.alert("Error", "Could not load event details.");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Could not load event details.",
+        });
       } finally {
         setLoading(false);
       }

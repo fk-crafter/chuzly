@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Image,
@@ -17,6 +16,7 @@ import * as Linking from "expo-linking";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
+import Toast from "react-native-toast-message";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -48,23 +48,39 @@ export default function RegisterScreen() {
           await AsyncStorage.setItem("token", token);
           router.replace("/(protected)/overview");
         } else {
-          Alert.alert("Error", "No token found in redirect URL");
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "No token found in redirect URL",
+          });
         }
       }
     } catch (err) {
       console.error("OAuth error:", err);
-      Alert.alert("Error", "Failed to sign in with " + provider);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to sign in with " + provider,
+      });
     }
   };
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
-      Alert.alert("Missing info", "Please fill in all fields.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please fill in all fields.",
+      });
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert("Password mismatch", "Passwords do not match.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Passwords do not match.",
+      });
       return;
     }
 
@@ -91,7 +107,11 @@ export default function RegisterScreen() {
       router.replace("/(protected)/overview");
     } catch (err: any) {
       console.error("Register error:", err);
-      Alert.alert("Error", err.message || "Registration failed.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: err.message || "Registration failed.",
+      });
     } finally {
       setLoading(false);
     }
