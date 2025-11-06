@@ -16,6 +16,7 @@ import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import { FontAwesome } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
+import { useMutation } from "@tanstack/react-query";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -23,21 +24,18 @@ export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Please fill in all fields",
-      });
-      return;
-    }
+  const loginMutation = useMutation({
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => {
+      if (!email || !password) throw new Error("Please fill in all fields");
 
-    setLoading(true);
-    try {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -49,21 +47,30 @@ export default function LoginScreen() {
         throw new Error(err || "Login failed");
       }
 
-      const data = await res.json();
+      return res.json();
+    },
+    onSuccess: async (data) => {
       await AsyncStorage.setItem("token", data.token);
       await AsyncStorage.setItem("userName", data.name);
       await AsyncStorage.setItem("userPlan", data.plan);
+
+      Toast.show({
+        type: "success",
+        text1: "Welcome back 👋",
+      });
       router.replace("/(protected)/overview");
-    } catch (err: any) {
-      console.error("Login error:", err);
+    },
+    onError: (error: any) => {
       Toast.show({
         type: "error",
         text1: "Login failed",
-        text2: err.message || "Please try again.",
+        text2: error?.message || "Please try again.",
       });
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const handleLogin = () => {
+    loginMutation.mutate({ email, password });
   };
 
   const handleOAuthLogin = async (provider: "google" | "github" | "apple") => {
@@ -163,11 +170,13 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          disabled={loading}
+          disabled={loginMutation.isPending}
           onPress={handleLogin}
-          className="bg-black rounded-full py-4 mt-4"
+          className={`rounded-full py-4 mt-4 ${
+            loginMutation.isPending ? "bg-gray-400" : "bg-black"
+          }`}
         >
-          {loading ? (
+          {loginMutation.isPending ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <Text className="text-white text-center font-semibold text-base">
