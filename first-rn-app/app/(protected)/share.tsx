@@ -110,6 +110,7 @@ export default function ShareEventScreen() {
 
       <Text className="text-lg font-semibold mb-4">Guest links</Text>
 
+      {/* Bouton pour copier tous les liens */}
       <TouchableOpacity
         onPress={() => {
           const allLinks = event.guests
@@ -125,10 +126,25 @@ export default function ShareEventScreen() {
             .join("\n\n");
           handleCopy(allLinks);
         }}
-        className="bg-black py-4 rounded-full mb-6"
+        className="bg-black py-4 rounded-full mb-4"
       >
         <Text className="text-white text-center font-semibold">
           {copied === "all" ? "Copied!" : "Copy all guest links"}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() =>
+          router.push(
+            `/(protected)/vote?id=${event.id}&guest=${encodeURIComponent(
+              event.guests?.[0]?.nickname || "guest"
+            )}`
+          )
+        }
+        className="bg-blue-600 py-4 rounded-full mb-8"
+      >
+        <Text className="text-white text-center font-semibold">
+          Go to Vote Page
         </Text>
       </TouchableOpacity>
 
