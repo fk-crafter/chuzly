@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -17,41 +17,30 @@ import {
   LogOut,
   ChevronRight,
 } from "lucide-react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        router.push("/(auth)/login");
+        throw new Error("No token found");
+      }
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchProfile = async () => {
-        const token = await AsyncStorage.getItem("token");
-        if (!token) {
-          router.push("/(auth)/login");
-          return;
-        }
+      const res = await fetch(`${API_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        try {
-          const res = await fetch(`${API_URL}/auth/me`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (!res.ok) throw new Error("Failed to fetch profile");
-          const data = await res.json();
-          setProfile(data);
-        } catch (err) {
-          console.error("Error loading profile:", err);
-        } finally {
-          setLoading(false);
-        }
-      };
+      if (!res.ok) throw new Error("Failed to load profile");
+      return res.json();
+    },
+    refetchOnWindowFocus: true,
+  });
 
-      fetchProfile();
-    }, [router])
-  );
-
-  if (loading) {
+  if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="black" />
