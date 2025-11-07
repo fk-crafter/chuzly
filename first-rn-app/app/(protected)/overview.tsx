@@ -1,45 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useQuery } from "@tanstack/react-query";
 
 export default function OverviewScreen() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState<{
-    totalEvents: number;
-    totalVotes: number;
-    totalGuests: number;
-    upcomingEvents: number;
-  } | null>(null);
 
-  useEffect(() => {
-    const fetchOverview = async () => {
+  const {
+    data: stats,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["overview"],
+    queryFn: async () => {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
         router.push("/(auth)/login");
-        return;
+        throw new Error("No token");
       }
 
-      try {
-        const res = await fetch(`${API_URL}/events/overview`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to load stats");
-        const data = await res.json();
-        setStats(data);
-      } catch (err) {
-        console.error("Error fetching overview:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const res = await fetch(`${API_URL}/events/overview`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to load stats");
+      return res.json();
+    },
+    refetchOnWindowFocus: true,
+    retry: false,
+  });
 
-    fetchOverview();
-  }, [router]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <View className="flex-1 bg-white px-6 py-10">
         <View className="w-48 h-8 bg-gray-200 rounded-md self-center mb-8 animate-pulse" />
@@ -62,7 +54,7 @@ export default function OverviewScreen() {
     );
   }
 
-  if (!stats) {
+  if (error || !stats) {
     return (
       <View className="flex-1 justify-center items-center px-6">
         <Text className="text-lg font-semibold text-gray-800 mb-4">
