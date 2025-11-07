@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,43 +11,43 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import Toast from "react-native-toast-message";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ShareEventScreen() {
   const router = useRouter();
-  const { id } = useLocalSearchParams();
-  const [event, setEvent] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { id } = useLocalSearchParams<{ id?: string }>();
   const [copied, setCopied] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchEvent = async () => {
+  const {
+    data: event,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["event", id],
+    queryFn: async () => {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
         router.push("/(auth)/login");
-        return;
+        throw new Error("No token");
       }
 
-      try {
-        const res = await fetch(`${API_URL}/events/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch event");
-        const data = await res.json();
-        setEvent(data);
-      } catch (err) {
-        console.error("Error loading event:", err);
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "Could not load event details.",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+      const res = await fetch(`${API_URL}/events/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch event");
+      return res.json();
+    },
+    enabled: !!id,
+    retry: false,
+  });
 
-    if (id) fetchEvent();
-  }, [id, router]);
+  if (error) {
+    Toast.show({
+      type: "error",
+      text1: "Error",
+      text2: "Could not load event details.",
+    });
+  }
 
   const handleCopy = async (text: string, guest?: string) => {
     await Clipboard.setStringAsync(text);
@@ -55,7 +55,7 @@ export default function ShareEventScreen() {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="black" />
@@ -110,7 +110,6 @@ export default function ShareEventScreen() {
 
       <Text className="text-lg font-semibold mb-4">Guest links</Text>
 
-      {/* Bouton pour copier tous les liens */}
       <TouchableOpacity
         onPress={() => {
           const allLinks = event.guests
