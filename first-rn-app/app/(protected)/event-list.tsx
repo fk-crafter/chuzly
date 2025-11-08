@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -12,79 +12,82 @@ import { API_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Share2, Trash2 } from "lucide-react-native";
 import Toast from "react-native-toast-message";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+type Event = {
+  id: string;
+  name: string;
+  description?: string;
+  guests?: { nickname: string }[];
+  options?: { id: string }[];
+  votingDeadline?: string;
+};
 
 export default function EventListScreen() {
   const router = useRouter();
-  const [events, setEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchEvents = useCallback(async () => {
-    const token = await AsyncStorage.getItem("token");
-    if (!token) {
-      router.push("/(auth)/login");
-      return;
-    }
+  const { data: events = [], isLoading } = useQuery<Event[]>({
+    queryKey: ["events"],
+    queryFn: async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        router.push("/(auth)/login");
+        throw new Error("No token");
+      }
 
-    try {
       const res = await fetch(`${API_URL}/events/mine`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!res.ok) throw new Error("Failed to load events");
       const data = await res.json();
-      setEvents(data);
-    } catch (err) {
-      console.error("Error fetching events:", err);
+      return data;
+    },
+    refetchOnWindowFocus: true,
+  });
+
+  const deleteEventMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) throw new Error("No token");
+
+      const res = await fetch(`${API_URL}/events/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error("Failed to delete");
+    },
+    onSuccess: () => {
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Event has been deleted.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
+    onError: () => {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Could not load your events.",
+        text2: "Unable to delete event.",
       });
-    } finally {
-      setLoading(false);
-    }
-  }, [router]);
+    },
+  });
 
-  useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
-
-  const handleDelete = async (id: string) => {
-    const token = await AsyncStorage.getItem("token");
-    if (!token) return;
-
+  const handleDelete = (id: string) => {
     Alert.alert("Delete Event", "Are you sure you want to delete this event?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
         style: "destructive",
-        onPress: async () => {
-          try {
-            const res = await fetch(`${API_URL}/events/${id}`, {
-              method: "DELETE",
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!res.ok) throw new Error("Failed to delete");
-            Toast.show({
-              type: "success",
-              text1: "Success",
-              text2: "Event has been deleted.",
-            });
-            fetchEvents();
-          } catch (err) {
-            console.error(err);
-            Toast.show({
-              type: "error",
-              text1: "Error",
-              text2: "Unable to delete event.",
-            });
-          }
-        },
+        onPress: () => deleteEventMutation.mutate(id),
       },
     ]);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" color="black" />
@@ -122,7 +125,7 @@ export default function EventListScreen() {
       </Text>
 
       <View className="space-y-4">
-        {events.map((event) => (
+        {events.map((event: any) => (
           <View
             key={event.id}
             className="border border-gray-200 rounded-2xl p-5 bg-gray-50"
