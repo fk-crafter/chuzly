@@ -15,6 +15,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { API_URL } from "@/config";
 import { PartyPopper, Trash } from "lucide-react-native";
 import Toast from "react-native-toast-message";
+import { useQuery } from "@tanstack/react-query";
 
 export default function CreateEventScreen() {
   const router = useRouter();
@@ -34,6 +35,22 @@ export default function CreateEventScreen() {
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(
     null
   );
+
+  const { data: pastEvents = [] } = useQuery({
+    queryKey: ["pastEvents"],
+    queryFn: async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) return [];
+
+      const res = await fetch(`${API_URL}/events/mine`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch events");
+      const data = await res.json();
+      return data.slice(-3);
+    },
+    enabled: !checkingAuth,
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -419,6 +436,42 @@ export default function CreateEventScreen() {
                 </TouchableOpacity>
               </View>
             </Animated.View>
+          )}
+
+          {/* Previous events section */}
+          {pastEvents.length > 0 && (
+            <View className="mt-12">
+              <Text className="text-lg font-semibold mb-4">
+                Previous events
+              </Text>
+
+              {pastEvents.map((event: any) => (
+                <TouchableOpacity
+                  key={event.id}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/(protected)/share",
+                      params: { id: event.id },
+                    })
+                  }
+                  className="border border-gray-200 rounded-2xl p-4 mb-3 bg-gray-50"
+                >
+                  <Text className="text-base font-semibold mb-1">
+                    {event.name}
+                  </Text>
+                  <Text className="text-xs text-gray-500 mb-1">
+                    Guests: {event.guests?.length ?? 0} • Options:{" "}
+                    {event.options?.length ?? 0}
+                  </Text>
+                  {event.votingDeadline && (
+                    <Text className="text-xs text-gray-400">
+                      Voting closed on:{" "}
+                      {new Date(event.votingDeadline).toLocaleDateString()}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
           )}
         </ScrollView>
       </KeyboardAvoidingView>
