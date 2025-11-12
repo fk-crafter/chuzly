@@ -438,7 +438,6 @@ export default function CreateEventScreen() {
             </Animated.View>
           )}
 
-          {/* Previous events section */}
           {pastEvents.length > 0 && (
             <View className="mt-12">
               <Text className="text-lg font-semibold mb-4">
