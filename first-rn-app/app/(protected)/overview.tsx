@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery } from "@tanstack/react-query";
 import { API_URL } from "@/config";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function OverviewScreen() {
   const router = useRouter();
@@ -37,22 +38,12 @@ export default function OverviewScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-white px-6 py-12">
-        <View className="w-48 h-8 bg-gray-200 rounded-md self-center mb-4 animate-pulse" />
-        <View className="w-56 h-4 bg-gray-200 rounded-md self-center mb-10 animate-pulse" />
-
-        <View className="space-y-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <View
-              key={i}
-              className="h-20 bg-gray-200 rounded-2xl animate-pulse"
-            />
-          ))}
-        </View>
-
-        <View className="mt-10 space-y-4">
-          <View className="h-14 bg-gray-200 rounded-full animate-pulse" />
-          <View className="h-14 bg-gray-200 rounded-full animate-pulse" />
-        </View>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <View
+            key={i}
+            className="h-20 bg-gray-200 rounded-3xl mb-4 animate-pulse"
+          />
+        ))}
       </View>
     );
   }
@@ -66,7 +57,7 @@ export default function OverviewScreen() {
 
         <TouchableOpacity
           onPress={() => router.push("/(protected)/create-event")}
-          className="bg-black px-6 py-3 rounded-full"
+          className="bg-black px-6 py-3 rounded-xl"
         >
           <Text className="text-white font-semibold">Create a new event</Text>
         </TouchableOpacity>
@@ -76,30 +67,50 @@ export default function OverviewScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-white px-6 py-10"
-      contentContainerStyle={{ paddingBottom: 60 }}
+      className="flex-1 bg-white"
+      contentContainerStyle={{ padding: 20, paddingBottom: 60 }}
     >
       <View className="mb-10">
-        <Text className="text-4xl font-extrabold text-center">
-          Welcome back 👋
+        <Text className="text-4xl font-extrabold text-center tracking-tight">
+          Overview
         </Text>
 
-        <Text className="text-gray-500 text-center mt-2">
-          Here’s your activity overview
+        <Text className="text-gray-500 text-center mt-1 text-base">
+          Your planning activity at a glance
         </Text>
       </View>
 
-      <View className="space-y-4">
-        <StatCard title="Total Events" value={stats.totalEvents} />
-        <StatCard title="Total Votes" value={stats.totalVotes} />
-        <StatCard title="Total Guests" value={stats.totalGuests} />
+      <View className="space-y-5">
+        <StatCard
+          title="Total Events"
+          value={stats.totalEvents}
+          color="#6366F1"
+          icon="calendar-outline"
+        />
+
+        <StatCard
+          title="Total Votes"
+          value={stats.totalVotes}
+          color="#10B981"
+          icon="checkmark-done-outline"
+        />
+
+        <StatCard
+          title="Total Guests"
+          value={stats.totalGuests}
+          color="#F59E0B"
+          icon="people-outline"
+        />
+
         <StatCard
           title="Upcoming Deadlines"
-          value={`${stats.upcomingEvents} ending soon`}
+          value={`${stats.upcomingEvents} due soon`}
+          color="#EF4444"
+          icon="alert-circle-outline"
         />
       </View>
 
-      <View className="mt-12 space-y-3">
+      <View className="mt-14 space-y-4">
         <TouchableOpacity
           onPress={() => router.push("/(protected)/create-event")}
           className="bg-black py-4 rounded-full shadow-md active:opacity-80"
@@ -122,11 +133,33 @@ export default function OverviewScreen() {
   );
 }
 
-function StatCard({ title, value }: { title: string; value: string | number }) {
+function StatCard({
+  title,
+  value,
+  color,
+  icon,
+}: {
+  title: string;
+  value: string | number;
+  color: string;
+  icon: any;
+}) {
   return (
-    <View className="bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm">
-      <Text className="text-gray-500 text-sm">{title}</Text>
-      <Text className="text-3xl font-bold text-black mt-1">{value}</Text>
+    <View
+      className="p-6 rounded-3xl border border-gray-100 shadow-sm bg-white flex-row justify-between items-center"
+      style={{ elevation: 2 }}
+    >
+      <View>
+        <Text className="text-gray-500 text-sm">{title}</Text>
+        <Text className="text-3xl font-extrabold mt-1">{value}</Text>
+      </View>
+
+      <View
+        className="w-14 h-14 rounded-2xl justify-center items-center"
+        style={{ backgroundColor: `${color}20` }}
+      >
+        <Ionicons name={icon} size={28} color={color} />
+      </View>
     </View>
   );
 }
