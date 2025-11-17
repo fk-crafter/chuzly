@@ -16,6 +16,7 @@ import {
   Star,
   LogOut,
   ChevronRight,
+  MessageCircle,
 } from "lucide-react-native";
 import { useQuery } from "@tanstack/react-query";
 
@@ -116,6 +117,14 @@ export default function SettingsScreen() {
           label="Subscription"
           icon={<CreditCard size={20} color="#111" />}
           onPress={() => router.push("/(protected)/setting/subscription")}
+        />
+      </View>
+
+      <View className="mt-6 bg-white shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
+        <SettingItem
+          label="Send Feedback"
+          icon={<MessageCircle size={20} color="#111" />}
+          onPress={() => router.push("/")}
         />
       </View>
 
