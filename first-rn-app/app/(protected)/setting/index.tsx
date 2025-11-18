@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
@@ -129,9 +130,18 @@ export default function SettingsScreen() {
       </View>
 
       <TouchableOpacity
-        onPress={async () => {
-          await AsyncStorage.clear();
-          router.push("/(auth)/login");
+        onPress={() => {
+          Alert.alert("Log out", "Are you sure you want to log out?", [
+            { text: "Cancel", style: "cancel" },
+            {
+              text: "Log out",
+              style: "destructive",
+              onPress: async () => {
+                await AsyncStorage.removeItem("token");
+                router.replace("/(auth)/login");
+              },
+            },
+          ]);
         }}
         className="mt-8 flex-row items-center justify-center bg-red-600 py-4 rounded-full shadow-sm"
       >
