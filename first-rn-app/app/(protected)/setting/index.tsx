@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
@@ -23,14 +22,17 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { data: profile, isLoading } = useQuery({
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const {
+    data: profile,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        router.push("/(auth)/login");
-        throw new Error("No token found");
-      }
+      if (!token) throw new Error("NO_TOKEN");
 
       const res = await fetch(`${API_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -41,6 +43,10 @@ export default function SettingsScreen() {
     },
     refetchOnWindowFocus: true,
   });
+
+  if (error?.message === "NO_TOKEN") {
+    router.replace("/(auth)/login");
+  }
 
   if (isLoading) {
     return (
@@ -72,6 +78,16 @@ export default function SettingsScreen() {
       .join("")
       .slice(0, 2)
       .toUpperCase() || "?";
+
+  const handleLogout = async () => {
+    try {
+      setLoggingOut(true);
+      await AsyncStorage.removeItem("token");
+      router.replace("/(auth)/login");
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   return (
     <ScrollView
@@ -130,23 +146,22 @@ export default function SettingsScreen() {
       </View>
 
       <TouchableOpacity
-        onPress={() => {
-          Alert.alert("Log out", "Are you sure you want to log out?", [
-            { text: "Cancel", style: "cancel" },
-            {
-              text: "Log out",
-              style: "destructive",
-              onPress: async () => {
-                await AsyncStorage.removeItem("token");
-                router.replace("/(auth)/login");
-              },
-            },
-          ]);
-        }}
-        className="mt-8 flex-row items-center justify-center bg-red-600 py-4 rounded-full shadow-sm"
+        onPress={handleLogout}
+        disabled={loggingOut}
+        className={`mt-8 flex-row items-center justify-center py-4 rounded-full shadow-sm ${
+          loggingOut ? "bg-red-400" : "bg-red-600"
+        }`}
       >
-        <LogOut size={20} color="white" />
-        <Text className="text-white text-base font-semibold ml-2">Log out</Text>
+        {loggingOut ? (
+          <ActivityIndicator size="small" color="white" />
+        ) : (
+          <>
+            <LogOut size={20} color="white" />
+            <Text className="text-white text-base font-semibold ml-2">
+              Log out
+            </Text>
+          </>
+        )}
       </TouchableOpacity>
     </ScrollView>
   );
