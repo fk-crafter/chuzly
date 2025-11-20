@@ -141,7 +141,7 @@ export default function SettingsScreen() {
         <SettingItem
           label="Send Feedback"
           icon={<MessageCircle size={20} color="#111" />}
-          onPress={() => router.push("/")}
+          onPress={() => router.push("/(protected)/setting/feedback")}
         />
       </View>
 
