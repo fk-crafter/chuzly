@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Animated,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { MessageCircle, ThumbsUp } from "lucide-react-native";
@@ -12,20 +13,17 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function FeedbackListScreen() {
   const router = useRouter();
-
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadFeedbacks = async () => {
     try {
-      setLoading(true);
-
       const stored = await AsyncStorage.getItem("local_feedbacks");
 
       if (stored) {
         setFeedbacks(JSON.parse(stored));
       } else {
-        const defaultFeedbacks = [
+        const defaults = [
           {
             id: "1",
             title: "Current day Swipe gestures",
@@ -33,6 +31,7 @@ export default function FeedbackListScreen() {
             user: { name: "nbashar" },
             date: "last week",
             votes: 8,
+            liked: false,
           },
           {
             id: "2",
@@ -41,54 +40,72 @@ export default function FeedbackListScreen() {
             user: { name: "test" },
             date: "last week",
             votes: 7,
+            liked: false,
           },
         ];
-
-        setFeedbacks(defaultFeedbacks);
-        await AsyncStorage.setItem(
-          "local_feedbacks",
-          JSON.stringify(defaultFeedbacks)
-        );
+        setFeedbacks(defaults);
+        await AsyncStorage.setItem("local_feedbacks", JSON.stringify(defaults));
       }
-    } catch (err) {
-      console.error("Failed to load feedbacks", err);
-      setFeedbacks([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadFeedbacks();
+    const run = async () => {
+      await loadFeedbacks();
+    };
+    run();
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      loadFeedbacks();
+      const run = async () => {
+        await loadFeedbacks();
+      };
+      run();
     }, [])
   );
 
-  const handleUpvote = async (id: string) => {
-    try {
-      const updated = feedbacks.map((fb) =>
-        fb.id === id ? { ...fb, votes: fb.votes + 1 } : fb
-      );
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
-      setFeedbacks(updated);
-
-      await AsyncStorage.setItem("local_feedbacks", JSON.stringify(updated));
-    } catch (err) {
-      console.error("Error upvoting", err);
-    }
+  const animate = () => {
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 1.3,
+        duration: 120,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 120,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
-  const getInitials = (name: string) => {
-    return name
+  const toggleLike = async (id: string) => {
+    animate();
+
+    const updated = feedbacks.map((fb) => {
+      if (fb.id === id) {
+        const liked = !fb.liked;
+        const votes = liked ? fb.votes + 1 : fb.votes - 1;
+        return { ...fb, liked, votes };
+      }
+      return fb;
+    });
+
+    setFeedbacks(updated);
+    await AsyncStorage.setItem("local_feedbacks", JSON.stringify(updated));
+  };
+
+  const getInitials = (name: string) =>
+    name
       ?.split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase();
-  };
 
   if (loading) {
     return (
@@ -128,19 +145,26 @@ export default function FeedbackListScreen() {
           <View className="flex-row items-center mt-3">
             <View className="w-8 h-8 rounded-full bg-gray-200 items-center justify-center mr-3">
               <Text className="font-bold text-gray-700">
-                {getInitials(fb.user?.name || "U")}
+                {getInitials(fb.user?.name || "")}
               </Text>
             </View>
 
             <Text className="text-gray-500 text-sm">
-              {fb.user?.name || "Unknown"} • {fb.date}
+              {fb.user?.name} • {fb.date}
             </Text>
 
             <TouchableOpacity
-              onPress={() => handleUpvote(fb.id)}
+              onPress={() => toggleLike(fb.id)}
               className="flex-row items-center ml-auto bg-gray-100 px-3 py-1.5 rounded-full"
             >
-              <ThumbsUp size={16} color="#333" />
+              <Animated.View
+                style={{
+                  transform: [{ scale: fb.liked ? scaleAnim : 1 }],
+                }}
+              >
+                <ThumbsUp size={16} color={fb.liked ? "#2563EB" : "#333"} />
+              </Animated.View>
+
               <Text className="ml-1 font-semibold text-gray-800">
                 {fb.votes}
               </Text>
