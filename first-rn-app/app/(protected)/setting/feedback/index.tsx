@@ -68,6 +68,20 @@ export default function FeedbackListScreen() {
     }, [])
   );
 
+  const handleUpvote = async (id: string) => {
+    try {
+      const updated = feedbacks.map((fb) =>
+        fb.id === id ? { ...fb, votes: fb.votes + 1 } : fb
+      );
+
+      setFeedbacks(updated);
+
+      await AsyncStorage.setItem("local_feedbacks", JSON.stringify(updated));
+    } catch (err) {
+      console.error("Error upvoting", err);
+    }
+  };
+
   const getInitials = (name: string) => {
     return name
       ?.split(" ")
@@ -122,7 +136,10 @@ export default function FeedbackListScreen() {
               {fb.user?.name || "Unknown"} • {fb.date}
             </Text>
 
-            <TouchableOpacity className="flex-row items-center ml-auto bg-gray-100 px-3 py-1.5 rounded-full">
+            <TouchableOpacity
+              onPress={() => handleUpvote(fb.id)}
+              className="flex-row items-center ml-auto bg-gray-100 px-3 py-1.5 rounded-full"
+            >
               <ThumbsUp size={16} color="#333" />
               <Text className="ml-1 font-semibold text-gray-800">
                 {fb.votes}
