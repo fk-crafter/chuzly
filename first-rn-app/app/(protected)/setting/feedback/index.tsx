@@ -10,16 +10,33 @@ import {
 import { useRouter, useFocusEffect } from "expo-router";
 import { MessageCircle, ThumbsUp } from "lucide-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TapGestureHandler } from "react-native-gesture-handler";
 
 export default function FeedbackListScreen() {
   const router = useRouter();
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const animate = () => {
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 1.3,
+        duration: 120,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 120,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
   const loadFeedbacks = async () => {
     try {
       const stored = await AsyncStorage.getItem("local_feedbacks");
-
       if (stored) {
         setFeedbacks(JSON.parse(stored));
       } else {
@@ -52,37 +69,16 @@ export default function FeedbackListScreen() {
   };
 
   useEffect(() => {
-    const run = async () => {
-      await loadFeedbacks();
-    };
+    const run = async () => await loadFeedbacks();
     run();
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      const run = async () => {
-        await loadFeedbacks();
-      };
+      const run = async () => await loadFeedbacks();
       run();
     }, [])
   );
-
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-
-  const animate = () => {
-    Animated.sequence([
-      Animated.timing(scaleAnim, {
-        toValue: 1.3,
-        duration: 120,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 120,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
 
   const toggleLike = async (id: string) => {
     animate();
@@ -135,42 +131,46 @@ export default function FeedbackListScreen() {
       </TouchableOpacity>
 
       {feedbacks.map((fb) => (
-        <View key={fb.id} className="mb-6 pb-4 border-b border-gray-200">
-          <Text className="text-xl font-semibold text-gray-900">
-            {fb.title}
-          </Text>
-
-          <Text className="text-gray-600 mt-1">{fb.description}</Text>
-
-          <View className="flex-row items-center mt-3">
-            <View className="w-8 h-8 rounded-full bg-gray-200 items-center justify-center mr-3">
-              <Text className="font-bold text-gray-700">
-                {getInitials(fb.user?.name || "")}
-              </Text>
-            </View>
-
-            <Text className="text-gray-500 text-sm">
-              {fb.user?.name} • {fb.date}
+        <TapGestureHandler
+          key={fb.id}
+          numberOfTaps={2}
+          onActivated={() => toggleLike(fb.id)}
+        >
+          <View className="mb-6 pb-4 border-b border-gray-200">
+            <Text className="text-xl font-semibold text-gray-900">
+              {fb.title}
             </Text>
 
-            <TouchableOpacity
-              onPress={() => toggleLike(fb.id)}
-              className="flex-row items-center ml-auto bg-gray-100 px-3 py-1.5 rounded-full"
-            >
-              <Animated.View
-                style={{
-                  transform: [{ scale: fb.liked ? scaleAnim : 1 }],
-                }}
-              >
-                <ThumbsUp size={16} color={fb.liked ? "#2563EB" : "#333"} />
-              </Animated.View>
+            <Text className="text-gray-600 mt-1">{fb.description}</Text>
 
-              <Text className="ml-1 font-semibold text-gray-800">
-                {fb.votes}
+            <View className="flex-row items-center mt-3">
+              <View className="w-8 h-8 rounded-full bg-gray-200 items-center justify-center mr-3">
+                <Text className="font-bold text-gray-700">
+                  {getInitials(fb.user?.name || "")}
+                </Text>
+              </View>
+
+              <Text className="text-gray-500 text-sm">
+                {fb.user?.name} • {fb.date}
               </Text>
-            </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => toggleLike(fb.id)}
+                className="flex-row items-center ml-auto bg-gray-100 px-3 py-1.5 rounded-full"
+              >
+                <Animated.View
+                  style={{ transform: [{ scale: fb.liked ? scaleAnim : 1 }] }}
+                >
+                  <ThumbsUp size={16} color={fb.liked ? "#2563EB" : "#333"} />
+                </Animated.View>
+
+                <Text className="ml-1 font-semibold text-gray-800">
+                  {fb.votes}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </TapGestureHandler>
       ))}
     </ScrollView>
   );
