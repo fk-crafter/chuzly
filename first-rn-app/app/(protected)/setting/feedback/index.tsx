@@ -45,7 +45,7 @@ export default function FeedbackListScreen() {
     ]).start();
   };
 
-  const loadFeedbacks = async () => {
+  const loadFeedbacks = useCallback(async () => {
     try {
       const stored = await AsyncStorage.getItem("local_feedbacks");
 
@@ -82,18 +82,16 @@ export default function FeedbackListScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    const run = async () => await loadFeedbacks();
-    run();
-  }, []);
+    loadFeedbacks();
+  }, [loadFeedbacks]);
 
   useFocusEffect(
     useCallback(() => {
-      const run = async () => await loadFeedbacks();
-      run();
-    }, [])
+      loadFeedbacks();
+    }, [loadFeedbacks])
   );
 
   const toggleLike = async (id: string) => {
