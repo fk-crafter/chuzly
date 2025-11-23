@@ -8,7 +8,7 @@ import {
   Animated,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
-import { MessageCircle, ThumbsUp } from "lucide-react-native";
+import { MessageCircle, ThumbsUp, Trash2 } from "lucide-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TapGestureHandler, Swipeable } from "react-native-gesture-handler";
 
@@ -159,7 +159,7 @@ export default function FeedbackListScreen() {
               onPress={() => deleteFeedback(fb.id)}
               className="bg-red-500 justify-center items-center w-20 h-28"
             >
-              <Text className="text-white font-semibold">Delete</Text>
+              <Trash2 size={26} color="white" />
             </TouchableOpacity>
           );
         };
