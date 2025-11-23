@@ -17,16 +17,27 @@ export default function FeedbackListScreen() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const scaleAnimRef = useRef<{ [key: string]: Animated.Value }>({});
 
-  const animate = () => {
+  const initAnimations = (items: any[]) => {
+    const anims: any = {};
+    items.forEach((fb) => {
+      anims[fb.id] = new Animated.Value(1);
+    });
+    scaleAnimRef.current = anims;
+  };
+
+  const animate = (id: string) => {
+    const anim = scaleAnimRef.current[id];
+    if (!anim) return;
+
     Animated.sequence([
-      Animated.timing(scaleAnim, {
+      Animated.timing(anim, {
         toValue: 1.3,
         duration: 120,
         useNativeDriver: true,
       }),
-      Animated.timing(scaleAnim, {
+      Animated.timing(anim, {
         toValue: 1,
         duration: 120,
         useNativeDriver: true,
@@ -37,8 +48,11 @@ export default function FeedbackListScreen() {
   const loadFeedbacks = async () => {
     try {
       const stored = await AsyncStorage.getItem("local_feedbacks");
+
       if (stored) {
-        setFeedbacks(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        setFeedbacks(parsed);
+        initAnimations(parsed);
       } else {
         const defaults = [
           {
@@ -60,7 +74,9 @@ export default function FeedbackListScreen() {
             liked: false,
           },
         ];
+
         setFeedbacks(defaults);
+        initAnimations(defaults);
         await AsyncStorage.setItem("local_feedbacks", JSON.stringify(defaults));
       }
     } finally {
@@ -81,7 +97,7 @@ export default function FeedbackListScreen() {
   );
 
   const toggleLike = async (id: string) => {
-    animate();
+    animate(id);
 
     const updated = feedbacks.map((fb) => {
       if (fb.id === id) {
@@ -159,7 +175,9 @@ export default function FeedbackListScreen() {
                 className="flex-row items-center ml-auto bg-gray-100 px-3 py-1.5 rounded-full"
               >
                 <Animated.View
-                  style={{ transform: [{ scale: fb.liked ? scaleAnim : 1 }] }}
+                  style={{
+                    transform: [{ scale: scaleAnimRef.current[fb.id] || 1 }],
+                  }}
                 >
                   <ThumbsUp size={16} color={fb.liked ? "#2563EB" : "#333"} />
                 </Animated.View>
