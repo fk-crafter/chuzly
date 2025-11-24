@@ -11,6 +11,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { MessageCircle, ThumbsUp, Trash2 } from "lucide-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TapGestureHandler, Swipeable } from "react-native-gesture-handler";
+import { API_URL } from "@/config";
 
 export default function FeedbackListScreen() {
   const router = useRouter();
@@ -47,38 +48,31 @@ export default function FeedbackListScreen() {
 
   const loadFeedbacks = useCallback(async () => {
     try {
-      const stored = await AsyncStorage.getItem("local_feedbacks");
+      const token = await AsyncStorage.getItem("token");
+      if (!token) return;
 
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        setFeedbacks(parsed);
-        initAnimations(parsed);
-      } else {
-        const defaults = [
-          {
-            id: "1",
-            title: "Current day Swipe gestures",
-            description: "Add ability to swipe between next and previous day.",
-            user: { name: "nbashar" },
-            date: "last week",
-            votes: 8,
-            liked: false,
-          },
-          {
-            id: "2",
-            title: "Streaks and weekly",
-            description: "See weekly streak progress.",
-            user: { name: "test" },
-            date: "last week",
-            votes: 7,
-            liked: false,
-          },
-        ];
+      const res = await fetch(`${API_URL}/feedback`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        setFeedbacks(defaults);
-        initAnimations(defaults);
-        await AsyncStorage.setItem("local_feedbacks", JSON.stringify(defaults));
-      }
+      if (!res.ok) throw new Error("Failed to fetch feedbacks");
+
+      const data = await res.json();
+
+      const formatted = data.map((f: any) => ({
+        id: f.id,
+        title: f.title,
+        description: f.description,
+        votes: f.votes,
+        liked: f.likedBy.includes(f.currentUserId),
+        user: { name: f.user.name },
+        date: "just now",
+      }));
+
+      setFeedbacks(formatted);
+      initAnimations(formatted);
+    } catch (e) {
+      console.log("failed to load feedbacks", e);
     } finally {
       setLoading(false);
     }
@@ -97,23 +91,51 @@ export default function FeedbackListScreen() {
   const toggleLike = async (id: string) => {
     animate(id);
 
-    const updated = feedbacks.map((fb) => {
-      if (fb.id === id) {
-        const liked = !fb.liked;
-        const votes = liked ? fb.votes + 1 : fb.votes - 1;
-        return { ...fb, liked, votes };
-      }
-      return fb;
-    });
+    const token = await AsyncStorage.getItem("token");
+    if (!token) return;
 
-    setFeedbacks(updated);
-    await AsyncStorage.setItem("local_feedbacks", JSON.stringify(updated));
+    try {
+      const res = await fetch(`${API_URL}/feedback/${id}/like`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error("Failed to like");
+
+      const updated = await res.json();
+
+      setFeedbacks((prev) =>
+        prev.map((fb) =>
+          fb.id === id
+            ? {
+                ...fb,
+                votes: updated.votes,
+                liked: updated.likedBy.includes(updated.userId),
+              }
+            : fb
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const deleteFeedback = async (id: string) => {
-    const updated = feedbacks.filter((fb) => fb.id !== id);
-    setFeedbacks(updated);
-    await AsyncStorage.setItem("local_feedbacks", JSON.stringify(updated));
+    const token = await AsyncStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_URL}/feedback/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error("Delete failed");
+
+      setFeedbacks((prev) => prev.filter((f) => f.id !== id));
+    } catch (e) {
+      console.log("Failed to delete feedback", e);
+    }
   };
 
   const getInitials = (name: string) =>

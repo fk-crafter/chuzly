@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "@/config";
 
 export default function CreateFeedbackScreen() {
   const router = useRouter();
@@ -17,31 +18,29 @@ export default function CreateFeedbackScreen() {
 
   const submit = async () => {
     if (!title.trim() || !message.trim()) return;
-
     setSending(true);
 
     try {
-      const stored = await AsyncStorage.getItem("local_feedbacks");
-      const existing = stored ? JSON.parse(stored) : [];
+      const token = await AsyncStorage.getItem("token");
+      if (!token) return;
 
-      const newFeedback = {
-        id: Date.now().toString(),
-        title,
-        description: message,
-        user: {
-          name: "You",
+      const res = await fetch(`${API_URL}/feedback`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        date: "just now",
-        votes: 0,
-      };
+        body: JSON.stringify({
+          title,
+          description: message,
+        }),
+      });
 
-      const updated = [newFeedback, ...existing];
-
-      await AsyncStorage.setItem("local_feedbacks", JSON.stringify(updated));
+      if (!res.ok) throw new Error("Failed to send feedback");
 
       router.back();
     } catch (err) {
-      console.error("Error saving feedback", err);
+      console.error(err);
     } finally {
       setSending(false);
     }
