@@ -24,8 +24,8 @@ export class FeedbackController {
   }
 
   @Get()
-  findAll() {
-    return this.service.findAll();
+  findAll(@User() user: { userId: string }) {
+    return this.service.findAll(user.userId);
   }
 
   @Patch(':id/like')

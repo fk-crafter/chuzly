@@ -64,7 +64,8 @@ export default function FeedbackListScreen() {
         title: f.title,
         description: f.description,
         votes: f.votes,
-        liked: f.likedBy.includes(f.currentUserId),
+        liked: f.liked,
+        mine: f.mine,
         user: { name: f.user.name },
         date: "just now",
       }));
@@ -110,7 +111,7 @@ export default function FeedbackListScreen() {
             ? {
                 ...fb,
                 votes: updated.votes,
-                liked: updated.likedBy.includes(updated.userId),
+                liked: updated.liked,
               }
             : fb
         )
@@ -174,7 +175,7 @@ export default function FeedbackListScreen() {
 
       {feedbacks.map((fb) => {
         const renderRightActions = () => {
-          if (fb.user?.name !== "You") return null;
+          if (!fb.mine) return null;
 
           return (
             <TouchableOpacity

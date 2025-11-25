@@ -20,13 +20,24 @@ export class FeedbackService {
     });
   }
 
-  async findAll() {
-    return this.prisma.feedback.findMany({
+  async findAll(userId: string) {
+    const list = await this.prisma.feedback.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
         user: { select: { name: true } },
       },
     });
+
+    return list.map((f) => ({
+      id: f.id,
+      title: f.title,
+      description: f.description,
+      votes: f.votes,
+      liked: f.likedBy.includes(userId),
+      mine: f.userId === userId,
+      user: { name: f.user.name },
+      createdAt: f.createdAt,
+    }));
   }
 
   async toggleLike(id: string, userId: string) {
