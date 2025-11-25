@@ -9,6 +9,7 @@ import {
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
+import Toast from "react-native-toast-message";
 
 export default function CreateFeedbackScreen() {
   const router = useRouter();
@@ -38,9 +39,21 @@ export default function CreateFeedbackScreen() {
 
       if (!res.ok) throw new Error("Failed to send feedback");
 
+      // ⭐ NEW: success message
+      Toast.show({
+        type: "success",
+        text1: "Thank you!",
+        text2: "Your feedback has been sent 👌",
+      });
+
       router.back();
     } catch (err) {
       console.error(err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Something went wrong",
+      });
     } finally {
       setSending(false);
     }
