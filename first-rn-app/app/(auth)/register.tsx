@@ -98,11 +98,13 @@ export default function RegisterScreen() {
         throw new Error(err || "Registration failed");
       }
 
-      const data = await res.json();
+      Toast.show({
+        type: "success",
+        text1: "Account created 🎉",
+        text2: "Please verify your email before logging in.",
+      });
 
-      await AsyncStorage.setItem("token", data.token);
-      await AsyncStorage.setItem("userName", data.name);
-      await AsyncStorage.setItem("userPlan", data.plan);
+      router.replace("/(auth)/login");
 
       router.replace("/(protected)/overview");
     } catch (err: any) {
