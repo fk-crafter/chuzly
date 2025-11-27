@@ -11,12 +11,12 @@ import {
 } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import { FontAwesome } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import { useMutation } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/auth-store";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -50,14 +50,17 @@ export default function LoginScreen() {
       return res.json();
     },
     onSuccess: async (data) => {
-      await AsyncStorage.setItem("token", data.token);
-      await AsyncStorage.setItem("userName", data.name);
-      await AsyncStorage.setItem("userPlan", data.plan);
+      useAuthStore.getState().setAuth({
+        token: data.token,
+        userName: data.name,
+        userPlan: data.plan,
+      });
 
       Toast.show({
         type: "success",
         text1: "Welcome back 👋",
       });
+
       router.replace("/(protected)/overview");
     },
     onError: (error: any) => {
@@ -89,7 +92,7 @@ export default function LoginScreen() {
         const tokenMatch = result.url.match(/token=([^&]+)/);
         if (tokenMatch) {
           const token = decodeURIComponent(tokenMatch[1]);
-          await AsyncStorage.setItem("token", token);
+          useAuthStore.getState().setAuth({ token });
           router.replace("/(protected)/overview");
         } else {
           Toast.show({
