@@ -9,16 +9,17 @@ import {
   Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Animated, { SlideInRight, SlideInLeft } from "react-native-reanimated";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { API_URL } from "@/config";
 import { PartyPopper, Trash } from "lucide-react-native";
 import Toast from "react-native-toast-message";
 import { useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function CreateEventScreen() {
   const router = useRouter();
+  const token = useAuthStore((s) => s.token);
 
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [step, setStep] = useState(1);
@@ -39,7 +40,7 @@ export default function CreateEventScreen() {
   const { data: pastEvents = [] } = useQuery({
     queryKey: ["pastEvents"],
     queryFn: async () => {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) return [];
 
       const res = await fetch(`${API_URL}/events/mine`, {
@@ -53,16 +54,12 @@ export default function CreateEventScreen() {
   });
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        router.push("/(auth)/login");
-        return;
-      }
-      setCheckingAuth(false);
-    };
-    checkAuth();
-  }, [router]);
+    if (!token) {
+      router.push("/(auth)/login");
+      return;
+    }
+    setCheckingAuth(false);
+  }, [token, router]);
 
   const handleOptionChange = (index: number, field: string, value: string) => {
     const updated = [...options];
@@ -101,7 +98,7 @@ export default function CreateEventScreen() {
   };
 
   const handleSubmit = async () => {
-    const token = await AsyncStorage.getItem("token");
+    const token = useAuthStore.getState().token;
     if (!token) {
       router.push("/(auth)/login");
       return;

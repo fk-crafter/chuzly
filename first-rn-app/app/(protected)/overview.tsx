@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery } from "@tanstack/react-query";
 import { API_URL } from "@/config";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function OverviewScreen() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function OverviewScreen() {
   } = useQuery({
     queryKey: ["overview"],
     queryFn: async () => {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
 
       if (!token) {
         router.push("/(auth)/login");
