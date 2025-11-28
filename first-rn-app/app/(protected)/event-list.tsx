@@ -9,10 +9,10 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Share2, Trash2 } from "lucide-react-native";
 import Toast from "react-native-toast-message";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/auth-store";
 
 type Event = {
   id: string;
@@ -30,7 +30,7 @@ export default function EventListScreen() {
   const { data: events = [], isLoading } = useQuery<Event[]>({
     queryKey: ["events"],
     queryFn: async () => {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) {
         router.push("/(auth)/login");
         throw new Error("No token");
@@ -49,7 +49,7 @@ export default function EventListScreen() {
 
   const deleteEventMutation = useMutation({
     mutationFn: async (id: string) => {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) throw new Error("No token");
 
       const res = await fetch(`${API_URL}/events/${id}`, {
