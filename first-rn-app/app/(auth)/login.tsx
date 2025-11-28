@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
 import { FontAwesome } from "@expo/vector-icons";
@@ -55,12 +56,10 @@ export default function LoginScreen() {
         userName: data.name,
         userPlan: data.plan,
       });
-
       Toast.show({
         type: "success",
         text1: "Welcome back 👋",
       });
-
       router.replace("/(protected)/overview");
     },
     onError: (error: any) => {
@@ -92,7 +91,7 @@ export default function LoginScreen() {
         const tokenMatch = result.url.match(/token=([^&]+)/);
         if (tokenMatch) {
           const token = decodeURIComponent(tokenMatch[1]);
-          useAuthStore.getState().setAuth({ token });
+          await AsyncStorage.setItem("token", token);
           router.replace("/(protected)/overview");
         } else {
           Toast.show({
