@@ -7,10 +7,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import Toast from "react-native-toast-message";
 import { useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/auth-store";
 
 type EventOption = {
   id: string;
@@ -48,7 +48,7 @@ export default function VoteScreen() {
     queryFn: async () => {
       if (!id || !guest) throw new Error("Missing event or guest info");
 
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) {
         router.push("/(auth)/login");
         throw new Error("No token");
@@ -87,7 +87,7 @@ export default function VoteScreen() {
     if (!id || !guest) return;
 
     try {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) {
         router.push("/(auth)/login");
         return;
@@ -194,7 +194,9 @@ export default function VoteScreen() {
               selectedOptionId === opt.id
                 ? "border-black bg-gray-100"
                 : "border-gray-300"
-            } ${votingClosed && isWinning ? "border-green-500 bg-green-100" : ""}
+            } ${
+              votingClosed && isWinning ? "border-green-500 bg-green-100" : ""
+            }
               ${votingClosed && isLosing ? "border-red-400 bg-red-50" : ""}`}
           >
             <Text className="font-semibold text-lg mb-1">{opt.name}</Text>
@@ -270,15 +272,15 @@ export default function VoteScreen() {
                 g.vote?.name === "Not available"
                   ? "bg-yellow-100 text-yellow-700"
                   : g.vote
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-500"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-gray-100 text-gray-500"
               }`}
             >
               {g.vote?.name === "Not available"
                 ? "Unavailable"
                 : g.vote
-                  ? "Voted"
-                  : "Pending"}
+                ? "Voted"
+                : "Pending"}
             </Text>
           </View>
         ))}
