@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { API_URL } from "@/config";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Cog,
   User,
@@ -19,6 +18,7 @@ import {
   MessageCircle,
 } from "lucide-react-native";
 import { useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -31,7 +31,7 @@ export default function SettingsScreen() {
   } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) throw new Error("NO_TOKEN");
 
       const res = await fetch(`${API_URL}/auth/me`, {
@@ -82,7 +82,7 @@ export default function SettingsScreen() {
   const handleLogout = async () => {
     try {
       setLoggingOut(true);
-      await AsyncStorage.removeItem("token");
+      useAuthStore.getState().logout();
       router.replace("/(auth)/login");
     } finally {
       setLoggingOut(false);
