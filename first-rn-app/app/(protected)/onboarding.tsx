@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { API_URL } from "@/config";
 import Toast from "react-native-toast-message";
+import { useAuthStore } from "@/store/auth-store";
 
 const COLORS = [
   "bg-gray-300",
@@ -119,7 +120,7 @@ export default function OnboardingScreen() {
 
   const handleFinish = async (redirect: "create" | "overview") => {
     setLoading(true);
-    const token = await AsyncStorage.getItem("token");
+    const token = useAuthStore.getState().token;
     if (!token) return router.push("/(auth)/login");
 
     try {
