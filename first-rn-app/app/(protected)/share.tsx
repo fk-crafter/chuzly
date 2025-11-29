@@ -8,10 +8,10 @@ import {
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import Toast from "react-native-toast-message";
 import { useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function ShareEventScreen() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function ShareEventScreen() {
   } = useQuery({
     queryKey: ["event", id],
     queryFn: async () => {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) {
         router.push("/(auth)/login");
         throw new Error("No token");
@@ -148,10 +148,9 @@ export default function ShareEventScreen() {
       </TouchableOpacity>
 
       {event.guests?.map((guest: any, i: number) => {
-        const voteUrl = `${API_URL.replace(
-          ":5001",
-          ":3000"
-        )}/vote?id=${event.id}&guest=${encodeURIComponent(guest.nickname)}`;
+        const voteUrl = `${API_URL.replace(":5001", ":3000")}/vote?id=${
+          event.id
+        }&guest=${encodeURIComponent(guest.nickname)}`;
 
         return (
           <TouchableOpacity
