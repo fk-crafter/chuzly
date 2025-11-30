@@ -12,6 +12,7 @@ import { API_URL } from "@/config";
 import { Pencil } from "lucide-react-native";
 import Toast from "react-native-toast-message";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/auth-store";
 
 const COLORS = [
   "bg-gray-300",
@@ -42,7 +43,7 @@ export default function ProfileScreen() {
   } = useQuery<Profile>({
     queryKey: ["profile"],
     queryFn: async () => {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) {
         router.push("/(auth)/login");
         throw new Error("No token");
@@ -75,7 +76,7 @@ export default function ProfileScreen() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async () => {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) {
         router.push("/(auth)/login");
         throw new Error("No token");
