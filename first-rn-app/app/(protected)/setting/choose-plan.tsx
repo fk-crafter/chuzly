@@ -8,10 +8,10 @@ import {
   Alert,
   Linking,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import { useRouter } from "expo-router";
 import { Wallet, Sparkles, Crown, Check, Info } from "lucide-react-native";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function ChoosePlanScreen() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function ChoosePlanScreen() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) {
         router.push("/(auth)/login");
         return;
@@ -44,7 +44,7 @@ export default function ChoosePlanScreen() {
   }, [router]);
 
   const handleSelectPlan = async (selected: "FREE" | "PRO") => {
-    const token = await AsyncStorage.getItem("token");
+    const token = useAuthStore.getState().token;
     if (!token) return Alert.alert("Error", "You must be logged in.");
 
     if (selected === "FREE") {
@@ -95,7 +95,7 @@ export default function ChoosePlanScreen() {
   };
 
   const handleCancelScheduledDowngrade = async () => {
-    const token = await AsyncStorage.getItem("token");
+    const token = useAuthStore.getState().token;
     if (!token) return;
 
     try {
@@ -112,7 +112,7 @@ export default function ChoosePlanScreen() {
   };
 
   const openPortal = async () => {
-    const token = await AsyncStorage.getItem("token");
+    const token = useAuthStore.getState().token;
     if (!token) return;
 
     try {
