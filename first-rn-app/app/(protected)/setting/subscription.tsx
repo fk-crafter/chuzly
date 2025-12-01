@@ -8,11 +8,11 @@ import {
   Alert,
   Linking,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import { useRouter } from "expo-router";
 import { CreditCard } from "lucide-react-native";
 import Toast from "react-native-toast-message";
+import { useAuthStore } from "@/store/auth-store";
 
 type SubscriptionInfo = {
   plan: "FREE" | "TRIAL" | "PRO";
@@ -27,7 +27,7 @@ export default function SubscriptionScreen() {
   const [loading, setLoading] = useState(true);
 
   const fetchSubscription = useCallback(async () => {
-    const token = await AsyncStorage.getItem("token");
+    const token = useAuthStore.getState().token;
     if (!token) {
       router.push("/(auth)/login");
       return;
@@ -52,7 +52,7 @@ export default function SubscriptionScreen() {
   }, [router]);
 
   const openStripePortal = async () => {
-    const token = await AsyncStorage.getItem("token");
+    const token = useAuthStore.getState().token;
     if (!token) return;
 
     try {
@@ -102,15 +102,15 @@ export default function SubscriptionScreen() {
     sub.plan === "PRO"
       ? "Pro Plan"
       : sub.plan === "FREE"
-        ? "Free Plan"
-        : "Trial Plan";
+      ? "Free Plan"
+      : "Trial Plan";
 
   const planDescription =
     sub.plan === "PRO"
       ? "Enjoy full access to all features, including unlimited events and chat."
       : sub.plan === "FREE"
-        ? "You’re using the free plan with limited features."
-        : "Trial users enjoy temporary Pro benefits.";
+      ? "You’re using the free plan with limited features."
+      : "Trial users enjoy temporary Pro benefits.";
 
   return (
     <ScrollView
