@@ -9,9 +9,9 @@ import {
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { MessageCircle, ThumbsUp, Trash2 } from "lucide-react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TapGestureHandler, Swipeable } from "react-native-gesture-handler";
 import { API_URL } from "@/config";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function FeedbackListScreen() {
   const router = useRouter();
@@ -48,7 +48,7 @@ export default function FeedbackListScreen() {
 
   const loadFeedbacks = useCallback(async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) return;
 
       const res = await fetch(`${API_URL}/feedback`, {
@@ -92,7 +92,7 @@ export default function FeedbackListScreen() {
   const toggleLike = async (id: string) => {
     animate(id);
 
-    const token = await AsyncStorage.getItem("token");
+    const token = useAuthStore.getState().token;
     if (!token) return;
 
     try {
@@ -122,7 +122,7 @@ export default function FeedbackListScreen() {
   };
 
   const deleteFeedback = async (id: string) => {
-    const token = await AsyncStorage.getItem("token");
+    const token = useAuthStore.getState().token;
     if (!token) return;
 
     try {
