@@ -7,9 +7,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/config";
 import Toast from "react-native-toast-message";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function CreateFeedbackScreen() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function CreateFeedbackScreen() {
     setSending(true);
 
     try {
-      const token = await AsyncStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       if (!token) return;
 
       const res = await fetch(`${API_URL}/feedback`, {
@@ -39,7 +39,6 @@ export default function CreateFeedbackScreen() {
 
       if (!res.ok) throw new Error("Failed to send feedback");
 
-      // ⭐ NEW: success message
       Toast.show({
         type: "success",
         text1: "Thank you!",
