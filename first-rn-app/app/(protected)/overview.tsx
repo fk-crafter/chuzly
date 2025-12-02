@@ -76,7 +76,7 @@ export default function OverviewScreen() {
         </Text>
 
         <Text className="text-gray-500 text-center mt-1 text-base">
-          Your planning activity at a glance
+          Your planning activity
         </Text>
       </View>
 
