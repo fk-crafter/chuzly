@@ -157,7 +157,7 @@ export default function SettingsScreen() {
         ) : (
           <>
             <LogOut size={20} color="white" />
-            <Text className="text-white text-base font-semibold ml-2">
+            <Text className="text-white text-base font-semibold ml-3">
               Log out
             </Text>
           </>
