@@ -110,7 +110,9 @@ export default function AdminDashboardPage() {
   return (
     <main className="max-w-7xl mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
-
+      <p className="text-gray-600 mb-6">
+        Total users: <span className="font-semibold">{users.length}</span>
+      </p>
       <UserTable
         users={users}
         onPlanChange={(id, plan) =>
