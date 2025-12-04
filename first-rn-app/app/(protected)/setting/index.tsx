@@ -99,20 +99,20 @@ export default function SettingsScreen() {
         <Text className="text-3xl font-bold text-gray-900 ml-2">Settings</Text>
       </View>
 
-      <View className="bg-white shadow-sm border border-gray-100 rounded-2xl p-6 mb-8">
+      <View className="bg-white shadow-md border border-gray-100 rounded-2xl p-6 mb-8">
         <View className="items-center">
           <View
-            className={`w-20 h-20 rounded-full items-center justify-center ${
-              profile.avatarColor || "bg-gray-200"
-            }`}
+            className={`w-24 h-24 rounded-full items-center justify-center shadow-lg border-4 border-white 
+      ${profile.avatarColor || "bg-gray-200"}`}
           >
-            <Text className="text-2xl font-bold text-gray-800">{initials}</Text>
+            <Text className="text-3xl font-bold text-gray-800">{initials}</Text>
           </View>
-          <Text className="text-lg font-semibold mt-3">{profile.name}</Text>
+
+          <Text className="text-xl font-semibold mt-4">{profile.name}</Text>
           <Text className="text-gray-500">{profile.email}</Text>
 
           {profile.plan === "PRO" && (
-            <View className="mt-2 px-4 py-1 bg-yellow-400/80 rounded-full">
+            <View className="mt-3 px-5 py-1.5 bg-yellow-400/80 rounded-full shadow-sm">
               <Text className="font-semibold text-black">PRO PLAN</Text>
             </View>
           )}
@@ -176,17 +176,23 @@ function SettingItem({
   icon: React.ReactNode;
   onPress: () => void;
 }) {
+  const [pressed, setPressed] = useState(false);
+
   return (
     <TouchableOpacity
       onPress={onPress}
-      activeOpacity={0.7}
-      className="flex-row items-center justify-between px-5 py-4 border-b border-gray-100"
+      activeOpacity={0.6}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      className={`flex-row items-center justify-between px-5 py-5 border-b border-gray-100
+        ${pressed ? "bg-gray-100" : "bg-white"}`}
     >
       <View className="flex-row items-center">
-        <View className="mr-3">{icon}</View>
-        <Text className="text-base font-semibold text-gray-800">{label}</Text>
+        <View className="mr-3 opacity-90">{icon}</View>
+        <Text className="text-base font-semibold text-gray-900">{label}</Text>
       </View>
-      <ChevronRight size={18} color="#9ca3af" />
+
+      <ChevronRight size={22} color="#6b7280" strokeWidth={2.2} />
     </TouchableOpacity>
   );
 }
