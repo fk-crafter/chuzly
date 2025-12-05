@@ -80,7 +80,7 @@ export default function OverviewScreen() {
         </Text>
       </View>
 
-      <View className="space-y-5">
+      <View className="gap-2">
         <StatCard
           title="Total Events"
           value={stats.totalEvents}
