@@ -113,7 +113,7 @@ export default function OverviewScreen() {
       <View className="mt-14 space-y-4">
         <TouchableOpacity
           onPress={() => router.push("/(protected)/create-event")}
-          className="bg-black py-4 rounded-full shadow-md active:opacity-80"
+          className="bg-black py-5 mb-3 rounded-full shadow-md active:opacity-80"
         >
           <Text className="text-white font-semibold text-center text-base">
             Create New Event
@@ -122,7 +122,7 @@ export default function OverviewScreen() {
 
         <TouchableOpacity
           onPress={() => router.push("/(protected)/event-list")}
-          className="border border-gray-300 py-4 rounded-full active:opacity-70"
+          className="border border-gray-300 py-5 rounded-full active:opacity-70"
         >
           <Text className="text-black font-semibold text-center text-base">
             View My Events
